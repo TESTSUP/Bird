@@ -2,11 +2,12 @@
 //  AppDelegate.m
 //  Bird
 //
-//  Created by 孙永刚 on 15/6/17.
+//  Created by 孙永刚 on 15/6/16.
 //  Copyright (c) 2015年 孙永刚. All rights reserved.
 //
 
 #import "AppDelegate.h"
+#import "HomeViewController.h"
 
 @interface AppDelegate ()
 
@@ -17,6 +18,23 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.window.backgroundColor = [UIColor colorWithRed:225.0/255.0
+                                                  green:225.0/255.0
+                                                   blue:225.0/255.0
+                                                  alpha:1.0];
+    
+    HomeViewController *homeVC = [[HomeViewController alloc] init];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:homeVC];
+    nav.navigationBar.translucent = NO;
+    nav.navigationBar.barTintColor = [UIColor colorWithRed:245.0/255.0
+                                                     green:245.0/255.0
+                                                      blue:245.0/255.0
+                                                     alpha:1.0];
+    self.window.rootViewController = nav;
+    
+    [self.window makeKeyAndVisible];
+    
     return YES;
 }
 
