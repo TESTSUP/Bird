@@ -16,12 +16,14 @@
 		985E42F21B3307BC007F8C1A /* NSArray+MASAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 985E42E51B3307BC007F8C1A /* NSArray+MASAdditions.m */; };
 		985E42F31B3307BC007F8C1A /* NSLayoutConstraint+MASDebugAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 985E42E81B3307BC007F8C1A /* NSLayoutConstraint+MASDebugAdditions.m */; };
 		985E42F41B3307BC007F8C1A /* View+MASAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 985E42EA1B3307BC007F8C1A /* View+MASAdditions.m */; };
-		985E42F81B330DD6007F8C1A /* CategoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 985E42F71B330DD6007F8C1A /* CategoryViewController.m */; };
+		985E42F81B330DD6007F8C1A /* CategoryListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 985E42F71B330DD6007F8C1A /* CategoryListViewController.m */; };
 		98E9B9BB1B31C0F000366D58 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 98E9B9BA1B31C0F000366D58 /* main.m */; };
 		98E9B9BE1B31C0F000366D58 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 98E9B9BD1B31C0F000366D58 /* AppDelegate.m */; };
 		98E9B9C11B31C0F000366D58 /* HomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 98E9B9C01B31C0F000366D58 /* HomeViewController.m */; };
 		98E9B9C61B31C0F000366D58 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 98E9B9C51B31C0F000366D58 /* Images.xcassets */; };
 		98E9B9D51B31C0F000366D58 /* BirdTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 98E9B9D41B31C0F000366D58 /* BirdTests.m */; };
+		CF5135731B39537B006983FD /* SettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF5135721B39537B006983FD /* SettingViewController.m */; };
+		CF5135801B396002006983FD /* CreateCategoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF51357F1B396002006983FD /* CreateCategoryViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,8 +61,8 @@
 		985E42EA1B3307BC007F8C1A /* View+MASAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "View+MASAdditions.m"; sourceTree = "<group>"; };
 		985E42EB1B3307BC007F8C1A /* View+MASShorthandAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "View+MASShorthandAdditions.h"; sourceTree = "<group>"; };
 		985E42F51B33093E007F8C1A /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
-		985E42F61B330DD6007F8C1A /* CategoryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CategoryViewController.h; sourceTree = "<group>"; };
-		985E42F71B330DD6007F8C1A /* CategoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CategoryViewController.m; sourceTree = "<group>"; };
+		985E42F61B330DD6007F8C1A /* CategoryListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CategoryListViewController.h; sourceTree = "<group>"; };
+		985E42F71B330DD6007F8C1A /* CategoryListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CategoryListViewController.m; sourceTree = "<group>"; };
 		98E9B9B51B31C0F000366D58 /* Bird.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Bird.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		98E9B9B91B31C0F000366D58 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		98E9B9BA1B31C0F000366D58 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -72,6 +74,10 @@
 		98E9B9CE1B31C0F000366D58 /* BirdTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BirdTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		98E9B9D31B31C0F000366D58 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		98E9B9D41B31C0F000366D58 /* BirdTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BirdTests.m; sourceTree = "<group>"; };
+		CF5135711B39537B006983FD /* SettingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingViewController.h; sourceTree = "<group>"; };
+		CF5135721B39537B006983FD /* SettingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingViewController.m; sourceTree = "<group>"; };
+		CF51357E1B396002006983FD /* CreateCategoryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateCategoryViewController.h; sourceTree = "<group>"; };
+		CF51357F1B396002006983FD /* CreateCategoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CreateCategoryViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -155,8 +161,12 @@
 				98E9B9BD1B31C0F000366D58 /* AppDelegate.m */,
 				98E9B9BF1B31C0F000366D58 /* HomeViewController.h */,
 				98E9B9C01B31C0F000366D58 /* HomeViewController.m */,
-				985E42F61B330DD6007F8C1A /* CategoryViewController.h */,
-				985E42F71B330DD6007F8C1A /* CategoryViewController.m */,
+				985E42F61B330DD6007F8C1A /* CategoryListViewController.h */,
+				985E42F71B330DD6007F8C1A /* CategoryListViewController.m */,
+				CF51357E1B396002006983FD /* CreateCategoryViewController.h */,
+				CF51357F1B396002006983FD /* CreateCategoryViewController.m */,
+				CF5135711B39537B006983FD /* SettingViewController.h */,
+				CF5135721B39537B006983FD /* SettingViewController.m */,
 				985E42D31B3307BC007F8C1A /* 3rd */,
 				98E9B9C51B31C0F000366D58 /* Images.xcassets */,
 				98E9B9B81B31C0F000366D58 /* Supporting Files */,
@@ -235,12 +245,11 @@
 		98E9B9AD1B31C0F000366D58 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0610;
+				LastUpgradeCheck = 0620;
 				ORGANIZATIONNAME = "孙永刚";
 				TargetAttributes = {
 					98E9B9B41B31C0F000366D58 = {
 						CreatedOnToolsVersion = 6.1.1;
-						DevelopmentTeam = U7E7529TA5;
 					};
 					98E9B9CD1B31C0F000366D58 = {
 						CreatedOnToolsVersion = 6.1.1;
@@ -290,10 +299,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF5135801B396002006983FD /* CreateCategoryViewController.m in Sources */,
 				985E42F31B3307BC007F8C1A /* NSLayoutConstraint+MASDebugAdditions.m in Sources */,
 				985E42F11B3307BC007F8C1A /* MASViewConstraint.m in Sources */,
 				985E42EC1B3307BC007F8C1A /* MASCompositeConstraint.m in Sources */,
-				985E42F81B330DD6007F8C1A /* CategoryViewController.m in Sources */,
+				CF5135731B39537B006983FD /* SettingViewController.m in Sources */,
+				985E42F81B330DD6007F8C1A /* CategoryListViewController.m in Sources */,
 				985E42F21B3307BC007F8C1A /* NSArray+MASAdditions.m in Sources */,
 				98E9B9C11B31C0F000366D58 /* HomeViewController.m in Sources */,
 				98E9B9BE1B31C0F000366D58 /* AppDelegate.m in Sources */,
@@ -342,7 +353,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -362,6 +373,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				PROVISIONING_PROFILE = "6cfd6799-b8ef-428a-9a5c-93344ab9eacd";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -383,7 +395,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -396,6 +408,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				PROVISIONING_PROFILE = "6cfd6799-b8ef-428a-9a5c-93344ab9eacd";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -404,7 +417,6 @@
 		98E9B9D91B31C0F000366D58 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "";
@@ -423,7 +435,6 @@
 		98E9B9DA1B31C0F000366D58 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "";

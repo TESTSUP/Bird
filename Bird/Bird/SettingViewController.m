@@ -1,18 +1,18 @@
 //
-//  Category ViewController.m
+//  SettingViewController.m
 //  Bird
 //
-//  Created by 孙永刚 on 15/6/18.
+//  Created by 孙永刚 on 15-6-20.
 //  Copyright (c) 2015年 孙永刚. All rights reserved.
 //
 
-#import "CategoryViewController.h"
+#import "SettingViewController.h"
 
-@interface CategoryViewController ()
+@interface SettingViewController ()
 
 @end
 
-@implementation CategoryViewController
+@implementation SettingViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
