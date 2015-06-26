@@ -19,17 +19,14 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    self.window.backgroundColor = [UIColor colorWithRed:225.0/255.0
-                                                  green:225.0/255.0
-                                                   blue:225.0/255.0
-                                                  alpha:1.0];
+    self.window.backgroundColor = [UIColor whiteColor];
     
     HomeViewController *homeVC = [[HomeViewController alloc] init];
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:homeVC];
     nav.navigationBar.translucent = NO;
-    nav.navigationBar.barTintColor = [UIColor colorWithRed:245.0/255.0
-                                                     green:245.0/255.0
-                                                      blue:245.0/255.0
+    nav.navigationBar.barTintColor = [UIColor colorWithRed:247.0/255.0
+                                                     green:247.0/255.0
+                                                      blue:247.0/255.0
                                                      alpha:1.0];
     self.window.rootViewController = nav;
     

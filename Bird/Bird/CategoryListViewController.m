@@ -12,8 +12,9 @@
 @interface CategoryListViewController () <UITableViewDataSource, UITableViewDelegate>
 {
     UITableView *_categoryTable;
-    UIButton *_backBtn;
     UIButton *_settingBtn;
+    
+    
 }
 @end
 
@@ -22,8 +23,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    self.view.backgroundColor = [UIColor greenColor];
-
+    
     [self configNavBar];
     
     [self createSubView];
@@ -33,34 +33,84 @@
 
 - (void)createSubView
 {
-    _backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_backBtn setImage:[UIImage imageNamed:@""] forState:UIControlStateNormal];
-    [_backBtn addTarget:self action:@selector(popCategoryView) forControlEvents:UIControlEventTouchUpInside];
-    
     _settingBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_settingBtn setImage:[UIImage imageNamed:@""] forState:UIControlStateNormal];
-    [_settingBtn addTarget:self action:@selector(showSettingView) forControlEvents:UIControlEventTouchUpInside];
+    [_settingBtn setImage:[UIImage imageNamed:@"setting"] forState:UIControlStateNormal];
+    [_settingBtn addTarget:self action:@selector(handleSettingButtonAction) forControlEvents:UIControlEventTouchUpInside];
     
     _categoryTable = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
     _categoryTable.delegate = self;
     _categoryTable.dataSource = self;
     _categoryTable.showsVerticalScrollIndicator = NO;
     _categoryTable.showsHorizontalScrollIndicator = NO;
+    UIView *footView = [[UIView alloc] init];
+    footView.backgroundColor = [UIColor clearColor];
+    _categoryTable.tableFooterView = footView;
+    if ([_categoryTable respondsToSelector:@selector(setSeparatorInset:)]) {
+        [_categoryTable setSeparatorInset:UIEdgeInsetsZero];
+    }
+    if ([_categoryTable respondsToSelector:@selector(setLayoutMargins:)]) {
+        [_categoryTable setLayoutMargins:UIEdgeInsetsZero];
+    }
     
-    [self.view addSubview:_backBtn];
     [self.view addSubview:_settingBtn];
     [self.view addSubview:_categoryTable];
-    
-     _backBtn.backgroundColor = [UIColor blueColor];
-    _backBtn.backgroundColor = [UIColor yellowColor];
 }
 
 - (void)configNavBar
 {
     self.navigationItem.hidesBackButton = YES;
+    
+    UIButton *categoryBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    categoryBtn.frame = CGRectMake(0, 0, 40, 40);
+    [categoryBtn addTarget:self action:@selector(handleBackAction) forControlEvents:UIControlEventTouchUpInside];
+    [categoryBtn setImage:[UIImage imageNamed:@"NavigationBar_category"] forState:UIControlStateNormal];
+    UIBarButtonItem *leftBarItem = [[UIBarButtonItem alloc] initWithCustomView:categoryBtn];
+    // 调整 leftBarButtonItem 在 iOS7 下面的位置
+    UIBarButtonItem *negativeSpacer = [[UIBarButtonItem alloc]
+                                       initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
+                                       target:nil action:nil];
+    negativeSpacer.width = -10;
+    categoryBtn.titleEdgeInsets = UIEdgeInsetsMake(0, 5, 0, 0);
+    [self.navigationItem setLeftBarButtonItems:@[negativeSpacer, leftBarItem] animated:YES];
+    
+    UIButton *addBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    addBtn.frame = CGRectMake(0, 0, 40, 40);
+    [addBtn addTarget:self action:@selector(handleAddCategoryAction) forControlEvents:UIControlEventTouchUpInside];
+    [addBtn setImage:[UIImage imageNamed:@"nav_add_category"] forState:UIControlStateNormal];
+    UIBarButtonItem *rightBarItem = [[UIBarButtonItem alloc] initWithCustomView:addBtn];
+    self.navigationItem.rightBarButtonItem = rightBarItem;
 }
 
-- (void)popCategoryView
+- (void)layoutSubViews
+{
+    [_settingBtn makeConstraints:^(MASConstraintMaker *make) {
+        make.right.equalTo(self.view);
+        make.bottom.equalTo(0);
+        make.width.equalTo(44);
+        make.height.equalTo(44);
+    }];
+    
+    [_categoryTable makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(0);
+        make.top.equalTo(0);
+        make.right.equalTo(0);
+        make.bottom.equalTo(_settingBtn.top);
+    }];
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+- (NSString *)title
+{
+    return @"长按可排序";
+}
+
+#pragma mark - action
+
+- (void)handleBackAction
 {
     CATransition *transition = [CATransition animation];
     transition.duration = 0.3;
@@ -73,49 +123,30 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-- (void)showSettingView
+- (void)handleAddCategoryAction
+{
+    
+}
+
+- (void)handleSettingButtonAction
 {
     SettingViewController *settingVC = [[SettingViewController alloc] init];
-    
+
     [self presentViewController:settingVC animated:YES completion:nil];
 }
 
-- (void)layoutSubViews
-{
-    [_backBtn makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(0);
-        make.bottom.equalTo(0);
-        make.width.equalTo(50);
-        make.height.equalTo(50);
-    }];
-    
-    [_settingBtn makeConstraints:^(MASConstraintMaker *make) {
-        make.right.equalTo(self.view);
-        make.bottom.equalTo(0);
-        make.width.equalTo(50);
-        make.height.equalTo(50);
-    }];
-    
-    [_categoryTable makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(0);
-        make.top.equalTo(0);
-        make.right.equalTo(0);
-        make.bottom.equalTo(_backBtn.top);
-    }];
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
-- (NSString *)title
-{
-    return @"分类";
-}
-
-
 #pragma mark - UITableViewDelegate
+
+-(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ([cell respondsToSelector:@selector(setSeparatorInset:)]) {
+        [cell setSeparatorInset:UIEdgeInsetsZero];
+    }
+    
+    if ([cell respondsToSelector:@selector(setLayoutMargins:)]) {
+        [cell setLayoutMargins:UIEdgeInsetsZero];
+    }
+}
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {

@@ -24,6 +24,7 @@
 		98E9B9D51B31C0F000366D58 /* BirdTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 98E9B9D41B31C0F000366D58 /* BirdTests.m */; };
 		CF5135731B39537B006983FD /* SettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF5135721B39537B006983FD /* SettingViewController.m */; };
 		CF5135801B396002006983FD /* CreateCategoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF51357F1B396002006983FD /* CreateCategoryViewController.m */; };
+		CFD1EA161B3D583600C9C588 /* BHomeFloadView.m in Sources */ = {isa = PBXBuildFile; fileRef = CFD1EA151B3D583600C9C588 /* BHomeFloadView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,6 +79,8 @@
 		CF5135721B39537B006983FD /* SettingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingViewController.m; sourceTree = "<group>"; };
 		CF51357E1B396002006983FD /* CreateCategoryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateCategoryViewController.h; sourceTree = "<group>"; };
 		CF51357F1B396002006983FD /* CreateCategoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CreateCategoryViewController.m; sourceTree = "<group>"; };
+		CFD1EA141B3D583600C9C588 /* BHomeFloadView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BHomeFloadView.h; sourceTree = "<group>"; };
+		CFD1EA151B3D583600C9C588 /* BHomeFloadView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BHomeFloadView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -167,6 +170,8 @@
 				CF51357F1B396002006983FD /* CreateCategoryViewController.m */,
 				CF5135711B39537B006983FD /* SettingViewController.h */,
 				CF5135721B39537B006983FD /* SettingViewController.m */,
+				CFD1EA141B3D583600C9C588 /* BHomeFloadView.h */,
+				CFD1EA151B3D583600C9C588 /* BHomeFloadView.m */,
 				985E42D31B3307BC007F8C1A /* 3rd */,
 				98E9B9C51B31C0F000366D58 /* Images.xcassets */,
 				98E9B9B81B31C0F000366D58 /* Supporting Files */,
@@ -306,6 +311,7 @@
 				CF5135731B39537B006983FD /* SettingViewController.m in Sources */,
 				985E42F81B330DD6007F8C1A /* CategoryListViewController.m in Sources */,
 				985E42F21B3307BC007F8C1A /* NSArray+MASAdditions.m in Sources */,
+				CFD1EA161B3D583600C9C588 /* BHomeFloadView.m in Sources */,
 				98E9B9C11B31C0F000366D58 /* HomeViewController.m in Sources */,
 				98E9B9BE1B31C0F000366D58 /* AppDelegate.m in Sources */,
 				985E42EF1B3307BC007F8C1A /* MASLayoutConstraint.m in Sources */,
