@@ -125,6 +125,8 @@
 
 - (void)handleDissmissAction
 {
+//    [self.navigationController popoverPresentationController];
+    
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 

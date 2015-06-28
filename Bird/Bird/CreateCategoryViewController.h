@@ -10,4 +10,6 @@
 
 @interface CreateCategoryViewController : UIViewController
 
+@property (nonatomic, assign) BOOL isCreate;    //创建or修改分类
+
 @end

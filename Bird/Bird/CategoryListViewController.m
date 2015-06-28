@@ -8,6 +8,8 @@
 
 #import "CategoryListViewController.h"
 #import "SettingViewController.h"
+#import "CreateCategoryViewController.h"
+#import "SelectCatrgoryViewController.h"
 
 @interface CategoryListViewController () <UITableViewDataSource, UITableViewDelegate>
 {
@@ -23,6 +25,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    self.view.backgroundColor = [UIColor whiteColor];
     
     [self configNavBar];
     
@@ -118,14 +121,17 @@
     transition.type = kCATransitionPush;
     transition.subtype = kCATransitionFromRight;
     transition.delegate = self;
-    
     [self.navigationController.view.layer addAnimation:transition forKey:nil];
+    
     [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)handleAddCategoryAction
 {
+    CreateCategoryViewController *createVC = [[CreateCategoryViewController alloc] init];
+    createVC.isCreate = YES;
     
+    [self.navigationController pushViewController:createVC animated:YES];
 }
 
 - (void)handleSettingButtonAction

@@ -9,12 +9,19 @@
 #import "HomeViewController.h"
 #import "CategoryListViewController.h"
 #import "BHomeFloadView.h"
+#import "ZYQAssetPickerController.h"
+#import "SelectCatrgoryViewController.h"
 
 static const CGFloat SideWidth = 75;
 static const CGFloat SideCellHeight = 50;
 static const NSTimeInterval animationDur3 = 0.3;
 
-@interface HomeViewController () <UITableViewDataSource, UITableViewDelegate>
+@interface HomeViewController ()
+<UITableViewDataSource,
+UITableViewDelegate,
+UINavigationControllerDelegate,
+UIImagePickerControllerDelegate,
+ZYQAssetPickerControllerDelegate>
 {
     UITableView *_categoryTableView;
     UIView *_tableFooter;
@@ -25,6 +32,7 @@ static const NSTimeInterval animationDur3 = 0.3;
 }
 
 @property (nonatomic, assign) BOOL showSideView;
+@property (nonatomic, assign) BOOL showFloatView;
 
 @end
 
@@ -34,6 +42,7 @@ static const NSTimeInterval animationDur3 = 0.3;
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     _showSideView = YES;
+    _showFloatView = NO;
     
     [self getCateGoryData];
     
@@ -233,6 +242,9 @@ static const NSTimeInterval animationDur3 = 0.3;
     _floadView.alpha = 0.0;
     [self.view addSubview:_floadView];
     [self.view bringSubviewToFront:_floadView];
+    
+    [_floadView.photoButton addTarget:self action:@selector(handlePhotoButtonAction) forControlEvents:UIControlEventTouchUpInside];
+    [_floadView.cameraButton addTarget:self action:@selector(handleCameraButtonAction) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void)createGestureSwipe
@@ -292,6 +304,23 @@ static const NSTimeInterval animationDur3 = 0.3;
                      }];
 }
 
+- (void)setShowFloatView:(BOOL)showFloatView
+{
+    _showFloatView = showFloatView;
+    CGFloat alpha = 0.0;
+    if (_showFloatView) {
+        alpha = 1.0;
+    }
+    
+    [UIView animateWithDuration:0.3
+                     animations:^{
+                         _floadView.alpha = alpha;
+                     }
+                     completion:^(BOOL finished) {
+                         
+                     }];
+}
+
 - (void)getCateGoryData
 {
     if (!_categoryData) {
@@ -334,25 +363,70 @@ static const NSTimeInterval animationDur3 = 0.3;
 
 - (void)handleAddButtonAction
 {
-    CGFloat alpha = _floadView.alpha;
-    if (alpha == 1.0) {
-        alpha = 0.0;
-    } else {
-        alpha = 1.0;
-    }
-    
-    [UIView animateWithDuration:0.3
-                     animations:^{
-                         _floadView.alpha = alpha;
-                     }
-                     completion:^(BOOL finished) {
-                         
-                     }];
+    self.showFloatView = !self.showFloatView;
 }
 
 - (void)handleSearchAction
 {
     
+}
+
+- (void)handlePhotoButtonAction
+{
+    ZYQAssetPickerController *picker = [[ZYQAssetPickerController alloc] init];
+    picker.maximumNumberOfSelection = 5;
+    picker.assetsFilter = [ALAssetsFilter allPhotos];
+    picker.showEmptyGroups=NO;
+    picker.delegate=self;
+    picker.selectionFilter = [NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
+        if ([[(ALAsset*)evaluatedObject valueForProperty:ALAssetPropertyType] isEqual:ALAssetTypeVideo]) {
+            NSTimeInterval duration = [[(ALAsset*)evaluatedObject valueForProperty:ALAssetPropertyDuration] doubleValue];
+            return duration >= 5;
+        } else {
+            return YES;
+        }
+    }];
+    
+    self.showFloatView = NO;
+    [self presentViewController:picker animated:YES completion:NULL];
+}
+
+- (void)handleCameraButtonAction
+{
+    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+        UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
+        imagePickerController.delegate = self;
+        imagePickerController.showsCameraControls = YES;
+        imagePickerController.cameraFlashMode = UIImagePickerControllerCameraFlashModeAuto;
+    }
+}
+
+#pragma mark - UIImagePickerControllerDelegate
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image
+{
+    
+}
+
+#pragma mark - ZYQAssetPickerController Delegate
+-(void)assetPickerController:(ZYQAssetPickerController *)picker didFinishPickingAssets:(NSArray *)assets{
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+
+        for (int i=0; i<assets.count; i++) {
+            ALAsset *asset=assets[i];
+            UIImage *tempImg=[UIImage imageWithCGImage:asset.defaultRepresentation.fullScreenImage];
+            dispatch_async(dispatch_get_main_queue(), ^{
+
+                
+            });
+        }
+    });
+}
+
+
+-(void)assetPickerControllerDidMaximum:(ZYQAssetPickerController *)picker{
+    NSLog(@"到达上限");
 }
 
 #pragma mark - UITableViewDelegate
