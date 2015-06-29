@@ -7,7 +7,7 @@
 //
 
 #import "AppDelegate.h"
-#import "HomeViewController.h"
+#import "BHomeViewController.h"
 
 @interface AppDelegate ()
 
@@ -20,8 +20,10 @@
     // Override point for customization after application launch.
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor = [UIColor whiteColor];
+    //默认用户
+    [BGlobalConfig shareInstance].currentUser = DefaultUser;
     
-    HomeViewController *homeVC = [[HomeViewController alloc] init];
+    BHomeViewController *homeVC = [[BHomeViewController alloc] init];
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:homeVC];
     nav.navigationBar.translucent = NO;
     nav.navigationBar.barTintColor = [UIColor colorWithRed:247.0/255.0

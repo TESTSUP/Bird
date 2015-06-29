@@ -6,12 +6,12 @@
 //  Copyright (c) 2015年 孙永刚. All rights reserved.
 //
 
-#import "CategoryListViewController.h"
-#import "SettingViewController.h"
-#import "CreateCategoryViewController.h"
-#import "SelectCatrgoryViewController.h"
+#import "BCategoryListViewController.h"
+#import "BSettingViewController.h"
+#import "BCreateCategoryViewController.h"
+#import "BSelectCatrgoryViewController.h"
 
-@interface CategoryListViewController () <UITableViewDataSource, UITableViewDelegate>
+@interface BCategoryListViewController () <UITableViewDataSource, UITableViewDelegate>
 {
     UITableView *_categoryTable;
     UIButton *_settingBtn;
@@ -20,7 +20,7 @@
 }
 @end
 
-@implementation CategoryListViewController
+@implementation BCategoryListViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -128,7 +128,7 @@
 
 - (void)handleAddCategoryAction
 {
-    CreateCategoryViewController *createVC = [[CreateCategoryViewController alloc] init];
+    BCreateCategoryViewController *createVC = [[BCreateCategoryViewController alloc] init];
     createVC.isCreate = YES;
     
     [self.navigationController pushViewController:createVC animated:YES];
@@ -136,7 +136,7 @@
 
 - (void)handleSettingButtonAction
 {
-    SettingViewController *settingVC = [[SettingViewController alloc] init];
+    BSettingViewController *settingVC = [[BSettingViewController alloc] init];
 
     [self presentViewController:settingVC animated:YES completion:nil];
 }

@@ -6,14 +6,14 @@
 //  Copyright (c) 2015年 孙永刚. All rights reserved.
 //
 
-#import "CreateCategoryViewController.h"
+#import "BCreateCategoryViewController.h"
 
 static const CGFloat left_offset = 20;
 static const CGFloat top_offset = 20;
 static const CGFloat itemSpace15 = 15;
 static NSString *const placeHolder = @"备注名称";
 
-@interface CreateCategoryViewController () <UITextViewDelegate, UITextFieldDelegate>
+@interface BCreateCategoryViewController () <UITextViewDelegate, UITextFieldDelegate>
 {
     UIView *_contentView;
     UILabel *_catigoryName;
@@ -23,7 +23,7 @@ static NSString *const placeHolder = @"备注名称";
 }
 @end
 
-@implementation CreateCategoryViewController
+@implementation BCreateCategoryViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];

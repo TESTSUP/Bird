@@ -6,13 +6,13 @@
 //  Copyright (c) 2015年 孙永刚. All rights reserved.
 //
 
-#import "SelectCatrgoryViewController.h"
+#import "BSelectCatrgoryViewController.h"
 
-@interface SelectCatrgoryViewController ()
+@interface BSelectCatrgoryViewController ()
 
 @end
 
-@implementation SelectCatrgoryViewController
+@implementation BSelectCatrgoryViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];

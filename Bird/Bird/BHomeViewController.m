@@ -6,17 +6,17 @@
 //  Copyright (c) 2015年 孙永刚. All rights reserved.
 //
 
-#import "HomeViewController.h"
-#import "CategoryListViewController.h"
+#import "BHomeViewController.h"
+#import "BCategoryListViewController.h"
 #import "BHomeFloadView.h"
 #import "ZYQAssetPickerController.h"
-#import "SelectCatrgoryViewController.h"
+#import "BSelectCatrgoryViewController.h"
 
 static const CGFloat SideWidth = 75;
 static const CGFloat SideCellHeight = 50;
 static const NSTimeInterval animationDur3 = 0.3;
 
-@interface HomeViewController ()
+@interface BHomeViewController ()
 <UITableViewDataSource,
 UITableViewDelegate,
 UINavigationControllerDelegate,
@@ -36,7 +36,7 @@ ZYQAssetPickerControllerDelegate>
 
 @end
 
-@implementation HomeViewController
+@implementation BHomeViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -279,7 +279,7 @@ ZYQAssetPickerControllerDelegate>
 //    group.duration = 0.4;
 //    group.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
     
-    CategoryListViewController *cateVC = [[CategoryListViewController alloc] init];
+    BCategoryListViewController *cateVC = [[BCategoryListViewController alloc] init];
     
     [self.navigationController pushViewController:cateVC animated:NO];
     [self.navigationController.view.layer addAnimation:transition forKey:nil];
@@ -396,15 +396,39 @@ ZYQAssetPickerControllerDelegate>
     if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
         UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
         imagePickerController.delegate = self;
+        imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
         imagePickerController.showsCameraControls = YES;
         imagePickerController.cameraFlashMode = UIImagePickerControllerCameraFlashModeAuto;
+        //取景框全屏
+        CGSize screenBounds = [UIScreen mainScreen].bounds.size;
+        CGFloat cameraAspectRatio = 4.0f/3.0f;
+        CGFloat camViewHeight = screenBounds.width * cameraAspectRatio;
+        CGFloat scale = screenBounds.height / camViewHeight;
+        imagePickerController.cameraViewTransform = CGAffineTransformMakeTranslation(0, (screenBounds.height - camViewHeight) / 2.0);
+        imagePickerController.cameraViewTransform = CGAffineTransformScale(imagePickerController.cameraViewTransform, scale, scale);
+
+        self.showFloatView = NO;
+        [self presentViewController:imagePickerController animated:YES completion:nil];
     }
 }
 
 #pragma mark - UIImagePickerControllerDelegate
 
-- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
+    //info中key值
+//    NSString *const  UIImagePickerControllerMediaType ;指定用户选择的媒体类型（文章最后进行扩展）
+//    NSString *const  UIImagePickerControllerOriginalImage ;原始图片
+//    NSString *const  UIImagePickerControllerEditedImage ;修改后的图片
+//    NSString *const  UIImagePickerControllerCropRect ;裁剪尺寸
+//    NSString *const  UIImagePickerControllerMediaURL ;媒体的URL
+//    NSString *const  UIImagePickerControllerReferenceURL ;原件的URL
+//    NSString *const  UIImagePickerControllerMediaMetadata;当来数据来源是照相机的时候这个值才有效
+
+    UIImage *pickImage = [info objectForKey:UIImagePickerControllerOriginalImage];
+    NSLog(@"%@", pickImage);
+    
+    [self dismissViewControllerAnimated:YES completion:nil];
     
 }
 

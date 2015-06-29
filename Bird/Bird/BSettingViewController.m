@@ -6,9 +6,9 @@
 //  Copyright (c) 2015年 孙永刚. All rights reserved.
 //
 
-#import "SettingViewController.h"
+#import "BSettingViewController.h"
 
-@interface SettingViewController () <UITableViewDataSource, UITableViewDelegate>
+@interface BSettingViewController () <UITableViewDataSource, UITableViewDelegate>
 {
     UIButton *_backBtn;
     UILabel *_titleLabel;
@@ -19,7 +19,7 @@
 }
 @end
 
-@implementation SettingViewController
+@implementation BSettingViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];

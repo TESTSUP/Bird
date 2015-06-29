@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface SelectCatrgoryViewController : UIViewController
+@interface BSelectCatrgoryViewController : UIViewController
 
 @property (nonatomic, assign) BOOL isGuide;     //是否是引导页
 

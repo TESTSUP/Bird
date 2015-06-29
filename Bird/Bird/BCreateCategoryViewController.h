@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface CreateCategoryViewController : UIViewController
+@interface BCreateCategoryViewController : UIViewController
 
 @property (nonatomic, assign) BOOL isCreate;    //创建or修改分类
 

@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface CategoryListViewController : UIViewController
+@interface BCategoryListViewController : UIViewController
 
 @end

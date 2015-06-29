@@ -16,5 +16,6 @@
 #define MAS_SHORTHAND_GLOBALS
 
 #import "Masonry.h"
+#import "BGlobalConfig.h"
 
 #endif
