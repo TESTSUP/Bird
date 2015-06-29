@@ -72,9 +72,11 @@ static BGlobalConfig *configInstance = nil;
     if (![_currentUser isEqualToString:aCurrentUser]) {
         _currentUser = aCurrentUser;
         
-        [self constructPath];
-        
-        [[BirdDB share] buildDB];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self constructPath];
+            
+            [[BirdDB share] buildDB];
+        });
     }
 }
 
