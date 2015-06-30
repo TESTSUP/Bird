@@ -7,10 +7,11 @@
 //
 
 #import "BirdDB.h"
+#import "BirdUtil.h"
 #import "FMDatabase.h"
 #import "FMDatabaseQueue.h"
-#import "BItemContent.h"
-#import "BCategoryContent.h"
+
+
 
 static NSString *const BirdDBVersion = @"100";
 
@@ -72,14 +73,6 @@ static BirdDB *DBInstance = nil;
         
     }];
     return version;
-    
-//    NSString* version = nil;
-//    FMResultSet *rs = [self.db executeQuery:@"SELECT Version FROM bird_db_version WHERE Name = 'version'"];
-//    while ([rs next]) {
-//        version = [rs stringForColumnIndex:0];
-//    }
-//    [rs close];
-//    return version;
 }
 
 - (void)updateVersion
@@ -156,7 +149,7 @@ static BirdDB *DBInstance = nil;
 - (void)createItemTable
 {
     [self.dbQueue inDatabase:^(FMDatabase *db) {
-        [db executeUpdate:@"CREATE TABLE IF NOT EXISTS bird_db_items ( name varchar(64), category varchar(32), images varchar(256), properties varchar(256))"];
+        [db executeUpdate:@"CREATE TABLE IF NOT EXISTS bird_db_items (itemid char(32), name varchar(64), category varchar(32), images varchar(256), properties varchar(256), PRIMARY KEY (itemid) ON CONFLICT REPLACE)"];
         [self checkError:db];
     }];
 }
@@ -164,7 +157,7 @@ static BirdDB *DBInstance = nil;
 - (void)createCategoryTable
 {
     [self.dbQueue inDatabase:^(FMDatabase *db) {
-        [db executeUpdate:@"CREATE TABLE IF NOT EXISTS bird_db_category (name varchar(32), description var(64))"];
+        [db executeUpdate:@"CREATE TABLE IF NOT EXISTS bird_db_category (name char(32), description var(64), PRIMARY KEY (name) ON CONFLICT REPLACE))"];
         [self checkError:db];
     }];
 }
@@ -172,7 +165,7 @@ static BirdDB *DBInstance = nil;
 - (void)createPropertyTable
 {
     [self.dbQueue inDatabase:^(FMDatabase *db) {
-        [db executeUpdate:@"CREATE TABLE IF NOT EXISTS bird_db_property (name varchar(64), used_count int)"];
+        [db executeUpdate:@"CREATE TABLE IF NOT EXISTS bird_db_property (name varchar(64), used_count int, PRIMARY KEY (name) ON CONFLICT REPLACE))"];
         [self checkError:db];
     }];
 }
@@ -183,16 +176,113 @@ static BirdDB *DBInstance = nil;
 {
     [self.dbQueue inDatabase:^(FMDatabase *db) {
         [db executeUpdate:@"INSERT OR REPLACE INTO bird_db_items VALUES (?,?,?,?,?)",
+         aItem.itemID,
          aItem.name,
          aItem.category,
-         [aItem.images componentsJoinedByString:@","],
+         [aItem.imageIDs componentsJoinedByString:@","],
          [aItem.property componentsJoinedByString:@","]];
-         [self checkError:db];
+        [self checkError:db];
+    }];
+    
+    
+}
+
+- (BItemContent *)createItemWithResult:(FMResultSet *)rs
+{
+    BItemContent *item = [[BItemContent alloc] init];
+    item.itemID = [rs stringForColumnIndex:0];
+    item.name = [rs stringForColumnIndex:1];
+    item.category = [rs stringForColumnIndex:2];
+    NSString *imageStr = [rs stringForColumnIndex:3];
+    item.imageIDs = [imageStr componentsSeparatedByString:@","];
+    NSString *proStr = [rs stringForColumnIndex:4];
+    item.property = [proStr componentsSeparatedByString:@","];
+    
+    return item;
+}
+
+- (NSArray *)getItemWithCategory:(NSString *)category
+{
+    NSMutableArray *rt = [[NSMutableArray alloc] initWithCapacity:0];
+    
+    if ([category length]) {
+        [self.dbQueue inDatabase:^(FMDatabase *db) {
+            FMResultSet *rs = [db executeQuery:@"SELECT * FROM bird_db_items WHERE category = ?", category];
+            [self checkError:db];
+            if ([rs next]) {
+                BItemContent *item = [self createItemWithResult:rs];
+                if (item) {
+                    [rt addObject:item];
+                }
+            }
+            [rs close];
+        }];
+    } else {
+        [self.dbQueue inDatabase:^(FMDatabase *db) {
+            FMResultSet *rs = [db executeQuery:@"SELECT * FROM bird_db_items"];
+            [self checkError:db];
+            if ([rs next]) {
+                BItemContent *item = [self createItemWithResult:rs];
+                if (item) {
+                    [rt addObject:item];
+                }
+            }
+            [rs close];
+        }];
+    }
+    
+    return rt;
+}
+
+- (void)deleteItmeWithId:(NSString *)aItemId
+{
+    [self.dbQueue inDatabase:^(FMDatabase *db) {
+        [db executeUpdate:@"DELETE FROM bird_db_items WHERE itemid = ?", aItemId];
+        [self checkEmpty:db];
     }];
 }
 
 #pragma mark - category
 
+- (void)insertCategory:(BCategoryContent *)aCategory
+{
+    [self.dbQueue inDatabase:^(FMDatabase *db) {
+        [db executeUpdate:@"INSERT OR REPLACE INTO bird_db_category VALUES (?,?)",
+         aCategory.name,
+         aCategory.descr];
+        [self checkError:db];
+    }];
+}
+
+- (NSArray *)getAllCategory
+{
+     NSMutableArray *rt = [[NSMutableArray alloc] initWithCapacity:0];
+    
+    [self.dbQueue inDatabase:^(FMDatabase *db) {
+        FMResultSet *rs = [db executeQuery:@"SELECT * FROM bird_db_category"];
+        [self checkError:db];
+        if ([rs next]) {
+            BCategoryContent *category = [[BCategoryContent alloc] init];
+            category.name = [rs stringForColumnIndex:0];
+            category.descr = [rs stringForColumnIndex:1];
+            [rt addObject:category];
+        }
+        [rs close];
+    }];
+    
+    return rt;
+}
+
+- (void)deleteCateGoryWithName:(NSString *)aCategoryName
+{
+    [self.dbQueue inDatabase:^(FMDatabase *db) {
+        [db executeUpdate:@"DELETE FROM bird_db_category WHERE name = ?", aCategoryName];
+        [self checkEmpty:db];
+    }];
+}
+
 #pragma mark - property
+
+
 
 @end

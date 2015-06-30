@@ -7,6 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "BItemContent.h"
+#import "BCategoryContent.h"
 
 @interface BirdDB : NSObject
 
@@ -17,7 +19,16 @@
  */
 - (void)buildDB;
 
+//物品操作
+- (void)insertItem:(BItemContent *)aItem;
+- (NSArray *)getItemWithCategory:(NSString *)category;
+- (void)deleteItmeWithId:(NSString *)aItemId;
 
+//分类操作
+- (void)insertCategory:(BCategoryContent *)aCategory;
+- (NSArray *)getAllCategory;
+- (void)deleteCateGoryWithName:(NSString *)aCategoryName;
 
+//属性
 
 @end

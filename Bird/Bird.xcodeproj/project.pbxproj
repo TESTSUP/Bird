@@ -38,6 +38,7 @@
 		CF3EA6831B412A51006A21E5 /* BCategoryContent.m in Sources */ = {isa = PBXBuildFile; fileRef = CF3EA6821B412A51006A21E5 /* BCategoryContent.m */; };
 		CF3EA6851B413BFC006A21E5 /* defaultProperty.plist in Resources */ = {isa = PBXBuildFile; fileRef = CF3EA6841B413BFC006A21E5 /* defaultProperty.plist */; };
 		CF3EA6871B413C72006A21E5 /* defaultCategory.plist in Resources */ = {isa = PBXBuildFile; fileRef = CF3EA6861B413C72006A21E5 /* defaultCategory.plist */; };
+		CF3EA68A1B42791B006A21E5 /* BirdUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = CF3EA6891B42791B006A21E5 /* BirdUtil.m */; };
 		CF5135731B39537B006983FD /* BSettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF5135721B39537B006983FD /* BSettingViewController.m */; };
 		CF5135801B396002006983FD /* BCreateCategoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF51357F1B396002006983FD /* BCreateCategoryViewController.m */; };
 		CFD1EA161B3D583600C9C588 /* BHomeFloadView.m in Sources */ = {isa = PBXBuildFile; fileRef = CFD1EA151B3D583600C9C588 /* BHomeFloadView.m */; };
@@ -120,6 +121,8 @@
 		CF3EA6821B412A51006A21E5 /* BCategoryContent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCategoryContent.m; sourceTree = "<group>"; };
 		CF3EA6841B413BFC006A21E5 /* defaultProperty.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = defaultProperty.plist; sourceTree = "<group>"; };
 		CF3EA6861B413C72006A21E5 /* defaultCategory.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = defaultCategory.plist; sourceTree = "<group>"; };
+		CF3EA6881B42791B006A21E5 /* BirdUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BirdUtil.h; sourceTree = "<group>"; };
+		CF3EA6891B42791B006A21E5 /* BirdUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BirdUtil.m; sourceTree = "<group>"; };
 		CF5135711B39537B006983FD /* BSettingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BSettingViewController.h; sourceTree = "<group>"; };
 		CF5135721B39537B006983FD /* BSettingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BSettingViewController.m; sourceTree = "<group>"; };
 		CF51357E1B396002006983FD /* BCreateCategoryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCreateCategoryViewController.h; sourceTree = "<group>"; };
@@ -226,6 +229,8 @@
 				CF3EA6741B411CF3006A21E5 /* Model */,
 				CF3EA6781B411D66006A21E5 /* BGlobalConfig.h */,
 				CF3EA6791B411D66006A21E5 /* BGlobalConfig.m */,
+				CF3EA6881B42791B006A21E5 /* BirdUtil.h */,
+				CF3EA6891B42791B006A21E5 /* BirdUtil.m */,
 				985E42D31B3307BC007F8C1A /* 3rd */,
 				98E9B9C51B31C0F000366D58 /* Images.xcassets */,
 				98E9B9B81B31C0F000366D58 /* Supporting Files */,
@@ -435,6 +440,7 @@
 				CF3EA6771B411D14006A21E5 /* BModelInterface.m in Sources */,
 				985E42F81B330DD6007F8C1A /* BCategoryListViewController.m in Sources */,
 				985E42F21B3307BC007F8C1A /* NSArray+MASAdditions.m in Sources */,
+				CF3EA68A1B42791B006A21E5 /* BirdUtil.m in Sources */,
 				CFD1EA161B3D583600C9C588 /* BHomeFloadView.m in Sources */,
 				CF3EA67A1B411D66006A21E5 /* BGlobalConfig.m in Sources */,
 				98E9B9C11B31C0F000366D58 /* BHomeViewController.m in Sources */,
