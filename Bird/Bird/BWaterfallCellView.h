@@ -10,4 +10,9 @@
 
 @interface BWaterfallCellView : UIView
 
+@property (nonatomic, strong) UIImage *itemImage;
+@property (nonatomic, strong) NSString *itemTitle;
+
+- (CGSize)cellSizeWithImage:(UIImage *)aImage;
+
 @end

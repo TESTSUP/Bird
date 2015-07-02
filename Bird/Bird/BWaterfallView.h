@@ -8,6 +8,17 @@
 
 #import <UIKit/UIKit.h>
 
+@class BWaterfallView;
+
+@protocol BWaterfallViewDelagate <NSObject>
+
+- (void)BWaterfallView:(BWaterfallView *)aWaterfall didSelectedItemAtIndexL:(NSInteger)aIndex;
+
+@end
+
+
 @interface BWaterfallView : UIScrollView
+
+@property (nonatomic, strong) NSArray *itemArray;
 
 @end

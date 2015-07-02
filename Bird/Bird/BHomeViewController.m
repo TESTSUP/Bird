@@ -11,6 +11,7 @@
 #import "BHomeFloadView.h"
 #import "ZYQAssetPickerController.h"
 #import "BSelectCatrgoryViewController.h"
+#import "BWaterfallView.h"
 
 static const CGFloat SideWidth = 75;
 static const CGFloat SideCellHeight = 50;
@@ -25,7 +26,7 @@ ZYQAssetPickerControllerDelegate>
 {
     UITableView *_categoryTableView;
     UIView *_tableFooter;
-    UIView *_contentView;
+    BWaterfallView *_contentView;
     BHomeFloadView *_floadView;
     
     NSMutableArray *_categoryData;
@@ -228,7 +229,7 @@ ZYQAssetPickerControllerDelegate>
 
 - (void)createContentView
 {
-    _contentView = [[UIView alloc] initWithFrame:CGRectZero];
+    _contentView = [[BWaterfallView alloc] initWithFrame:CGRectZero];
     _contentView.backgroundColor = [UIColor colorWithRed:231.0/255.0
                                                    green:231.0/255.0
                                                     blue:231.0/255.0
