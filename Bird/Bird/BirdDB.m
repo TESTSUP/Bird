@@ -149,7 +149,7 @@ static BirdDB *DBInstance = nil;
 - (void)createItemTable
 {
     [self.dbQueue inDatabase:^(FMDatabase *db) {
-        [db executeUpdate:@"CREATE TABLE IF NOT EXISTS bird_db_items (itemid char(32), name varchar(64), category varchar(32), images varchar(256), properties varchar(256), PRIMARY KEY (itemid) ON CONFLICT REPLACE)"];
+        [db executeUpdate:@"CREATE TABLE IF NOT EXISTS bird_db_items (itemid char(32), name varchar(64), category varchar(32), images varchar(256), properties varchar(256), createTime int,PRIMARY KEY (itemid) ON CONFLICT REPLACE)"];
         [self checkError:db];
     }];
 }
@@ -157,7 +157,7 @@ static BirdDB *DBInstance = nil;
 - (void)createCategoryTable
 {
     [self.dbQueue inDatabase:^(FMDatabase *db) {
-        [db executeUpdate:@"CREATE TABLE IF NOT EXISTS bird_db_category (name char(32), description var(64), PRIMARY KEY (name) ON CONFLICT REPLACE))"];
+        [db executeUpdate:@"CREATE TABLE IF NOT EXISTS bird_db_category (name char(32), description var(64), createTime int,PRIMARY KEY (name) ON CONFLICT REPLACE))"];
         [self checkError:db];
     }];
 }
@@ -175,12 +175,13 @@ static BirdDB *DBInstance = nil;
 - (void)insertItem:(BItemContent *)aItem
 {
     [self.dbQueue inDatabase:^(FMDatabase *db) {
-        [db executeUpdate:@"INSERT OR REPLACE INTO bird_db_items VALUES (?,?,?,?,?)",
+        [db executeUpdate:@"INSERT OR REPLACE INTO bird_db_items VALUES (?,?,?,?,?,?)",
          aItem.itemID,
          aItem.name,
          aItem.category,
          [aItem.imageIDs componentsJoinedByString:@","],
-         [aItem.property componentsJoinedByString:@","]];
+         [aItem.property componentsJoinedByString:@","],
+         aItem.createTime];
         [self checkError:db];
     }];
     
@@ -197,6 +198,7 @@ static BirdDB *DBInstance = nil;
     item.imageIDs = [imageStr componentsSeparatedByString:@","];
     NSString *proStr = [rs stringForColumnIndex:4];
     item.property = [proStr componentsSeparatedByString:@","];
+    item.createTime = [rs intForColumnIndex:5];
     
     return item;
 }
@@ -247,9 +249,11 @@ static BirdDB *DBInstance = nil;
 - (void)insertCategory:(BCategoryContent *)aCategory
 {
     [self.dbQueue inDatabase:^(FMDatabase *db) {
-        [db executeUpdate:@"INSERT OR REPLACE INTO bird_db_category VALUES (?,?)",
+        [db executeUpdate:@"INSERT OR REPLACE INTO bird_db_category VALUES (?,?,?)",
          aCategory.name,
-         aCategory.descr];
+         aCategory.descr,
+         aCategory.createTime];
+        
         [self checkError:db];
     }];
 }
@@ -265,6 +269,7 @@ static BirdDB *DBInstance = nil;
             BCategoryContent *category = [[BCategoryContent alloc] init];
             category.name = [rs stringForColumnIndex:0];
             category.descr = [rs stringForColumnIndex:1];
+            category.createTime = [rs intForColumnIndex:2];
             [rt addObject:category];
         }
         [rs close];
@@ -278,6 +283,10 @@ static BirdDB *DBInstance = nil;
     [self.dbQueue inDatabase:^(FMDatabase *db) {
         [db executeUpdate:@"DELETE FROM bird_db_category WHERE name = ?", aCategoryName];
         [self checkEmpty:db];
+    }];
+    
+    [self.dbQueue inDatabase:^(FMDatabase *db) {
+        [db executeUpdate:@"DELETE * FROM bird_db_items WHERE category = ?", aCategoryName];
     }];
 }
 

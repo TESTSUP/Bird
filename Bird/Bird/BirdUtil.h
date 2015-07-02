@@ -20,4 +20,6 @@
 
 + (void)deleteImageWithId:(NSString *)aImageId;
 
++ (CGSize)compressImage:(UIImage*)aImage withWidth:(CGFloat)width;
+
 @end

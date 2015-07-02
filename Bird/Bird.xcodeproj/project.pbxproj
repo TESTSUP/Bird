@@ -41,7 +41,11 @@
 		CF3EA68A1B42791B006A21E5 /* BirdUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = CF3EA6891B42791B006A21E5 /* BirdUtil.m */; };
 		CF5135731B39537B006983FD /* BSettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF5135721B39537B006983FD /* BSettingViewController.m */; };
 		CF5135801B396002006983FD /* BCreateCategoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF51357F1B396002006983FD /* BCreateCategoryViewController.m */; };
+		CFCEA32F1B44D7A0002DE1F6 /* BSquareImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = CFCEA32E1B44D7A0002DE1F6 /* BSquareImageView.m */; };
 		CFD1EA161B3D583600C9C588 /* BHomeFloadView.m in Sources */ = {isa = PBXBuildFile; fileRef = CFD1EA151B3D583600C9C588 /* BHomeFloadView.m */; };
+		CFFAB76E1B451B75006716A3 /* BWaterfallView.m in Sources */ = {isa = PBXBuildFile; fileRef = CFFAB76D1B451B75006716A3 /* BWaterfallView.m */; };
+		CFFAB7711B451B8C006716A3 /* BWaterfallCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = CFFAB7701B451B8C006716A3 /* BWaterfallCellView.m */; };
+		CFFAB7741B451BDF006716A3 /* BTagLabelView.m in Sources */ = {isa = PBXBuildFile; fileRef = CFFAB7731B451BDF006716A3 /* BTagLabelView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -127,8 +131,16 @@
 		CF5135721B39537B006983FD /* BSettingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BSettingViewController.m; sourceTree = "<group>"; };
 		CF51357E1B396002006983FD /* BCreateCategoryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCreateCategoryViewController.h; sourceTree = "<group>"; };
 		CF51357F1B396002006983FD /* BCreateCategoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCreateCategoryViewController.m; sourceTree = "<group>"; };
+		CFCEA32D1B44D7A0002DE1F6 /* BSquareImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BSquareImageView.h; sourceTree = "<group>"; };
+		CFCEA32E1B44D7A0002DE1F6 /* BSquareImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BSquareImageView.m; sourceTree = "<group>"; };
 		CFD1EA141B3D583600C9C588 /* BHomeFloadView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BHomeFloadView.h; sourceTree = "<group>"; };
 		CFD1EA151B3D583600C9C588 /* BHomeFloadView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BHomeFloadView.m; sourceTree = "<group>"; };
+		CFFAB76C1B451B75006716A3 /* BWaterfallView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWaterfallView.h; sourceTree = "<group>"; };
+		CFFAB76D1B451B75006716A3 /* BWaterfallView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BWaterfallView.m; sourceTree = "<group>"; };
+		CFFAB76F1B451B8C006716A3 /* BWaterfallCellView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWaterfallCellView.h; sourceTree = "<group>"; };
+		CFFAB7701B451B8C006716A3 /* BWaterfallCellView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BWaterfallCellView.m; sourceTree = "<group>"; };
+		CFFAB7721B451BDF006716A3 /* BTagLabelView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BTagLabelView.h; sourceTree = "<group>"; };
+		CFFAB7731B451BDF006716A3 /* BTagLabelView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BTagLabelView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -307,6 +319,14 @@
 			children = (
 				CFD1EA141B3D583600C9C588 /* BHomeFloadView.h */,
 				CFD1EA151B3D583600C9C588 /* BHomeFloadView.m */,
+				CFCEA32D1B44D7A0002DE1F6 /* BSquareImageView.h */,
+				CFCEA32E1B44D7A0002DE1F6 /* BSquareImageView.m */,
+				CFFAB76C1B451B75006716A3 /* BWaterfallView.h */,
+				CFFAB76D1B451B75006716A3 /* BWaterfallView.m */,
+				CFFAB76F1B451B8C006716A3 /* BWaterfallCellView.h */,
+				CFFAB7701B451B8C006716A3 /* BWaterfallCellView.m */,
+				CFFAB7721B451BDF006716A3 /* BTagLabelView.h */,
+				CFFAB7731B451BDF006716A3 /* BTagLabelView.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -431,6 +451,7 @@
 				CF5135801B396002006983FD /* BCreateCategoryViewController.m in Sources */,
 				CF3EA66B1B411653006A21E5 /* FMDatabase.m in Sources */,
 				985E42F31B3307BC007F8C1A /* NSLayoutConstraint+MASDebugAdditions.m in Sources */,
+				CFCEA32F1B44D7A0002DE1F6 /* BSquareImageView.m in Sources */,
 				98AC4F351B3FABCA00E64E9B /* ZYQAssetPickerController.m in Sources */,
 				CF3EA66D1B411653006A21E5 /* FMDatabasePool.m in Sources */,
 				985E42F11B3307BC007F8C1A /* MASViewConstraint.m in Sources */,
@@ -440,8 +461,10 @@
 				CF3EA6771B411D14006A21E5 /* BModelInterface.m in Sources */,
 				985E42F81B330DD6007F8C1A /* BCategoryListViewController.m in Sources */,
 				985E42F21B3307BC007F8C1A /* NSArray+MASAdditions.m in Sources */,
+				CFFAB7711B451B8C006716A3 /* BWaterfallCellView.m in Sources */,
 				CF3EA68A1B42791B006A21E5 /* BirdUtil.m in Sources */,
 				CFD1EA161B3D583600C9C588 /* BHomeFloadView.m in Sources */,
+				CFFAB76E1B451B75006716A3 /* BWaterfallView.m in Sources */,
 				CF3EA67A1B411D66006A21E5 /* BGlobalConfig.m in Sources */,
 				98E9B9C11B31C0F000366D58 /* BHomeViewController.m in Sources */,
 				98E9B9BE1B31C0F000366D58 /* AppDelegate.m in Sources */,
@@ -452,6 +475,7 @@
 				985E42F41B3307BC007F8C1A /* View+MASAdditions.m in Sources */,
 				CF3EA66F1B411653006A21E5 /* FMResultSet.m in Sources */,
 				985E42F01B3307BC007F8C1A /* MASViewAttribute.m in Sources */,
+				CFFAB7741B451BDF006716A3 /* BTagLabelView.m in Sources */,
 				985E42ED1B3307BC007F8C1A /* MASConstraint.m in Sources */,
 				CF3EA66E1B411653006A21E5 /* FMDatabaseQueue.m in Sources */,
 				985E42EE1B3307BC007F8C1A /* MASConstraintMaker.m in Sources */,
