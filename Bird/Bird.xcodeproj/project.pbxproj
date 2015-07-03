@@ -36,11 +36,15 @@
 		CF3EA67D1B412268006A21E5 /* BirdDB.m in Sources */ = {isa = PBXBuildFile; fileRef = CF3EA67C1B412268006A21E5 /* BirdDB.m */; };
 		CF3EA6801B412A40006A21E5 /* BItemContent.m in Sources */ = {isa = PBXBuildFile; fileRef = CF3EA67F1B412A40006A21E5 /* BItemContent.m */; };
 		CF3EA6831B412A51006A21E5 /* BCategoryContent.m in Sources */ = {isa = PBXBuildFile; fileRef = CF3EA6821B412A51006A21E5 /* BCategoryContent.m */; };
-		CF3EA6851B413BFC006A21E5 /* defaultProperty.plist in Resources */ = {isa = PBXBuildFile; fileRef = CF3EA6841B413BFC006A21E5 /* defaultProperty.plist */; };
-		CF3EA6871B413C72006A21E5 /* defaultCategory.plist in Resources */ = {isa = PBXBuildFile; fileRef = CF3EA6861B413C72006A21E5 /* defaultCategory.plist */; };
 		CF3EA68A1B42791B006A21E5 /* BirdUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = CF3EA6891B42791B006A21E5 /* BirdUtil.m */; };
 		CF5135731B39537B006983FD /* BSettingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF5135721B39537B006983FD /* BSettingViewController.m */; };
 		CF5135801B396002006983FD /* BCreateCategoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF51357F1B396002006983FD /* BCreateCategoryViewController.m */; };
+		CF7CB6351B46639600164278 /* BCreateItemViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF7CB6341B46639600164278 /* BCreateItemViewController.m */; };
+		CF7CB6381B4663BB00164278 /* BEditItemViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF7CB6371B4663BB00164278 /* BEditItemViewController.m */; };
+		CF7CB63B1B46641800164278 /* BItemDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF7CB63A1B46641800164278 /* BItemDetailViewController.m */; };
+		CF7CB63F1B46732600164278 /* UIViewController+Bird.m in Sources */ = {isa = PBXBuildFile; fileRef = CF7CB63E1B46732500164278 /* UIViewController+Bird.m */; };
+		CF7CB6401B46848800164278 /* defaultCategory.plist in Resources */ = {isa = PBXBuildFile; fileRef = CF3EA6861B413C72006A21E5 /* defaultCategory.plist */; };
+		CF7CB6411B46848B00164278 /* defaultProperty.plist in Resources */ = {isa = PBXBuildFile; fileRef = CF3EA6841B413BFC006A21E5 /* defaultProperty.plist */; };
 		CFCEA32F1B44D7A0002DE1F6 /* BSquareImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = CFCEA32E1B44D7A0002DE1F6 /* BSquareImageView.m */; };
 		CFD1EA161B3D583600C9C588 /* BHomeFloadView.m in Sources */ = {isa = PBXBuildFile; fileRef = CFD1EA151B3D583600C9C588 /* BHomeFloadView.m */; };
 		CFFAB76E1B451B75006716A3 /* BWaterfallView.m in Sources */ = {isa = PBXBuildFile; fileRef = CFFAB76D1B451B75006716A3 /* BWaterfallView.m */; };
@@ -131,6 +135,14 @@
 		CF5135721B39537B006983FD /* BSettingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BSettingViewController.m; sourceTree = "<group>"; };
 		CF51357E1B396002006983FD /* BCreateCategoryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCreateCategoryViewController.h; sourceTree = "<group>"; };
 		CF51357F1B396002006983FD /* BCreateCategoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCreateCategoryViewController.m; sourceTree = "<group>"; };
+		CF7CB6331B46639600164278 /* BCreateItemViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCreateItemViewController.h; sourceTree = "<group>"; };
+		CF7CB6341B46639600164278 /* BCreateItemViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCreateItemViewController.m; sourceTree = "<group>"; };
+		CF7CB6361B4663BB00164278 /* BEditItemViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BEditItemViewController.h; sourceTree = "<group>"; };
+		CF7CB6371B4663BB00164278 /* BEditItemViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BEditItemViewController.m; sourceTree = "<group>"; };
+		CF7CB6391B46641800164278 /* BItemDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BItemDetailViewController.h; sourceTree = "<group>"; };
+		CF7CB63A1B46641800164278 /* BItemDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BItemDetailViewController.m; sourceTree = "<group>"; };
+		CF7CB63D1B46732500164278 /* UIViewController+Bird.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Bird.h"; sourceTree = "<group>"; };
+		CF7CB63E1B46732500164278 /* UIViewController+Bird.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Bird.m"; sourceTree = "<group>"; };
 		CFCEA32D1B44D7A0002DE1F6 /* BSquareImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BSquareImageView.h; sourceTree = "<group>"; };
 		CFCEA32E1B44D7A0002DE1F6 /* BSquareImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BSquareImageView.m; sourceTree = "<group>"; };
 		CFD1EA141B3D583600C9C588 /* BHomeFloadView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BHomeFloadView.h; sourceTree = "<group>"; };
@@ -241,8 +253,7 @@
 				CF3EA6741B411CF3006A21E5 /* Model */,
 				CF3EA6781B411D66006A21E5 /* BGlobalConfig.h */,
 				CF3EA6791B411D66006A21E5 /* BGlobalConfig.m */,
-				CF3EA6881B42791B006A21E5 /* BirdUtil.h */,
-				CF3EA6891B42791B006A21E5 /* BirdUtil.m */,
+				CF7CB63C1B4672F100164278 /* ToolKit */,
 				985E42D31B3307BC007F8C1A /* 3rd */,
 				98E9B9C51B31C0F000366D58 /* Images.xcassets */,
 				98E9B9B81B31C0F000366D58 /* Supporting Files */,
@@ -308,6 +319,12 @@
 				CF51357F1B396002006983FD /* BCreateCategoryViewController.m */,
 				98AC4F371B401A3B00E64E9B /* BSelectCatrgoryViewController.h */,
 				98AC4F381B401A3C00E64E9B /* BSelectCatrgoryViewController.m */,
+				CF7CB6331B46639600164278 /* BCreateItemViewController.h */,
+				CF7CB6341B46639600164278 /* BCreateItemViewController.m */,
+				CF7CB6391B46641800164278 /* BItemDetailViewController.h */,
+				CF7CB63A1B46641800164278 /* BItemDetailViewController.m */,
+				CF7CB6361B4663BB00164278 /* BEditItemViewController.h */,
+				CF7CB6371B4663BB00164278 /* BEditItemViewController.m */,
 				CF5135711B39537B006983FD /* BSettingViewController.h */,
 				CF5135721B39537B006983FD /* BSettingViewController.m */,
 			);
@@ -344,6 +361,17 @@
 				CF3EA67C1B412268006A21E5 /* BirdDB.m */,
 			);
 			name = Model;
+			sourceTree = "<group>";
+		};
+		CF7CB63C1B4672F100164278 /* ToolKit */ = {
+			isa = PBXGroup;
+			children = (
+				CF3EA6881B42791B006A21E5 /* BirdUtil.h */,
+				CF3EA6891B42791B006A21E5 /* BirdUtil.m */,
+				CF7CB63D1B46732500164278 /* UIViewController+Bird.h */,
+				CF7CB63E1B46732500164278 /* UIViewController+Bird.m */,
+			);
+			name = ToolKit;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -427,6 +455,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				98E9B9C61B31C0F000366D58 /* Images.xcassets in Resources */,
+				CF7CB6411B46848B00164278 /* defaultProperty.plist in Resources */,
+				CF7CB6401B46848800164278 /* defaultCategory.plist in Resources */,
 				98AC4F341B3FABCA00E64E9B /* ZYQAssetPicker.Bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -435,8 +465,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF3EA6871B413C72006A21E5 /* defaultCategory.plist in Resources */,
-				CF3EA6851B413BFC006A21E5 /* defaultProperty.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -456,6 +484,7 @@
 				CF3EA66D1B411653006A21E5 /* FMDatabasePool.m in Sources */,
 				985E42F11B3307BC007F8C1A /* MASViewConstraint.m in Sources */,
 				985E42EC1B3307BC007F8C1A /* MASCompositeConstraint.m in Sources */,
+				CF7CB63B1B46641800164278 /* BItemDetailViewController.m in Sources */,
 				CF5135731B39537B006983FD /* BSettingViewController.m in Sources */,
 				CF3EA67D1B412268006A21E5 /* BirdDB.m in Sources */,
 				CF3EA6771B411D14006A21E5 /* BModelInterface.m in Sources */,
@@ -465,6 +494,7 @@
 				CF3EA68A1B42791B006A21E5 /* BirdUtil.m in Sources */,
 				CFD1EA161B3D583600C9C588 /* BHomeFloadView.m in Sources */,
 				CFFAB76E1B451B75006716A3 /* BWaterfallView.m in Sources */,
+				CF7CB6381B4663BB00164278 /* BEditItemViewController.m in Sources */,
 				CF3EA67A1B411D66006A21E5 /* BGlobalConfig.m in Sources */,
 				98E9B9C11B31C0F000366D58 /* BHomeViewController.m in Sources */,
 				98E9B9BE1B31C0F000366D58 /* AppDelegate.m in Sources */,
@@ -477,7 +507,9 @@
 				985E42F01B3307BC007F8C1A /* MASViewAttribute.m in Sources */,
 				CFFAB7741B451BDF006716A3 /* BTagLabelView.m in Sources */,
 				985E42ED1B3307BC007F8C1A /* MASConstraint.m in Sources */,
+				CF7CB6351B46639600164278 /* BCreateItemViewController.m in Sources */,
 				CF3EA66E1B411653006A21E5 /* FMDatabaseQueue.m in Sources */,
+				CF7CB63F1B46732600164278 /* UIViewController+Bird.m in Sources */,
 				985E42EE1B3307BC007F8C1A /* MASConstraintMaker.m in Sources */,
 				CF3EA66C1B411653006A21E5 /* FMDatabaseAdditions.m in Sources */,
 			);

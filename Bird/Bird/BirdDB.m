@@ -149,7 +149,7 @@ static BirdDB *DBInstance = nil;
 - (void)createItemTable
 {
     [self.dbQueue inDatabase:^(FMDatabase *db) {
-        [db executeUpdate:@"CREATE TABLE IF NOT EXISTS bird_db_items (itemid char(32), name varchar(64), category varchar(32), images varchar(256), properties varchar(256), createTime int,PRIMARY KEY (itemid) ON CONFLICT REPLACE)"];
+        [db executeUpdate:@"CREATE TABLE IF NOT EXISTS bird_db_items (itemid char(32), name varchar(64), category varchar(32), images varchar(256), properties varchar(256), createtime int,  updatetime int, PRIMARY KEY (itemid) ON CONFLICT REPLACE)"];
         [self checkError:db];
     }];
 }
@@ -157,7 +157,7 @@ static BirdDB *DBInstance = nil;
 - (void)createCategoryTable
 {
     [self.dbQueue inDatabase:^(FMDatabase *db) {
-        [db executeUpdate:@"CREATE TABLE IF NOT EXISTS bird_db_category (name char(32), description var(64), createTime int,PRIMARY KEY (name) ON CONFLICT REPLACE))"];
+        [db executeUpdate:@"CREATE TABLE IF NOT EXISTS bird_db_category (name char(32), description var(64), createtime int, updatetime int, orderid INTEGER AUTO_INCREMENT, PRIMARY KEY (orderid) ON CONFLICT REPLACE)"];
         [self checkError:db];
     }];
 }
@@ -165,7 +165,7 @@ static BirdDB *DBInstance = nil;
 - (void)createPropertyTable
 {
     [self.dbQueue inDatabase:^(FMDatabase *db) {
-        [db executeUpdate:@"CREATE TABLE IF NOT EXISTS bird_db_property (name varchar(64), used_count int, PRIMARY KEY (name) ON CONFLICT REPLACE))"];
+        [db executeUpdate:@"CREATE TABLE IF NOT EXISTS bird_db_property (name varchar(64), used_count int, PRIMARY KEY (name) ON CONFLICT REPLACE)"];
         [self checkError:db];
     }];
 }
@@ -175,13 +175,14 @@ static BirdDB *DBInstance = nil;
 - (void)insertItem:(BItemContent *)aItem
 {
     [self.dbQueue inDatabase:^(FMDatabase *db) {
-        [db executeUpdate:@"INSERT OR REPLACE INTO bird_db_items VALUES (?,?,?,?,?,?)",
+        [db executeUpdate:@"INSERT OR REPLACE INTO bird_db_items VALUES (?,?,?,?,?,?,?)",
          aItem.itemID,
-         aItem.name,
+         [self checkEmpty:aItem.name],
          aItem.category,
-         [aItem.imageIDs componentsJoinedByString:@","],
-         [aItem.property componentsJoinedByString:@","],
-         aItem.createTime];
+         [self checkEmpty:[aItem.imageIDs componentsJoinedByString:@","]],
+         [self checkEmpty:[aItem.property componentsJoinedByString:@","]],
+         @(aItem.createTime),
+         @(aItem.updateTime)];
         [self checkError:db];
     }];
     
@@ -199,6 +200,7 @@ static BirdDB *DBInstance = nil;
     NSString *proStr = [rs stringForColumnIndex:4];
     item.property = [proStr componentsSeparatedByString:@","];
     item.createTime = [rs intForColumnIndex:5];
+    item.updateTime = [rs intForColumnIndex:6];
     
     return item;
 }
@@ -249,12 +251,45 @@ static BirdDB *DBInstance = nil;
 - (void)insertCategory:(BCategoryContent *)aCategory
 {
     [self.dbQueue inDatabase:^(FMDatabase *db) {
-        [db executeUpdate:@"INSERT OR REPLACE INTO bird_db_category VALUES (?,?,?)",
+//        [db executeUpdate:@"INSERT OR REPLACE INTO bird_db_category VALUES (?,?,?,?)",
+//         aCategory.name,
+//         [self checkEmpty:aCategory.descr],
+//         @(aCategory.createTime),
+//         @(aCategory.updateTime)];
+        
+
+        [db executeUpdate:@"INSERT OR REPLACE INTO bird_db_category (name, description, createtime, updatetime) VALUES (?,?,?,?)",
          aCategory.name,
-         aCategory.descr,
-         aCategory.createTime];
+         [self checkEmpty:aCategory.descr],
+         @(aCategory.createTime),
+         @(aCategory.updateTime)];
         
         [self checkError:db];
+    }];
+}
+
+- (void)updateCategoryDesc:(BCategoryContent *)aCategory
+{
+    [self.dbQueue inDatabase:^(FMDatabase *db) {
+        [db executeUpdate:@"UPDATE bird_db_category SET description = ? WHERE name = ?", aCategory.descr, aCategory.name];
+        [self checkError:db];
+    }];
+}
+
+- (void)updateCategoryListOrder:(NSArray *)aCategoryList
+{
+    [self.dbQueue inDatabase:^(FMDatabase *db) {
+        [db executeUpdate:@"DELETE * FROM bird_db_category"];
+        [self checkError:db];
+        
+        for (BCategoryContent *aCategory in aCategoryList) {
+            [db executeUpdate:@"INSERT OR REPLACE INTO bird_db_category VALUES (?,?,?,?)",
+             aCategory.name,
+             [self checkEmpty:aCategory.descr],
+             @(aCategory.createTime),
+             @(aCategory.updateTime)];
+            [self checkError:db];
+        }
     }];
 }
 

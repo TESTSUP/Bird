@@ -16,6 +16,7 @@
 @property (nonatomic, strong) NSArray *imageIDs;            //图片id列表， 成员：NSString
 @property (nonatomic, strong) NSArray *property;            //属性列表，成员：NSString
 @property (nonatomic, assign) NSTimeInterval createTime;    //创建时间
+@property (nonatomic, assign) NSTimeInterval updateTime;    //更新时间
 @property (nonatomic, strong) NSArray *imageDatas;          //图片数据里诶包，成员：UIImage,暂时只在创建物品的时候有值
 
 //创建时保存图片并生成本地id

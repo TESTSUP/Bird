@@ -14,7 +14,7 @@
 + (NSString *)createItemID
 {
     static NSInteger magic = 0;
-    NSString* timestamp = [NSString stringWithFormat:@"im%f%@", [[NSDate date] timeIntervalSince1970], @(magic)];
+    NSString* timestamp = [NSString stringWithFormat:@"id%f%@", [[NSDate date] timeIntervalSince1970], @(magic)];
     ++magic;
     
     if ([BGlobalConfig shareInstance].currentUser)

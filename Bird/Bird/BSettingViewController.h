@@ -8,6 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
+/**
+ *  设置页面
+ */
 @interface BSettingViewController : UIViewController
 
 @end

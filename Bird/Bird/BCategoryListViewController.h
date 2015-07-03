@@ -8,6 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
+/**
+ *  分类列表页面
+ */
 @interface BCategoryListViewController : UIViewController
 
 @end

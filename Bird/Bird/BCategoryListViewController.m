@@ -10,13 +10,15 @@
 #import "BSettingViewController.h"
 #import "BCreateCategoryViewController.h"
 #import "BSelectCatrgoryViewController.h"
+#import "BModelInterface.h"
 
 @interface BCategoryListViewController () <UITableViewDataSource, UITableViewDelegate>
 {
     UITableView *_categoryTable;
     UIButton *_settingBtn;
     
-    
+    NSMutableArray *_categoryArray;
+    BOOL _orderChanged;
 }
 @end
 
@@ -27,11 +29,26 @@
     // Do any additional setup after loading the view.
     self.view.backgroundColor = [UIColor whiteColor];
     
+    [self getCategoryData];
+    
     [self configNavBar];
     
     [self createSubView];
     
     [self layoutSubViews];
+}
+
+- (void)getCategoryData
+{
+    if (_categoryArray == nil) {
+        _categoryArray = [[NSMutableArray alloc] initWithCapacity:0];
+    }
+    [_categoryArray removeAllObjects];
+    NSArray *data = [[BModelInterface shareInstance] getCategoryList];
+    
+    if ([data count]) {
+        [_categoryArray addObjectsFromArray:data];
+    }
 }
 
 - (void)createSubView
@@ -45,6 +62,11 @@
     _categoryTable.dataSource = self;
     _categoryTable.showsVerticalScrollIndicator = NO;
     _categoryTable.showsHorizontalScrollIndicator = NO;
+    _categoryTable.separatorColor = [UIColor colorWithRed:204.0/255.0
+                                                    green:204.0/255.0
+                                                     blue:204.0/255.0
+                                                    alpha:1.0];
+    
     UIView *footView = [[UIView alloc] init];
     footView.backgroundColor = [UIColor clearColor];
     _categoryTable.tableFooterView = footView;
@@ -54,6 +76,9 @@
     if ([_categoryTable respondsToSelector:@selector(setLayoutMargins:)]) {
         [_categoryTable setLayoutMargins:UIEdgeInsetsZero];
     }
+    
+    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressGestureRecognized:)];
+    [_categoryTable addGestureRecognizer:longPress];
     
     [self.view addSubview:_settingBtn];
     [self.view addSubview:_categoryTable];
@@ -101,6 +126,24 @@
     }];
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    [self getCategoryData];
+    [_categoryTable reloadData];
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    
+    //列表有变动则保存
+    if (_orderChanged) {
+        [[BModelInterface shareInstance] updateCategoryList:_categoryArray];
+    }
+}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -128,10 +171,9 @@
 
 - (void)handleAddCategoryAction
 {
-    BCreateCategoryViewController *createVC = [[BCreateCategoryViewController alloc] init];
-    createVC.isCreate = YES;
+    BSelectCatrgoryViewController *selectedVC = [[BSelectCatrgoryViewController alloc] init];
     
-    [self.navigationController pushViewController:createVC animated:YES];
+    [self.navigationController pushViewController:selectedVC animated:YES];
 }
 
 - (void)handleSettingButtonAction
@@ -139,6 +181,119 @@
     BSettingViewController *settingVC = [[BSettingViewController alloc] init];
 
     [self presentViewController:settingVC animated:YES completion:nil];
+}
+
+- (IBAction)longPressGestureRecognized:(id)sender {
+    
+    UILongPressGestureRecognizer *longPress = (UILongPressGestureRecognizer *)sender;
+    UIGestureRecognizerState state = longPress.state;
+    
+    CGPoint location = [longPress locationInView:_categoryTable];
+    NSIndexPath *indexPath = [_categoryTable indexPathForRowAtPoint:location];
+    
+    static UIView       *snapshot = nil;        ///< A snapshot of the row user is moving.
+    static NSIndexPath  *sourceIndexPath = nil; ///< Initial index path, where gesture begins.
+    
+    switch (state) {
+        case UIGestureRecognizerStateBegan: {
+            if (indexPath) {
+                sourceIndexPath = indexPath;
+                
+                UITableViewCell *cell = [_categoryTable cellForRowAtIndexPath:indexPath];
+                
+                // Take a snapshot of the selected row using helper method.
+                snapshot = [self customSnapshoFromView:cell];
+                
+                // Add the snapshot as subview, centered at cell's center...
+                __block CGPoint center = cell.center;
+                snapshot.center = center;
+                snapshot.alpha = 0.0;
+                [_categoryTable addSubview:snapshot];
+                [UIView animateWithDuration:0.25 animations:^{
+                    
+                    // Offset for gesture location.
+                    center.y = location.y;
+                    snapshot.center = center;
+                    snapshot.transform = CGAffineTransformMakeScale(1.05, 1.05);
+                    snapshot.alpha = 0.98;
+                    cell.alpha = 0.0;
+                    
+                } completion:^(BOOL finished) {
+                    
+                    cell.hidden = YES;
+                    
+                }];
+            }
+            break;
+        }
+            
+        case UIGestureRecognizerStateChanged: {
+            CGPoint center = snapshot.center;
+            center.y = location.y;
+            snapshot.center = center;
+            
+            // Is destination valid and is it different from source?
+            if (indexPath && ![indexPath isEqual:sourceIndexPath]) {
+                
+                // ... update data source.
+                [_categoryArray exchangeObjectAtIndex:indexPath.row withObjectAtIndex:sourceIndexPath.row];
+                
+                // ... move the rows.
+                [_categoryTable moveRowAtIndexPath:sourceIndexPath toIndexPath:indexPath];
+                
+                // ... and update source so it is in sync with UI changes.
+                sourceIndexPath = indexPath;
+                _orderChanged = YES;
+            }
+            break;
+        }
+            
+        default: {
+            // Clean up.
+            UITableViewCell *cell = [_categoryTable cellForRowAtIndexPath:sourceIndexPath];
+            cell.hidden = NO;
+            cell.alpha = 0.0;
+            
+            [UIView animateWithDuration:0.25 animations:^{
+                
+                snapshot.center = cell.center;
+                snapshot.transform = CGAffineTransformIdentity;
+                snapshot.alpha = 0.0;
+                cell.alpha = 1.0;
+                
+            } completion:^(BOOL finished) {
+                
+                sourceIndexPath = nil;
+                [snapshot removeFromSuperview];
+                snapshot = nil;
+                
+            }];
+            
+            break;
+        }
+    }
+}
+
+#pragma mark - Helper methods
+
+/** @brief Returns a customized snapshot of a given view. */
+- (UIView *)customSnapshoFromView:(UIView *)inputView {
+    
+    // Make an image from the input view.
+    UIGraphicsBeginImageContextWithOptions(inputView.bounds.size, NO, 0);
+    [inputView.layer renderInContext:UIGraphicsGetCurrentContext()];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    // Create an image view.
+    UIView *snapshot = [[UIImageView alloc] initWithImage:image];
+    snapshot.layer.masksToBounds = NO;
+    snapshot.layer.cornerRadius = 0.0;
+    snapshot.layer.shadowOffset = CGSizeMake(-5.0, 0.0);
+    snapshot.layer.shadowRadius = 5.0;
+    snapshot.layer.shadowOpacity = 0.4;
+    
+    return snapshot;
 }
 
 #pragma mark - UITableViewDelegate
@@ -156,19 +311,25 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 44;
+    return 50;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
+    BCategoryContent *content = [_categoryArray objectAtIndex:indexPath.row];
+    BCreateCategoryViewController *createVC = [[BCreateCategoryViewController alloc] init];
+    createVC.isCreate = NO;
+    createVC.category = content;
+    [self.navigationController pushViewController:createVC animated:YES];;
 }
 
 #pragma mark - UITableViewDataSource
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 0;
+    return [_categoryArray count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -178,7 +339,13 @@
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
                                       reuseIdentifier:cellId];
+        UIImageView *editView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 22, 22)];
+        editView.image = [UIImage imageNamed:@"category_edit"];
+        cell.accessoryView = editView;
     }
+    
+    BCategoryContent *content = [_categoryArray objectAtIndex:indexPath.row];
+    cell.textLabel.text = content.name;
     
     return cell;
 }

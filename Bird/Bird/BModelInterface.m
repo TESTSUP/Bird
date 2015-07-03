@@ -43,6 +43,10 @@ static BModelInterface *modelInstance = nil;
 {
     switch (aAction) {
         case ModelAction_update:
+        {
+            [[BirdDB share] updateCategoryDesc:aCategory];
+        }
+            break;
         case ModelAction_create:
         {
             [[BirdDB share] insertCategory:aCategory];
@@ -88,6 +92,11 @@ static BModelInterface *modelInstance = nil;
 - (NSArray *)getCategoryList
 {
     return [[BirdDB share] getAllCategory];
+}
+
+- (void)updateCategoryList:(NSArray *)categoryList
+{
+    [[BirdDB share] updateCategoryListOrder:categoryList];
 }
 
 - (NSArray *)getItemsWithCategoryName:(NSString *)aCategoryName

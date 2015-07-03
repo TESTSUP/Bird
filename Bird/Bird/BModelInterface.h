@@ -21,7 +21,7 @@ typedef NS_ENUM(NSInteger, ModelAction) {
 + (BModelInterface *)shareInstance;
 
 /**
- *  处理分类数据
+ *  处理单条分类数据
  *
  *  @param aAction   处理类型
  *  @param aCategory 数据
@@ -29,7 +29,7 @@ typedef NS_ENUM(NSInteger, ModelAction) {
 - (void)handleCategoryWithAction:(ModelAction)aAction andData:(BCategoryContent *)aCategory;
 
 /**
- *  处理物品数据
+ *  处理单个物品数据
  *
  *  @param aAction 处理类型
  *  @param aItem   数据
@@ -42,6 +42,8 @@ typedef NS_ENUM(NSInteger, ModelAction) {
  *  @return 内容为BCategoryContent的数组
  */
 - (NSArray *)getCategoryList;
+
+- (void)updateCategoryList:(NSArray *)categoryList;
 
 /**
  *  获取物品列表
@@ -60,5 +62,7 @@ typedef NS_ENUM(NSInteger, ModelAction) {
  *  @return NSString的数组
  */
 - (NSArray *)getUsuallyPropertyWithLimit:(NSInteger )aLimit;
+
+
 
 @end

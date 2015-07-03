@@ -18,24 +18,26 @@
 #define COORDINATE_X_RIGHT MY_WIDTH/3 * 2 + 5
 #define PAGESIZE 21
 
+static const CGFloat edgeOffset = 5.0;
+static const CGFloat itemSpace = 10.0;
+
 @interface BWaterfallView ()<UIScrollViewDelegate>
 {
+    UIView *_contentView;
     UIView *_leftView;
     UIView *_rightView;
+    
+    BWaterfallCellView *_lastLeftCell;
+    BWaterfallCellView *_lastRightCell;
 }
 @property (nonatomic, strong) NSMutableArray *loadedImageArray;
 @property (nonatomic, assign) CGFloat leftColumHeight;
 @property (nonatomic, assign) CGFloat rightColumHeight;
 @property (nonatomic, assign) NSInteger imgTag;
-@property (nonatomic, strong) NSMutableDictionary *imgTagDic;
 
 @end
 
 @implementation BWaterfallView
-
-@synthesize imgTag = _imgTag;
-@synthesize imgTagDic = _imgTagDic;
-
 
 /*
  初始化scrollView的委托以及背景颜色，不显示它的水平，垂直显示条
@@ -50,12 +52,10 @@
         self.showsVerticalScrollIndicator = NO;
         
         self.loadedImageArray = [[NSMutableArray alloc] init];
-        self.imgTagDic = [[NSMutableDictionary alloc] init];
-        
+
         //初始化列的高度
         self.leftColumHeight = 3.0f;
         self.rightColumHeight = 3.0f;
-        self.imgTag = 10086;
         
         [self initWithPhotoBox];
     }
@@ -67,33 +67,49 @@
  将scrollView界面分为大小相等的3个部分，每个部分为一个UIView, 并设置每一个UIView的tag
  */
 - (void)initWithPhotoBox{
+    _contentView = UIView.new;
+    [self addSubview:_contentView];
+    [_contentView makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self);
+        make.width.equalTo(self);
+    }];
+    
     _leftView = [[UIView alloc] initWithFrame:CGRectZero];
     _rightView = [[UIView alloc] initWithFrame:CGRectZero];
 
     //设置背景颜色
+    _contentView.backgroundColor = [UIColor clearColor];
     [_leftView setBackgroundColor:[UIColor clearColor]];
     [_rightView setBackgroundColor:[UIColor clearColor]];
     
-    [self addSubview:_leftView];
-    [self addSubview:_rightView];
-    
-
+    [self addSubview:_contentView];
+    [_contentView addSubview:_leftView];
+    [_contentView addSubview:_rightView];
 }
 
-- (void)layoutSubviews
+- (void)layoutContentView
 {
     [_leftView makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.top);
-        make.left.equalTo(self.left).offset(5);
-        make.right.equalTo(_rightView.left).offset(-10);
-        make.height.equalTo(_leftColumHeight);
+        make.left.equalTo(self.left).offset(edgeOffset);
+        make.right.equalTo(_rightView.left).offset(-itemSpace);
+        if (_lastLeftCell) {
+            make.height.equalTo(_lastLeftCell.bottom).offset(edgeOffset);
+        } else {
+            make.height.equalTo(0);
+        }
+        
     }];
     
     [_rightView makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.top);
-        make.right.equalTo(self.right).offset(-5);
-        make.left.equalTo(_leftView.right).offset(10);
-        make.height.equalTo(_rightColumHeight);
+        make.right.equalTo(self.right).offset(-edgeOffset);
+        make.left.equalTo(_leftView.right).offset(itemSpace);
+        if (_lastRightCell) {
+            make.height.equalTo(_lastRightCell.bottom).offset(edgeOffset);
+        } else {
+            make.height.equalTo(0).offset(edgeOffset);
+        }
     }];
 }
 
@@ -103,19 +119,12 @@
     [self.loadedImageArray removeAllObjects];
     
     for (BItemContent *content in aItemArray) {
-        BWaterfallCellView *cell = [[BWaterfallCellView alloc] initWithFrame:CGRectZero];
-        
-        UIImage *image = [BirdUtil getImageWithID:[content.imageIDs firstObject]];
-        cell.itemImage = nil;
-        cell.itemTitle = content.name;
-        
-        CGSize size = [cell cellSizeWithImage:image];
-        [self addCell:cell withSize:size];
-        [self checkImageIsVisible];
+        [self createCellWithData:content];
     }
+    [self checkImageIsVisible];
+    
     //第一次加载图片
-    [self layoutSubviews];
-    [self layoutIfNeeded];
+    [self layoutContentView];
     
     [self adjustContentSize:NO];
 }
@@ -148,28 +157,65 @@
  imageView:图片视图
  imageName:图片名
  */
-- (void)addCell:(BWaterfallCellView *)cell withSize:(CGSize)aSize{
+- (void)createCellWithData:(BItemContent *)content{
+    
+    BWaterfallCellView *cell = [[BWaterfallCellView alloc] initWithFrame:CGRectZero];
+    
+    UIImage *image = [BirdUtil getImageWithID:[content.imageIDs firstObject]];
+    cell.itemImage = nil;
+    cell.itemTitle = content.name;
+    CGFloat width = (self.frame.size.width-edgeOffset*2-itemSpace)/2;
+    CGSize size = [BWaterfallCellView cellSizeWithImage:image andWidth:width];
+    
     [self.loadedImageArray addObject:cell];
+
+    float height = size.height;
+    //判断哪一列的高度最低
+    if( _leftColumHeight <= _rightColumHeight){
+        [_leftView addSubview:cell];
+        //重新设置坐标
+        _leftColumHeight = _leftColumHeight + height + itemSpace;
+        
+        if (_lastLeftCell == nil) {
+            [cell makeConstraints:^(MASConstraintMaker *make) {
+                make.top.equalTo(0);
+                make.left.equalTo(0);
+                make.width.equalTo(_leftView.width);
+            }];
+        } else {
+            [cell makeConstraints:^(MASConstraintMaker *make) {
+                make.top.equalTo(_lastLeftCell.bottom).offset(itemSpace);
+                make.left.equalTo(0);
+                make.width.equalTo(_leftView.width);
+            }];
+        }
+        _lastLeftCell = cell;
+        
+    }else{
+        [_rightView addSubview:cell];
+
+        _rightColumHeight = _rightColumHeight + height + itemSpace;
+        
+        if (_lastRightCell == nil) {
+            [cell makeConstraints:^(MASConstraintMaker *make) {
+                make.top.equalTo(0);
+                make.left.equalTo(0);
+                make.width.equalTo(_leftView.width);
+            }];
+        } else {
+            [cell makeConstraints:^(MASConstraintMaker *make) {
+                make.top.equalTo(_lastRightCell.bottom).offset(itemSpace);
+                make.left.equalTo(0);
+                make.width.equalTo(_rightView.width);
+            }];
+        }
+        _lastRightCell = cell;
+    }
     
     //图片添加事件响应
     UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(imageClickWithTag:)];
     cell.userInteractionEnabled = YES;
     [cell addGestureRecognizer:tapRecognizer];
-
-    float width = aSize.width;
-    float height = aSize.height;
-    //判断哪一列的高度最低
-    if( _leftColumHeight <= _rightColumHeight){
-        [_leftView addSubview:cell];
-        //重新设置坐标
-        [cell setFrame:CGRectMake(2, _leftColumHeight, width, height)];
-        _leftColumHeight = _leftColumHeight + height + 3;
-    }else{
-        [_rightView addSubview:cell];
-        
-        [cell setFrame:CGRectMake(2, _rightColumHeight, width, height)];
-        _rightColumHeight = _rightColumHeight + height + 3;
-    }
 }
 
 /*

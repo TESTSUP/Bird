@@ -8,6 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
+/**
+ *  主页面
+ */
 @interface BHomeViewController : UIViewController
 
 

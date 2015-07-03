@@ -7,6 +7,9 @@
 //
 
 #import "BCreateCategoryViewController.h"
+#import "UIViewController+Bird.h"
+#import "BModelInterface.h"
+#import "BirdUtil.h"
 
 static const CGFloat left_offset = 20;
 static const CGFloat top_offset = 20;
@@ -55,7 +58,7 @@ static NSString *const placeHolder = @"备注名称";
     UIButton * confirmBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     confirmBtn.frame =  CGRectMake(0, 0, 44, 44);
     [confirmBtn addTarget:self action:@selector(handleConfirmButtonAction) forControlEvents:UIControlEventTouchUpInside];
-    [confirmBtn setImage:[UIImage imageNamed:@"nav_back"] forState:UIControlStateNormal];
+    [confirmBtn setImage:[UIImage imageNamed:@"nav_confirm"] forState:UIControlStateNormal];
     
     UIBarButtonItem *backItem = [[UIBarButtonItem alloc] initWithCustomView:backBtn];
     UIBarButtonItem *negativeSpacer = [[UIBarButtonItem alloc]
@@ -73,14 +76,14 @@ static NSString *const placeHolder = @"备注名称";
     _catigoryName.textColor = [UIColor blackColor];
     _catigoryName.font = [UIFont systemFontOfSize:17];
     _catigoryName.backgroundColor = [UIColor greenColor];
-    _catigoryName.text = @"分类名称";
+    _catigoryName.text = self.category.name;
     
     _categoryDescription = [[UITextView alloc] initWithFrame:CGRectZero];
     _categoryDescription.showsHorizontalScrollIndicator = NO;
     _categoryDescription.showsVerticalScrollIndicator = NO;
     _categoryDescription.scrollEnabled = NO;
     _categoryDescription.delegate = self;
-    _categoryDescription.text = placeHolder;
+    _categoryDescription.text =  self.category.descr? self.category.descr:placeHolder;
     _categoryDescription.textColor = [UIColor lightGrayColor];
     _categoryDescription.font = [UIFont systemFontOfSize:14];
     _categoryDescription.backgroundColor = [UIColor redColor];
@@ -111,6 +114,9 @@ static NSString *const placeHolder = @"备注名称";
     _deleteButton.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:_deleteButton];
     
+    if (_isCreate) {
+        _deleteButton.hidden = YES;
+    }
 }
 
 - (void)layoutSubviews
@@ -169,15 +175,21 @@ static NSString *const placeHolder = @"备注名称";
 - (void)handleConfirmButtonAction
 {
     if (_isCreate) {
-        
+        self.category.createTime = [[NSDate date] timeIntervalSince1970];
+        self.category.updateTime = self.category.createTime;
+        [[BModelInterface shareInstance] handleCategoryWithAction:ModelAction_create andData:self.category];
     } else {
-        
+        self.category.updateTime = [[NSDate date] timeIntervalSince1970];
+        [[BModelInterface shareInstance] handleCategoryWithAction:ModelAction_update andData:self.category];
     }
+    [self popToViewControllerNamed:@"BCategoryListViewController"];
 }
 
 - (void)handleDeleteAction
 {
+    [[BModelInterface shareInstance] handleCategoryWithAction:ModelAction_delete andData:self.category];
     
+    [self popToViewControllerNamed:@"BCategoryListViewController"];
 }
 
 - (void)handleDisappearKeybord

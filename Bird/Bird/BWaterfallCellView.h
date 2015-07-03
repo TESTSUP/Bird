@@ -13,6 +13,7 @@
 @property (nonatomic, strong) UIImage *itemImage;
 @property (nonatomic, strong) NSString *itemTitle;
 
-- (CGSize)cellSizeWithImage:(UIImage *)aImage;
++ (CGSize)cellSizeWithImage:(UIImage *)aImage
+                   andWidth:(CGFloat)width;
 
 @end

@@ -2,24 +2,11 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <array>
-	<array>
-		<string></string>
-		<string></string>
-		<string></string>
-		<string></string>
-	</array>
-	<array>
-		<string></string>
-		<string></string>
-		<string></string>
-		<string></string>
-	</array>
-	<array>
-		<string></string>
-		<string></string>
-		<string></string>
-		<string></string>
-		<string></string>
-	</array>
+	<string>衣服</string>
+	<string>饰品</string>
+	<string>书籍</string>
+	<string>收藏</string>
+	<string>玩具</string>
+	<string>其它</string>
 </array>
 </plist>
