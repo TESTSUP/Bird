@@ -16,6 +16,9 @@
 #import "BCreateItemViewController.h"
 #import "BItemDetailViewController.h"
 
+#define TAG_ADD     9999
+#define TAG_LABEL   9998
+
 static const CGFloat SideWidth = 75;
 static const CGFloat SideCellHeight = 50;
 static const NSTimeInterval animationDur3 = 0.3;
@@ -84,6 +87,13 @@ BCreateItemViewDelegate>
     
     [self setCreateItemViewAlpha:0.0];
 }
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+#pragma mark - config views
 
 - (void)configLeftNavButtonTextColor
 {
@@ -311,64 +321,6 @@ BCreateItemViewDelegate>
     [self.navigationController.view.layer addAnimation:transition forKey:nil];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
-- (void)setShowSideView:(BOOL)asShowSideView
-{
-    _showSideView = asShowSideView;
-    [self layoutSubViews];
-    [self createLeftNavigationBarItem];
-    [UIView animateWithDuration:animationDur3
-                     animations:^{
-                         [self.view layoutIfNeeded];
-                     }
-                     completion:^(BOOL finished) {
-                         
-                     }];
-}
-
-- (void)setShowFloatView:(BOOL)showFloatView
-{
-    _showFloatView = showFloatView;
-    CGFloat alpha = 0.0;
-    if (_showFloatView) {
-        alpha = 1.0;
-    }
-    
-    [UIView animateWithDuration:0.3
-                     animations:^{
-                         _floadView.alpha = alpha;
-                     }
-                     completion:^(BOOL finished) {
-                         
-                     }];
-}
-
-- (void)getCategoryData
-{
-    
-}
-
-- (void)getItemsData
-{
-    
-}
-
-- (void)refreshCatagoryData
-{
-    _categoryData = [[BModelInterface shareInstance] getCategoryList];
-    [_categoryTableView reloadData];
-}
-
-- (void)refreshItemData
-{
-//    _itemsData = [[BModelInterface shareInstance] getItemsWithCategoryId:_selectedCategoryId];
-//    _contentView.itemArray = _itemsData;
-}
-
 - (void)presentCreateItemViewWithImages:(NSArray *)aimages
 {
     if (_createItemVC == nil) {
@@ -415,6 +367,89 @@ BCreateItemViewDelegate>
                      }
                      completion:^(BOOL finished) {
 
+                     }];
+}
+
+- (UITableViewCell *)createCategoryTableCellWithId:(NSString *)aCellId
+{
+    UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
+                                  reuseIdentifier:aCellId];
+    UIView *selectedBgView =[[UIView alloc] init];
+    selectedBgView.backgroundColor = _contentView.backgroundColor;
+    cell.selectedBackgroundView = selectedBgView;
+
+    UILabel *textLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+    textLabel.tag = TAG_LABEL;
+    textLabel.backgroundColor = [UIColor clearColor];
+    textLabel.font = [UIFont systemFontOfSize:14];
+    textLabel.textAlignment = NSTextAlignmentCenter;
+    textLabel.textColor = [UIColor colorWithRed:68.0/255.0
+                                          green:68.0/255.0
+                                           blue:68.0/255.0 alpha:1.0];
+    
+    UIImageView *addImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"home_add_category"]];
+    addImage.tag = TAG_ADD;
+    addImage.userInteractionEnabled = YES;
+    
+    [cell.contentView addSubview:textLabel];
+    [cell.contentView addSubview:addImage];
+    [textLabel makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(UIEdgeInsetsMake(0, 0, 0, 0));
+    }];
+    [addImage makeConstraints:^(MASConstraintMaker *make) {
+        make.centerX.equalTo(cell.contentView);
+        make.centerY.equalTo(cell.contentView);
+        make.width.equalTo(22);
+        make.height.equalTo(22);
+    }];
+    
+    return cell;
+}
+
+#pragma mark data
+
+- (void)refreshCatagoryData
+{
+    _categoryData = [[BModelInterface shareInstance] getCategoryList];
+    [_categoryTableView reloadData];
+}
+
+- (void)refreshItemData
+{
+    //    _itemsData = [[BModelInterface shareInstance] getItemsWithCategoryId:_selectedCategoryId];
+    //    _contentView.itemArray = _itemsData;
+}
+
+#pragma mark - set
+
+- (void)setShowSideView:(BOOL)asShowSideView
+{
+    _showSideView = asShowSideView;
+    [self layoutSubViews];
+    [self createLeftNavigationBarItem];
+    [UIView animateWithDuration:animationDur3
+                     animations:^{
+                         [self.view layoutIfNeeded];
+                     }
+                     completion:^(BOOL finished) {
+                         
+                     }];
+}
+
+- (void)setShowFloatView:(BOOL)showFloatView
+{
+    _showFloatView = showFloatView;
+    CGFloat alpha = 0.0;
+    if (_showFloatView) {
+        alpha = 1.0;
+    }
+    
+    [UIView animateWithDuration:0.3
+                     animations:^{
+                         _floadView.alpha = alpha;
+                     }
+                     completion:^(BOOL finished) {
+                         
                      }];
 }
 
@@ -644,42 +679,27 @@ BCreateItemViewDelegate>
     static NSString *cellId = @"categoryCell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellId];
     if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
-                                      reuseIdentifier:cellId];
-        UIView *selectedBgView =[[UIView alloc] init];
-        selectedBgView.backgroundColor = _contentView.backgroundColor;
-        cell.selectedBackgroundView = selectedBgView;
-        cell.textLabel.font = [UIFont systemFontOfSize:14];
-        cell.textLabel.textAlignment = NSTextAlignmentCenter;
-        cell.textLabel.textColor = [UIColor colorWithRed:68.0/255.0
-                                                   green:68.0/255.0
-                                                    blue:68.0/255.0
-                                                   alpha:1.0];
-        
-        UIImageView *addImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"home_add_category"]];
-        addImage.tag = addBtnTag;
-        addImage.userInteractionEnabled = YES;
-        [cell.contentView addSubview:addImage];
-        [addImage makeConstraints:^(MASConstraintMaker *make) {
-            make.centerX.equalTo(cell.contentView);
-            make.centerY.equalTo(cell.contentView);
-            make.width.equalTo(22);
-            make.height.equalTo(22);
-        }];
+        cell = [self createCategoryTableCellWithId:cellId];
     }
     
+    UILabel *textLabel = (UILabel *)[cell.contentView viewWithTag:TAG_LABEL];
     UIImageView *addBtn = (UIImageView *)[cell.contentView viewWithTag:addBtnTag];
+    textLabel.hidden = NO;
     addBtn.hidden = YES;
-    cell.textLabel.text = nil;
+    
+    textLabel.text = nil;
     if (indexPath.row < [_categoryData count]) {
         BCategoryContent *category = [_categoryData objectAtIndex:indexPath.row];
-        cell.textLabel.text = [category.descr length]? category.descr:category.name;
-        if ([category.categoryId isEqualToString:_selectedCategoryId]) {
-            cell.selected = YES;
-            [tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionMiddle];
-        }
+        textLabel.text = [category.descr length]? category.descr:category.name;
+        
+        //选中刷新
+//        if ([category.categoryId isEqualToString:_selectedCategoryId]) {
+//            cell.selected = YES;
+//            [tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionMiddle];
+//        }
         
     } else if (indexPath.row == [_categoryData count]) {
+        textLabel.hidden = YES;
         addBtn.hidden = NO;
     }
     
