@@ -10,6 +10,8 @@
 #import "UIViewController+Bird.h"
 #import "BModelInterface.h"
 #import "BirdUtil.h"
+#import "BItemDetailViewController.h"
+#import "BModelInterface.h"
 
 static const CGFloat left_offset = 20;
 static const CGFloat top_offset = 20;
@@ -174,15 +176,32 @@ static NSString *const placeHolder = @"备注名称";
 
 - (void)handleConfirmButtonAction
 {
+    self.category.descr = [_categoryDescription.text isEqualToString:placeHolder]? @"":_categoryDescription.text;
+    self.category.updateTime = self.category.createTime;
+    
     if (_isCreate) {
-        self.category.createTime = [[NSDate date] timeIntervalSince1970];
-        self.category.updateTime = self.category.createTime;
         [[BModelInterface shareInstance] handleCategoryWithAction:ModelAction_create andData:self.category];
     } else {
-        self.category.updateTime = [[NSDate date] timeIntervalSince1970];
         [[BModelInterface shareInstance] handleCategoryWithAction:ModelAction_update andData:self.category];
     }
-    [self popToViewControllerNamed:@"BCategoryListViewController"];
+
+    if (self.item) {
+        self.item.categoryId = self.category.categoryId;
+        [[BModelInterface shareInstance] handleItemWithAction:ModelAction_create
+                                                      andData:self.item];
+        
+        BItemDetailViewController *detailVC = [[BItemDetailViewController alloc] init];
+        detailVC.categoryName = [self.category.descr length]? self.category.descr:self.category.name;
+        detailVC.itemContent = self.item;
+        [self.navigationController pushViewController:detailVC animated:YES];
+        
+    } else if ([self popToViewControllerNamed:@"BCategoryListViewController"]) {
+        
+    } else if ([self popToViewControllerNamed:@"BHomeViewController"]) {
+        
+    } else {
+        
+    }
 }
 
 - (void)handleDeleteAction

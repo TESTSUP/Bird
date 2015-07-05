@@ -132,6 +132,7 @@
     BCreateCategoryViewController *createVC = [[BCreateCategoryViewController alloc] init];
     createVC.isCreate = YES;
     createVC.category = content;
+    createVC.item = self.item;
     [self.navigationController pushViewController:createVC animated:YES];;
 }
 

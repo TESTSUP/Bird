@@ -7,10 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "BItemContent.h"
 
 /**
  *  物品详情页面
  */
 @interface BItemDetailViewController : UIViewController
+
+@property (nonatomic, strong) NSString *categoryName;
+@property (nonatomic, strong) BItemContent *itemContent;
 
 @end

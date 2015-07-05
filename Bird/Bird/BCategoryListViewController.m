@@ -134,16 +134,6 @@
     [_categoryTable reloadData];
 }
 
-- (void)viewDidDisappear:(BOOL)animated
-{
-    [super viewDidDisappear:animated];
-    
-    //列表有变动则保存
-    if (_orderChanged) {
-        [[BModelInterface shareInstance] updateCategoryList:_categoryArray];
-    }
-}
-
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -266,9 +256,11 @@
                 sourceIndexPath = nil;
                 [snapshot removeFromSuperview];
                 snapshot = nil;
-                
             }];
-            
+            //列表有变动则保存
+            if (_orderChanged) {
+                [[BModelInterface shareInstance] updateCategoryList:_categoryArray];
+            }
             break;
         }
     }
@@ -345,7 +337,7 @@
     }
     
     BCategoryContent *content = [_categoryArray objectAtIndex:indexPath.row];
-    cell.textLabel.text = content.name;
+    cell.textLabel.text = [content.descr length]? content.descr:content.name;
     
     return cell;
 }

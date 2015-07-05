@@ -17,6 +17,7 @@
 		985E42F31B3307BC007F8C1A /* NSLayoutConstraint+MASDebugAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 985E42E81B3307BC007F8C1A /* NSLayoutConstraint+MASDebugAdditions.m */; };
 		985E42F41B3307BC007F8C1A /* View+MASAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 985E42EA1B3307BC007F8C1A /* View+MASAdditions.m */; };
 		985E42F81B330DD6007F8C1A /* BCategoryListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 985E42F71B330DD6007F8C1A /* BCategoryListViewController.m */; };
+		9877B3681B48F1B900AF7ED1 /* BSearchItemViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9877B3671B48F1B900AF7ED1 /* BSearchItemViewController.m */; };
 		98AC4F341B3FABCA00E64E9B /* ZYQAssetPicker.Bundle in Resources */ = {isa = PBXBuildFile; fileRef = 98AC4F311B3FABCA00E64E9B /* ZYQAssetPicker.Bundle */; };
 		98AC4F351B3FABCA00E64E9B /* ZYQAssetPickerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 98AC4F331B3FABCA00E64E9B /* ZYQAssetPickerController.m */; };
 		98AC4F391B401A3C00E64E9B /* BSelectCatrgoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 98AC4F381B401A3C00E64E9B /* BSelectCatrgoryViewController.m */; };
@@ -89,6 +90,8 @@
 		985E42F51B33093E007F8C1A /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 		985E42F61B330DD6007F8C1A /* BCategoryListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCategoryListViewController.h; sourceTree = "<group>"; };
 		985E42F71B330DD6007F8C1A /* BCategoryListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCategoryListViewController.m; sourceTree = "<group>"; };
+		9877B3661B48F1B900AF7ED1 /* BSearchItemViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BSearchItemViewController.h; sourceTree = "<group>"; };
+		9877B3671B48F1B900AF7ED1 /* BSearchItemViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BSearchItemViewController.m; sourceTree = "<group>"; };
 		98AC4F311B3FABCA00E64E9B /* ZYQAssetPicker.Bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ZYQAssetPicker.Bundle; sourceTree = "<group>"; };
 		98AC4F321B3FABCA00E64E9B /* ZYQAssetPickerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZYQAssetPickerController.h; sourceTree = "<group>"; };
 		98AC4F331B3FABCA00E64E9B /* ZYQAssetPickerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZYQAssetPickerController.m; sourceTree = "<group>"; };
@@ -319,6 +322,8 @@
 				CF51357F1B396002006983FD /* BCreateCategoryViewController.m */,
 				98AC4F371B401A3B00E64E9B /* BSelectCatrgoryViewController.h */,
 				98AC4F381B401A3C00E64E9B /* BSelectCatrgoryViewController.m */,
+				9877B3661B48F1B900AF7ED1 /* BSearchItemViewController.h */,
+				9877B3671B48F1B900AF7ED1 /* BSearchItemViewController.m */,
 				CF7CB6331B46639600164278 /* BCreateItemViewController.h */,
 				CF7CB6341B46639600164278 /* BCreateItemViewController.m */,
 				CF7CB6391B46641800164278 /* BItemDetailViewController.h */,
@@ -509,6 +514,7 @@
 				985E42ED1B3307BC007F8C1A /* MASConstraint.m in Sources */,
 				CF7CB6351B46639600164278 /* BCreateItemViewController.m in Sources */,
 				CF3EA66E1B411653006A21E5 /* FMDatabaseQueue.m in Sources */,
+				9877B3681B48F1B900AF7ED1 /* BSearchItemViewController.m in Sources */,
 				CF7CB63F1B46732600164278 /* UIViewController+Bird.m in Sources */,
 				985E42EE1B3307BC007F8C1A /* MASConstraintMaker.m in Sources */,
 				CF3EA66C1B411653006A21E5 /* FMDatabaseAdditions.m in Sources */,

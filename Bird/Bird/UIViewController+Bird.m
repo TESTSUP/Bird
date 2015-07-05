@@ -10,7 +10,7 @@
 
 @implementation UIViewController (Bird)
 
-- (void)popToViewControllerNamed:(NSString *)aViewControllerName
+- (BOOL)popToViewControllerNamed:(NSString *)aViewControllerName
 {
     if ([aViewControllerName length] && self.navigationController) {
         
@@ -18,10 +18,12 @@
             NSString *subVCName = NSStringFromClass([subVC class]);
             if ([subVCName isEqualToString:aViewControllerName]) {
                 [self.navigationController popToViewController:subVC animated:YES];
-                break;
+                return YES;
             }
         }
     }
+    
+    return NO;
 }
 
 @end

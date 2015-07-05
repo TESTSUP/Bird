@@ -44,17 +44,21 @@ static BModelInterface *modelInstance = nil;
     switch (aAction) {
         case ModelAction_update:
         {
+            aCategory.updateTime = [[NSDate date] timeIntervalSince1970];
             [[BirdDB share] updateCategoryDesc:aCategory];
         }
             break;
         case ModelAction_create:
         {
+            aCategory.categoryId = [BirdUtil createCategoryID];
+            aCategory.createTime = [[NSDate date] timeIntervalSince1970];
+            aCategory.updateTime = aCategory.createTime;
             [[BirdDB share] insertCategory:aCategory];
         }
             break;
         case ModelAction_delete:
         {
-            [[BirdDB share] delete:aCategory.name];
+            [[BirdDB share] deleteCateGoryWithId:aCategory.categoryId];
         }
             break;
         default:
@@ -68,12 +72,15 @@ static BModelInterface *modelInstance = nil;
     switch (aAction) {
         case ModelAction_create:
         {
+            aItem.createTime = [[NSDate date] timeIntervalSince1970];
+            aItem.updateTime = aItem.createTime;
             [aItem createImageIds];
             [[BirdDB share] insertItem:aItem];
         }
             break;
         case ModelAction_update:
         {
+            aItem.updateTime = [[NSDate date] timeIntervalSince1970];
             [aItem updateImageIds];
             [[BirdDB share] insertItem:aItem];
         }
@@ -99,9 +106,9 @@ static BModelInterface *modelInstance = nil;
     [[BirdDB share] updateCategoryListOrder:categoryList];
 }
 
-- (NSArray *)getItemsWithCategoryName:(NSString *)aCategoryName
+- (NSArray *)getItemsWithCategoryId:(NSString *)aCategoryId
 {
-    return [[BirdDB share] getItemWithCategory:aCategoryName];
+    return [[BirdDB share] getItemWithCategory:aCategoryId];
 }
 
 - (NSArray *)getUsuallyPropertyWithLimit:(NSInteger )aLimit

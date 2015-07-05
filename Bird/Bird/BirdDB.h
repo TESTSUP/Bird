@@ -29,7 +29,7 @@
 - (void)updateCategoryDesc:(BCategoryContent *)aCategory;
 - (NSArray *)getAllCategory;
 - (void)updateCategoryListOrder:(NSArray *)aCategoryList;
-- (void)deleteCateGoryWithName:(NSString *)aCategoryName;
+- (void)deleteCateGoryWithId:(NSString *)aCategoryId;
 
 //属性
 

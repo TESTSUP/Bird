@@ -32,6 +32,9 @@ static BGlobalConfig *configInstance = nil;
         configInstance = [[BGlobalConfig alloc] init];
     });
     
+    if (configInstance.currentUser == nil) {
+        configInstance.currentUser = DefaultUser;
+    }
     return configInstance;
 }
 
@@ -39,7 +42,7 @@ static BGlobalConfig *configInstance = nil;
 {
     self = [super init];
     if (self) {
-        self.currentUser = DefaultUser;
+        
         
         //读取分类和属性列表
         NSString *path = [[NSBundle mainBundle] pathForResource:@"defaultProperty" ofType:@"plist"];
@@ -71,12 +74,8 @@ static BGlobalConfig *configInstance = nil;
     
     if (![_currentUser isEqualToString:aCurrentUser]) {
         _currentUser = aCurrentUser;
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self constructPath];
-            
-            [[BirdDB share] buildDB];
-        });
+        [self constructPath];
+        [[BirdDB share] buildDB];;
     }
 }
 

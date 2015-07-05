@@ -12,6 +12,8 @@
 
 + (NSString *)createItemID;
 
++ (NSString *)createCategoryID;
+
 + (NSString *)MD5:(NSString *)aString;
 
 + (UIImage *)getImageWithID:(NSString *)aImageId;
@@ -21,5 +23,7 @@
 + (void)deleteImageWithId:(NSString *)aImageId;
 
 + (CGSize)compressImage:(UIImage*)aImage withWidth:(CGFloat)width;
+
++ (UIImage *)generatePhotoThumbnail:(UIImage *)image;
 
 @end

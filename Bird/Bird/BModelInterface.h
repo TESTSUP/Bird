@@ -48,11 +48,11 @@ typedef NS_ENUM(NSInteger, ModelAction) {
 /**
  *  获取物品列表
  *
- *  @param aCategoryName 分类名，传nil则返回所有物品
+ *  @param aCategoryId 分类id，传nil则返回所有物品
  *
  *  @return 内容为BItemContent的数组
  */
-- (NSArray *)getItemsWithCategoryName:(NSString *)aCategoryName;
+- (NSArray *)getItemsWithCategoryId:(NSString *)aCategoryId;
 
 /**
  *  获取常用属性列表

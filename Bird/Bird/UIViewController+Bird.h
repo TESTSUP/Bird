@@ -10,6 +10,6 @@
 
 @interface UIViewController (Bird)
 
-- (void)popToViewControllerNamed:(NSString *)aViewControllerName;
+- (BOOL)popToViewControllerNamed:(NSString *)aViewControllerName;
 
 @end

@@ -12,6 +12,9 @@
 #import "ZYQAssetPickerController.h"
 #import "BSelectCatrgoryViewController.h"
 #import "BWaterfallView.h"
+#import "BModelInterface.h"
+#import "BCreateItemViewController.h"
+#import "BItemDetailViewController.h"
 
 static const CGFloat SideWidth = 75;
 static const CGFloat SideCellHeight = 50;
@@ -22,14 +25,19 @@ static const NSTimeInterval animationDur3 = 0.3;
 UITableViewDelegate,
 UINavigationControllerDelegate,
 UIImagePickerControllerDelegate,
-ZYQAssetPickerControllerDelegate>
+ZYQAssetPickerControllerDelegate,
+BCreateItemViewDelegate>
 {
+    BCreateItemViewController *_createItemVC;
+    
     UITableView *_categoryTableView;
     UIView *_tableFooter;
     BWaterfallView *_contentView;
     BHomeFloadView *_floadView;
     
-    NSMutableArray *_categoryData;
+    NSArray *_itemsData;
+    NSArray *_categoryData;
+    NSString *_selectedCategoryId;
 }
 
 @property (nonatomic, assign) BOOL showSideView;
@@ -45,8 +53,6 @@ ZYQAssetPickerControllerDelegate>
     _showSideView = YES;
     _showFloatView = NO;
     
-    [self getCateGoryData];
-    
     [self configNavigationBar];
     
     [self createSideTableView];
@@ -58,6 +64,25 @@ ZYQAssetPickerControllerDelegate>
     [self createGestureSwipe];
     
     [self layoutSubViews];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    [self refreshCatagoryData];
+    
+    [self refreshItemData];
+    
+    [_createItemVC refreshData];
+    [self setCreateItemViewAlpha:1.0];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    
+    [self setCreateItemViewAlpha:0.0];
 }
 
 - (void)configLeftNavButtonTextColor
@@ -322,15 +347,76 @@ ZYQAssetPickerControllerDelegate>
                      }];
 }
 
-- (void)getCateGoryData
+- (void)getCategoryData
 {
-    if (!_categoryData) {
-        _categoryData = [[NSMutableArray alloc] initWithCapacity:0];
-    }
     
-    [_categoryData addObjectsFromArray:@[@"衬衫", @"裤子", @"外套", @"家电", @"家具"]];
 }
 
+- (void)getItemsData
+{
+    
+}
+
+- (void)refreshCatagoryData
+{
+    _categoryData = [[BModelInterface shareInstance] getCategoryList];
+    [_categoryTableView reloadData];
+}
+
+- (void)refreshItemData
+{
+//    _itemsData = [[BModelInterface shareInstance] getItemsWithCategoryId:_selectedCategoryId];
+//    _contentView.itemArray = _itemsData;
+}
+
+- (void)presentCreateItemViewWithImages:(NSArray *)aimages
+{
+    if (_createItemVC == nil) {
+        _createItemVC = [[BCreateItemViewController alloc] init];
+    }
+    _createItemVC.delegate =self;
+    _createItemVC.imageArray = aimages;
+    [self.navigationController.view addSubview:_createItemVC.view];
+//    [self.navigationController addChildViewController:_createItemVC];
+    _createItemVC.view.alpha = 0.0;
+    [UIView animateWithDuration:0.3
+                          delay:0
+                        options:UIViewAnimationOptionTransitionCrossDissolve
+                     animations:^{
+                         _createItemVC.view.alpha = 1.0;
+                     }
+                     completion:^(BOOL finished) {
+                         
+                     }];
+}
+
+- (void)dismissCreateItemView:(BOOL)needRelease
+{
+    [UIView animateWithDuration:0.3
+                          delay:0
+                        options:UIViewAnimationOptionTransitionCrossDissolve
+                     animations:^{
+                         _createItemVC.view.alpha = 0.0;
+                     }
+                     completion:^(BOOL finished) {
+                         [_createItemVC.view removeFromSuperview];
+                         [_createItemVC removeFromParentViewController];
+                         _createItemVC = nil;
+                     }];
+}
+
+- (void)setCreateItemViewAlpha:(CGFloat)aLpha
+{
+    [UIView animateWithDuration:0.3
+                          delay:0
+                        options:UIViewAnimationOptionTransitionCrossDissolve
+                     animations:^{
+                         _createItemVC.view.alpha = aLpha;
+                     }
+                     completion:^(BOOL finished) {
+
+                     }];
+}
 
 #pragma mark - action
 
@@ -394,6 +480,14 @@ ZYQAssetPickerControllerDelegate>
 
 - (void)handleCameraButtonAction
 {
+//    createItemVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+//    [self presentViewController:createItemVC
+//                       animated:YES
+//                     completion:^{
+//                         
+//                     }];
+//    createItemVC.view.superview.backgroundColor = [UIColor clearColor];
+
     if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
         UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
         imagePickerController.delegate = self;
@@ -408,9 +502,43 @@ ZYQAssetPickerControllerDelegate>
         imagePickerController.cameraViewTransform = CGAffineTransformMakeTranslation(0, (screenBounds.height - camViewHeight) / 2.0);
         imagePickerController.cameraViewTransform = CGAffineTransformScale(imagePickerController.cameraViewTransform, scale, scale);
 
-        self.showFloatView = NO;
         [self presentViewController:imagePickerController animated:YES completion:nil];
+    } else {
+        NSLog(@"设备不支持拍照");
     }
+    
+    self.showFloatView = NO;
+}
+
+#pragma mark - BCreateItemViewDelegate
+
+- (void)BCreateItemViewController:(BCreateItemViewController *)aVC didCreateItem:(BItemContent *)aItem
+{
+    [self dismissCreateItemView:YES];
+    
+    NSString *categoryName = nil;
+    for (BCategoryContent *category in _categoryData) {
+        if ([category.categoryId isEqualToString:aItem.categoryId]) {
+            categoryName = [category.descr length]? category.descr:category.name;
+            break;
+        }
+    }
+    
+    [[BModelInterface shareInstance] handleItemWithAction:ModelAction_create
+                                                  andData:aItem];
+    BItemDetailViewController *detailVC = [[BItemDetailViewController alloc] init];
+    detailVC.itemContent = aItem;
+    detailVC.categoryName = categoryName;
+    [self.navigationController pushViewController:detailVC animated:YES];
+}
+
+- (void)BCreateItemViewController:(BCreateItemViewController *)aVC didAddCategory:(BItemContent *)aItem
+{
+    [self dismissCreateItemView:YES];
+    
+    BSelectCatrgoryViewController *selectedVC = [[BSelectCatrgoryViewController alloc] init];
+    selectedVC.item = aItem;
+    [self.navigationController pushViewController:selectedVC animated:YES];
 }
 
 #pragma mark - UIImagePickerControllerDelegate
@@ -429,26 +557,27 @@ ZYQAssetPickerControllerDelegate>
     UIImage *pickImage = [info objectForKey:UIImagePickerControllerOriginalImage];
     NSLog(@"%@", pickImage);
     
-    [self dismissViewControllerAnimated:YES completion:nil];
-    
+    [self dismissViewControllerAnimated:YES completion:^{
+        [self presentCreateItemViewWithImages:@[pickImage]];
+    }];
 }
 
 #pragma mark - ZYQAssetPickerController Delegate
 -(void)assetPickerController:(ZYQAssetPickerController *)picker didFinishPickingAssets:(NSArray *)assets{
-
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 
+        NSMutableArray *imageArray = [[NSMutableArray alloc] initWithCapacity:0];
         for (int i=0; i<assets.count; i++) {
             ALAsset *asset=assets[i];
             UIImage *tempImg=[UIImage imageWithCGImage:asset.defaultRepresentation.fullScreenImage];
-            dispatch_async(dispatch_get_main_queue(), ^{
-
-                
-            });
+            [imageArray addObject:tempImg];
+           
         }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self presentCreateItemViewWithImages:imageArray];
+        });
     });
 }
-
 
 -(void)assetPickerControllerDidMaximum:(ZYQAssetPickerController *)picker{
     NSLog(@"到达上限");
@@ -475,6 +604,10 @@ ZYQAssetPickerControllerDelegate>
 - (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.row >= [_categoryData count]) {
+        //添加分类
+        BSelectCatrgoryViewController *selectedVC = [[BSelectCatrgoryViewController alloc] init];
+        [self.navigationController pushViewController:selectedVC animated:YES];
+        
         return [tableView indexPathForSelectedRow];
     } else {
         return indexPath;
@@ -485,10 +618,16 @@ ZYQAssetPickerControllerDelegate>
 {
     if (indexPath.row >= [_categoryData count]) {
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        //添加分类
+//        BSelectCatrgoryViewController *selectedVC = [[BSelectCatrgoryViewController alloc] init];
+//        [self.navigationController pushViewController:selectedVC animated:YES];
     } else {
         [self configLeftNavButtonTextColor];
-        
         //选中分类
+        BCategoryContent *content = [_categoryData objectAtIndex:indexPath.row];
+        _selectedCategoryId = content.categoryId;
+        
+        
     }
 }
 
@@ -519,6 +658,7 @@ ZYQAssetPickerControllerDelegate>
         
         UIImageView *addImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"home_add_category"]];
         addImage.tag = addBtnTag;
+        addImage.userInteractionEnabled = YES;
         [cell.contentView addSubview:addImage];
         [addImage makeConstraints:^(MASConstraintMaker *make) {
             make.centerX.equalTo(cell.contentView);
@@ -532,8 +672,13 @@ ZYQAssetPickerControllerDelegate>
     addBtn.hidden = YES;
     cell.textLabel.text = nil;
     if (indexPath.row < [_categoryData count]) {
-        NSString *catStr = [_categoryData objectAtIndex:indexPath.row];
-        cell.textLabel.text = catStr;
+        BCategoryContent *category = [_categoryData objectAtIndex:indexPath.row];
+        cell.textLabel.text = [category.descr length]? category.descr:category.name;
+        if ([category.categoryId isEqualToString:_selectedCategoryId]) {
+            cell.selected = YES;
+            [tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionMiddle];
+        }
+        
     } else if (indexPath.row == [_categoryData count]) {
         addBtn.hidden = NO;
     }

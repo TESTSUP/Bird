@@ -131,7 +131,10 @@ static UIColor *disabledColor;
 
 -(id)initWithFrame:(CGRect)frame{
     if (self=[super initWithFrame:frame]) {
-        _selectView=[[UIImageView alloc] initWithFrame:CGRectMake(frame.size.width-checkedIcon.size.width, frame.size.height-checkedIcon.size.height, checkedIcon.size.width, checkedIcon.size.height)];
+        _selectView=[[UIImageView alloc] initWithFrame:CGRectMake(frame.size.width-checkedIcon.size.width,
+                                                                  0,
+                                                                  checkedIcon.size.width,
+                                                                  checkedIcon.size.height)];
         [self addSubview:_selectView];
     }
     return self;
@@ -412,6 +415,7 @@ static UIColor *titleColor;
 {
     [super viewDidLoad];
 
+    [self setupToolBar];
     [self setupViews];
     [self setupButtons];
 }
@@ -419,6 +423,7 @@ static UIColor *titleColor;
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    self.navigationController.toolbarHidden = NO;
     if (!unFirst) {
         columns=floor(self.view.frame.size.width/(kThumbnailSize.width+minimumInteritemSpacing));
         
@@ -454,6 +459,23 @@ static UIColor *titleColor;
 }
 
 #pragma mark - Setup
+
+- (void)setupToolBar
+{
+    UIBarButtonItem *leftItem = [[UIBarButtonItem alloc] initWithTitle:@"预览"
+                                                                 style:UIBarButtonItemStylePlain
+                                                                target:self
+                                                                action:@selector(handlePreviewAction)];
+    UIBarButtonItem *rightItem = [[UIBarButtonItem alloc] initWithTitle:@"完成"
+                                                                  style:UIBarButtonItemStylePlain
+                                                                 target:self
+                                                                 action:@selector(finishPickingAssets:)];
+    UIBarButtonItem *spacer = [[UIBarButtonItem alloc]
+                               initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
+                               target:nil action:nil];
+    
+    self.toolbarItems = @[leftItem, spacer, rightItem];
+}
 
 - (void)setupViews
 {
@@ -656,6 +678,16 @@ static UIColor *titleColor;
 
 #pragma mark - Actions
 
+- (void)handlePreviewAction
+{
+    
+}
+
+- (void)handleCancelAction
+{
+    
+}
+
 - (void)finishPickingAssets:(id)sender
 {
     
@@ -742,6 +774,7 @@ static UIColor *titleColor;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+
     [self setupViews];
     [self setupButtons];
     [self localize];
@@ -1041,6 +1074,11 @@ static UIColor *titleColor;
         _showEmptyGroups               = NO;
         _selectionFilter               = [NSPredicate predicateWithValue:YES];
         _isFinishDismissViewController = YES;
+        
+        self.navigationBar.barStyle = UIBarStyleBlackTranslucent;
+        [self.navigationBar setTintColor:[UIColor whiteColor]];
+        self.toolbar.tintColor = [UIColor lightGrayColor];
+        self.toolbar.translucent = YES;
         
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_7_0
         self.preferredContentSize=kPopoverContentSize;

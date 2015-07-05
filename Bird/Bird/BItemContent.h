@@ -12,7 +12,7 @@
 
 @property (nonatomic, strong) NSString *itemID;             //id
 @property (nonatomic, strong) NSString *name;               //名字
-@property (nonatomic, strong) NSString *category;           //所属分类
+@property (nonatomic, strong) NSString *categoryId;           //所属分类
 @property (nonatomic, strong) NSArray *imageIDs;            //图片id列表， 成员：NSString
 @property (nonatomic, strong) NSArray *property;            //属性列表，成员：NSString
 @property (nonatomic, assign) NSTimeInterval createTime;    //创建时间

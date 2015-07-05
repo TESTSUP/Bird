@@ -7,9 +7,12 @@
 //
 
 #import "BItemDetailViewController.h"
+#import "UIViewController+Bird.h"
 
 @interface BItemDetailViewController ()
-
+{
+    
+}
 @end
 
 @implementation BItemDetailViewController
@@ -17,6 +20,47 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+    self.view.backgroundColor = [UIColor redColor];
+    
+    [self configNavigationBar];
+}
+
+- (void)configNavigationBar
+{
+    UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    backBtn.frame = CGRectMake(0, 0, 80, 40);
+    [backBtn addTarget:self action:@selector(handleBackAction) forControlEvents:UIControlEventTouchUpInside];
+    [backBtn setTitle:self.categoryName forState:UIControlStateNormal];
+    [backBtn setImage:[UIImage imageNamed:@"nav_back"] forState:UIControlStateNormal];
+    [backBtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+    UIBarButtonItem *leftBarItem = [[UIBarButtonItem alloc] initWithCustomView:backBtn];
+    // 调整 leftBarButtonItem 在 iOS7 下面的位置
+    UIBarButtonItem *negativeSpacer = [[UIBarButtonItem alloc]
+                                       initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
+                                       target:nil action:nil];
+    negativeSpacer.width = -10;
+    backBtn.titleEdgeInsets = UIEdgeInsetsMake(0, 5, 0, 0);
+    [self.navigationItem setLeftBarButtonItems:@[negativeSpacer, leftBarItem] animated:YES];
+    
+    UIButton * deleteBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    deleteBtn.frame =  CGRectMake(0, 0, 44, 44);
+    [deleteBtn addTarget:self action:@selector(handleDeleteAction) forControlEvents:UIControlEventTouchUpInside];
+    [deleteBtn setImage:[UIImage imageNamed:@"nav_delete"] forState:UIControlStateNormal];
+    UIBarButtonItem *rightItme = [[UIBarButtonItem alloc] initWithCustomView:deleteBtn];
+    self.navigationItem.rightBarButtonItem = rightItme;
+}
+
+#pragma mark - action 
+
+- (void)handleBackAction
+{
+    [self popToViewControllerNamed:@"BHomeViewController"];
+}
+
+- (void)handleDeleteAction
+{
+    
 }
 
 - (void)didReceiveMemoryWarning {

@@ -13,9 +13,23 @@
 
 + (NSString *)createItemID
 {
-    static NSInteger magic = 0;
-    NSString* timestamp = [NSString stringWithFormat:@"id%f%@", [[NSDate date] timeIntervalSince1970], @(magic)];
-    ++magic;
+    static NSInteger magicItem = 0;
+    NSString* timestamp = [NSString stringWithFormat:@"item%f%@", [[NSDate date] timeIntervalSince1970], @(magicItem)];
+    ++magicItem;
+    
+    if ([BGlobalConfig shareInstance].currentUser)
+    {
+        NSString* str = [[BGlobalConfig shareInstance].currentUser stringByAppendingString:timestamp];
+        return [BirdUtil MD5:str];
+    }
+    return [BirdUtil MD5:timestamp];
+}
+
++ (NSString *)createCategoryID
+{
+    static NSInteger magicCategory = 0;
+    NSString* timestamp = [NSString stringWithFormat:@"category%f%@", [[NSDate date] timeIntervalSince1970], @(magicCategory)];
+    ++magicCategory;
     
     if ([BGlobalConfig shareInstance].currentUser)
     {
@@ -45,7 +59,7 @@
 
 + (UIImage *)getImageWithID:(NSString *)aImageId
 {
-    NSString *filePath = [[BGlobalConfig shareInstance].imageSourcePath stringByAppendingString:aImageId];
+    NSString *filePath = [[BGlobalConfig shareInstance].imageSourcePath stringByAppendingPathComponent:aImageId];
     UIImage *image = [UIImage imageWithContentsOfFile:filePath];
     return image;
 }
@@ -62,7 +76,7 @@
             imageData = UIImageJPEGRepresentation(aImgae, 1);
         }
         
-        NSString *filePath = [[BGlobalConfig shareInstance].imageSourcePath stringByAppendingString:aImageId];
+        NSString *filePath = [[BGlobalConfig shareInstance].imageSourcePath stringByAppendingPathComponent:aImageId];
         if (imageData) {
             [imageData writeToFile:filePath atomically:YES];
         }
@@ -72,8 +86,7 @@
 + (void)deleteImageWithId:(NSString *)aImageId
 {
     NSFileManager *defaultManager = [NSFileManager defaultManager];
-    
-    NSString *filePath = [[BGlobalConfig shareInstance].imageSourcePath stringByAppendingString:aImageId];
+    NSString *filePath = [[BGlobalConfig shareInstance].imageSourcePath stringByAppendingPathComponent:aImageId];
     [defaultManager removeItemAtPath:filePath error:nil];
 }
 
@@ -87,6 +100,41 @@
     float new_height = (width * orgi_height)/orgi_width;
 
     return CGSizeMake(new_width, new_height);
+}
+
++ (UIImage *)generatePhotoThumbnail:(UIImage *)image {
+    // Create a thumbnail version of the image for the event object.
+    CGSize size = image.size;
+    CGSize croppedSize;
+    CGFloat ratio = 64.0;
+    CGFloat offsetX = 0.0;
+    CGFloat offsetY = 0.0;
+    
+    // check the size of the image, we want to make it
+    // a square with sides the size of the smallest dimension
+    if (size.width > size.height) {
+        offsetX = (size.height - size.width) / 2;
+        croppedSize = CGSizeMake(size.height, size.height);
+    } else {
+        offsetY = (size.width - size.height) / 2;
+        croppedSize = CGSizeMake(size.width, size.width);
+    }
+    
+    // Crop the image before resize
+    CGRect clippedRect = CGRectMake(offsetX * -1, offsetY * -1, croppedSize.width, croppedSize.height);
+    CGImageRef imageRef = CGImageCreateWithImageInRect([image CGImage], clippedRect);
+    // Done cropping
+    
+    // Resize the image
+    CGRect rect = CGRectMake(0.0, 0.0, ratio, ratio);
+    
+    UIGraphicsBeginImageContext(rect.size);
+    [[UIImage imageWithCGImage:imageRef] drawInRect:rect];
+    UIImage *thumbnail = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    // Done Resizing
+    
+    return thumbnail;
 }
 
 @end
