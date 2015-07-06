@@ -10,13 +10,15 @@
 #import "UIViewController+Bird.h"
 #import "BirdUtil.h"
 #import "BTagLabelView.h"
+#import "BEditItemViewController.h"
+#import "BModelInterface.h"
 
 static const CGFloat CoverSide = 230;
 static const CGFloat AddBtnSide = 65;
 static const CGFloat DefaultDescViewHeight = 50;
 static const CGFloat ThumbnailSide = 70;
-static const CGFloat topOffset = 5;
-static const CGFloat leftOffset = 10;
+static const CGFloat ItemOffset5 = 5;
+static const CGFloat ItemOffset10 = 10;
 
 @interface BItemDetailViewController ()
 {
@@ -147,6 +149,7 @@ static const CGFloat leftOffset = 10;
     
     _titleView = [[UITextField alloc] initWithFrame:CGRectZero];
     _titleView.placeholder = @"物品/描述/标签";
+    _titleView.enabled = NO;
     
     _editeIcon = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"item_editeIcon"]];
     _tagView = [[BTagLabelView alloc] initWithFrame:CGRectZero];
@@ -157,25 +160,49 @@ static const CGFloat leftOffset = 10;
     [_itemDescView addSubview:_tagView];
     [_itemDescView addSubview:_bottomDescLine];
     [_contentView addSubview:_itemDescView];
+    
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleEditTagAction)];
+    [_itemDescView addGestureRecognizer:tap];
 }
 
 #pragma mark - layout
 
 - (void)layoutThumbnailView
 {
+    UIImageView *lastView = nil;
+    CGSize imageSize = CGSizeMake(ThumbnailSide, ThumbnailSide);
     for (UIImageView *imageView in _imageViewArray) {
-        [imageView makeConstraints:^(MASConstraintMaker *make) {
-            
-        }];
+        if (lastView == nil) {
+            [imageView makeConstraints:^(MASConstraintMaker *make) {
+                make.left.equalTo(0);
+                make.top.equalTo(0);
+                make.size.equalTo(imageSize);
+            }];
+        } else if([_imageViewArray indexOfObject:imageView]%4 == 0) {
+            [imageView makeConstraints:^(MASConstraintMaker *make) {
+                make.top.equalTo(lastView.bottom).offset(ItemOffset10);
+                make.left.equalTo(0);
+                make.size.equalTo(imageSize);
+            }];
+        } else {
+            [imageView makeConstraints:^(MASConstraintMaker *make) {
+                make.top.equalTo(lastView.top);
+                make.left.equalTo(lastView.right).offset(ItemOffset10);
+                make.size.equalTo(imageSize);
+            }];
+        }
+        
+        lastView = imageView;
     }
+    
     NSInteger count = [_imageViewArray count];
     NSInteger line = count/4+ ((count%4)? 1:0);
-    CGFloat height = line*ThumbnailSide +(line-1)*leftOffset;
+    CGFloat height = line*ThumbnailSide +(line-1)*ItemOffset10;
     
     [_thumbnailView makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(_coverView.bottom).offset(topOffset);
-        make.left.equalTo(leftOffset);
-        make.right.equalTo(-leftOffset);
+        make.top.equalTo(_coverView.bottom).offset(ItemOffset10);
+        make.left.equalTo(ItemOffset5);
+        make.right.equalTo(-ItemOffset5);
         make.height.equalTo(height);
     }];
 }
@@ -191,19 +218,19 @@ static const CGFloat leftOffset = 10;
     
     [_titleView makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.equalTo(_editeIcon.centerY);
-        make.left.equalTo(leftOffset);
+        make.left.equalTo(ItemOffset10);
         make.width.equalTo(CoverSide+10);
     }];
     
      [_editeIcon makeConstraints:^(MASConstraintMaker *make) {
          make.top.equalTo(14);
          make.size.equalTo(CGSizeMake(22, 22));
-         make.right.equalTo(-(leftOffset+5));
+         make.right.equalTo(-(ItemOffset10+5));
      }];
     
     CGFloat tagHeight = 0;
     if ([_tagView.text length]) {
-        CGRect rect = [_tagView.text boundingRectWithSize:CGSizeMake(self.view.frame.size.width-2*leftOffset, 99999)
+        CGRect rect = [_tagView.text boundingRectWithSize:CGSizeMake(self.view.frame.size.width-2*ItemOffset10, 99999)
                                                   options:NSStringDrawingUsesLineFragmentOrigin
                                                attributes:@{NSFontAttributeName:_tagView.font}
                                                   context:nil];
@@ -211,8 +238,8 @@ static const CGFloat leftOffset = 10;
     }
     [_tagView makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(DefaultDescViewHeight);
-        make.left.equalTo(leftOffset);
-        make.right.equalTo(-leftOffset);
+        make.left.equalTo(ItemOffset10);
+        make.right.equalTo(-ItemOffset10);
         make.height.equalTo(tagHeight);
     }];
     
@@ -228,7 +255,7 @@ static const CGFloat leftOffset = 10;
          lastView = _coverView;
      }
     [_itemDescView makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(lastView.bottom).offset(topOffset);
+        make.top.equalTo(lastView.bottom).offset(ItemOffset5);
         make.left.equalTo(0);
         make.right.equalTo(0);
         make.height.equalTo(DefaultDescViewHeight);
@@ -239,13 +266,13 @@ static const CGFloat leftOffset = 10;
 - (void)layoutsubViews
 {
     [_coverView makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(topOffset);
-        make.left.equalTo(leftOffset);
+        make.top.equalTo(ItemOffset5);
+        make.left.equalTo(ItemOffset10);
         make.size.equalTo(CGSizeMake(CoverSide, CoverSide));
     }];
     
     [_addImageBtn makeConstraints:^(MASConstraintMaker *make) {
-        make.right.equalTo(-leftOffset);
+        make.right.equalTo(-ItemOffset10);
         make.bottom.equalTo(_coverView.bottom);
         make.size.equalTo(CGSizeMake(AddBtnSide, AddBtnSide));
     }];
@@ -253,6 +280,10 @@ static const CGFloat leftOffset = 10;
     [self layoutThumbnailView];
     
     [self layoutDescView];
+    
+    [_contentView makeConstraints:^(MASConstraintMaker *make) {
+        make.bottom.equalTo(_itemDescView.bottom).offset(ItemOffset5);
+    }];
 }
 
 #pragma mark - data
@@ -302,12 +333,21 @@ static const CGFloat leftOffset = 10;
 
 - (void)handleDeleteAction
 {
+    [[BModelInterface shareInstance] handleItemWithAction:ModelAction_delete andData:self.itemContent];
     
+    [self popToViewControllerNamed:@"BHomeViewController"];
 }
 
 - (void)handleAddImageAction
 {
+    NSLog(@"add image action");
+}
+
+- (void)handleEditTagAction
+{
+    BEditItemViewController *editVC = [[BEditItemViewController alloc] init];
     
+    [self.navigationController pushViewController:editVC animated:YES];
 }
 
 - (void)didReceiveMemoryWarning {

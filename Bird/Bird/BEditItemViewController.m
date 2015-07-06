@@ -7,9 +7,27 @@
 //
 
 #import "BEditItemViewController.h"
+#import "BTagLabelView.h"
 
-@interface BEditItemViewController ()
+static NSString *const placeHolder = @"输入";
+static const CGFloat left_offset = 20;
+static const CGFloat top_offset = 20;
+static const CGFloat itemSpace15 = 15;
 
+@interface BEditItemViewController () <UITextViewDelegate, BTagLabelViewDelegate>
+{
+    UIScrollView *_scrollView;
+    UIView *_contentView;
+    
+    UIView *_itemDescView;
+    UILabel *_itmeNameLabel;
+    BTagLabelView *_itemTagLabel;
+    UIView *_lineView;
+    UITextView *_inputTextView;
+    
+    NSString *_itemName;
+    NSMutableArray *_propertyArray;
+}
 @end
 
 @implementation BEditItemViewController
@@ -21,7 +39,321 @@
                                                 green:231.0/255.0
                                                  blue:231.0/255.0
                                                 alpha:1.0];
+    [self configNavigationBar];
+    
+    [self createSubViews];
+    
+    [self loadData];
 }
+
+- (void)configNavigationBar
+{
+    self.navigationItem.hidesBackButton = YES;
+    
+    UIButton * backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    backBtn.frame = CGRectMake(0, 0, 44, 44);
+    [backBtn addTarget:self action:@selector(handleBackAction) forControlEvents:UIControlEventTouchUpInside];
+    [backBtn setImage:[UIImage imageNamed:@"nav_back"] forState:UIControlStateNormal];
+    
+    
+    UIButton * confirmBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    confirmBtn.frame =  CGRectMake(0, 0, 44, 44);
+    [confirmBtn addTarget:self action:@selector(handleConfirmAction) forControlEvents:UIControlEventTouchUpInside];
+    [confirmBtn setImage:[UIImage imageNamed:@"nav_confirm"] forState:UIControlStateNormal];
+    
+    UIBarButtonItem *backItem = [[UIBarButtonItem alloc] initWithCustomView:backBtn];
+    UIBarButtonItem *negativeSpacer = [[UIBarButtonItem alloc]
+                                       initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace
+                                       target:nil action:nil];
+    negativeSpacer.width = -10;
+    UIBarButtonItem *rightItme = [[UIBarButtonItem alloc] initWithCustomView:confirmBtn];
+    self.navigationItem.leftBarButtonItems = @[negativeSpacer, backItem];
+    self.navigationItem.rightBarButtonItem = rightItme;
+}
+
+#pragma mark - create
+
+- (void)createSubViews
+{
+    _scrollView = [[UIScrollView alloc] initWithFrame:CGRectZero];
+    _contentView = [[UIView alloc] initWithFrame:CGRectZero];
+    
+    [_scrollView addSubview:_contentView];
+    [self.view addSubview:_scrollView];
+    
+    [_scrollView makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.view);
+    }];
+    [_contentView makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(_scrollView);
+        make.width.equalTo(_scrollView);
+    }];
+    
+    [self createItemDescView];
+    
+    [self createTagListView];
+}
+
+- (void)createItemDescView
+{
+    _itemDescView = [[UIView alloc] initWithFrame:CGRectZero];
+    
+    _itmeNameLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+    _itmeNameLabel.textColor = [UIColor blackColor];
+    _itmeNameLabel.font = [UIFont systemFontOfSize:15];
+    _itmeNameLabel.text = self.itemContent.name;
+    
+    _itemTagLabel = [[BTagLabelView alloc] initWithFrame:CGRectZero];
+    _itemTagLabel.delegate = self;
+    _itemTagLabel.textColor = [UIColor blackColor];
+    _itemTagLabel.font = [UIFont systemFontOfSize:15];
+    _itemTagLabel.text = self.itemContent.name;
+    _itemTagLabel.numberOfLines = 0;
+    
+    _lineView = [[UIView alloc] initWithFrame:CGRectZero];
+    _lineView.backgroundColor = [UIColor colorWithRed:204.0/255.0
+                                                green:204.0/255.0
+                                                 blue:204.0/255.0
+                                                alpha:1.0];
+    
+    _inputTextView = [[UITextView alloc] initWithFrame:CGRectZero];
+    _inputTextView.showsHorizontalScrollIndicator = NO;
+    _inputTextView.showsVerticalScrollIndicator = NO;
+    _inputTextView.scrollEnabled = NO;
+    _inputTextView.delegate = self;
+    _inputTextView.text =  @"输入";
+    _inputTextView.textColor = [UIColor lightGrayColor];
+    _inputTextView.font = [UIFont systemFontOfSize:14];
+    _inputTextView.textAlignment = NSTextAlignmentLeft;
+    _inputTextView.returnKeyType = UIReturnKeyDone;
+    self.automaticallyAdjustsScrollViewInsets = NO;
+    
+    _itemDescView.backgroundColor = [UIColor whiteColor];
+    _itmeNameLabel.backgroundColor = [UIColor greenColor];
+    _itemTagLabel.backgroundColor = [UIColor redColor];
+    _inputTextView.backgroundColor = [UIColor blueColor];
+    
+    [_itemDescView addSubview:_itmeNameLabel];
+    [_itemDescView addSubview:_itemTagLabel];
+    [_itemDescView addSubview:_lineView];
+    [_itemDescView addSubview:_inputTextView];
+    
+    [_contentView addSubview:_itemDescView];
+}
+
+- (void)createTagListView
+{
+    
+}
+
+#pragma mark - data
+
+- (void)loadData
+{
+    _itemName = self.itemContent.name;
+    if (_propertyArray == nil) {
+        _propertyArray = [[NSMutableArray alloc] initWithCapacity:0];
+    }
+    if ([self.itemContent.property count]) {
+        [_propertyArray addObjectsFromArray:self.itemContent.property];
+    }
+    
+    [self refreshData];
+}
+
+- (void)refreshData
+{
+    _itmeNameLabel.text = _itemName;
+    
+    _itemTagLabel.tagArray = _propertyArray;
+    
+    [self layoutSubViews];
+}
+
+#pragma mark - layout
+
+- (void)layoutSubViews
+{
+    [self layoutDescView];
+    
+    [self layoutTagListView];
+
+    [_contentView makeConstraints:^(MASConstraintMaker *make) {
+        make.bottom.equalTo(_itemDescView.bottom);
+    }];
+}
+
+- (void)layoutInputView
+{
+    //输入框高度
+    CGSize constraintSize = CGSizeMake(self.view.frame.size.width-2*left_offset, MAXFLOAT);
+    CGSize size = [_inputTextView sizeThatFits:constraintSize];
+    CGFloat descriptionH = size.height;
+    
+    [_inputTextView remakeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(_lineView.bottom).offset(itemSpace15);
+        make.left.equalTo(left_offset);
+        make.right.equalTo(-left_offset);
+        make.height.equalTo(descriptionH);
+    }];
+}
+
+- (void)layoutTagView
+{
+//    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+//    [paragraphStyle setLineSpacing:10];//调整行间距
+//    if ([_itemTagLabel.text length]) {
+//        NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:_itemTagLabel.text];
+//        [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, [_itemTagLabel.text length])];
+//        _itemTagLabel.attributedText = attributedString;
+//        
+//    }
+//    NSDictionary *attrDic = @{NSFontAttributeName:_itemTagLabel.font,
+//                              NSParagraphStyleAttributeName:paragraphStyle};
+    
+    NSDictionary *attrDic = @{NSFontAttributeName:_itemTagLabel.font};
+    //标签表高度
+    CGFloat tagHeight = 0;
+    //    if ([_itemTagLabel.text length])
+    {
+        CGRect rect = [_itemTagLabel.text boundingRectWithSize:CGSizeMake(self.view.frame.size.width-2*left_offset, MAXFLOAT)
+                                                       options:NSStringDrawingUsesLineFragmentOrigin
+                                                    attributes:attrDic
+                                                       context:nil];
+        tagHeight = rect.size.height>0? rect.size.height+1:0;
+    }
+    
+    NSLog(@"=====tagview height = %f", tagHeight);
+    
+    [_itemTagLabel remakeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(_itmeNameLabel.bottom).offset(itemSpace15);
+        make.left.equalTo(left_offset);
+        make.right.equalTo(-left_offset);
+        make.height.equalTo(tagHeight);
+    }];
+}
+
+- (void)layoutDescView
+{
+    //物品名高度
+    CGFloat titleHeight = 20;
+    [_itmeNameLabel remakeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(left_offset);
+        make.right.equalTo(-left_offset);
+        make.top.equalTo(top_offset);
+        make.height.equalTo(titleHeight);
+    }];
+    
+    [self layoutTagView];
+    
+    UIView *lastView = [_itemTagLabel.text length]>0? _itemTagLabel:_itmeNameLabel;
+    [_lineView remakeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(lastView.bottom).offset(top_offset);
+        make.left.equalTo(0);
+        make.right.equalTo(0);
+        make.height.equalTo(0.5);
+    }];
+    
+    [self layoutInputView];
+    
+    [_itemDescView remakeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(0);
+        make.left.equalTo(0);
+        make.right.equalTo(0);
+        make.bottom.equalTo(_inputTextView.bottom).offset(itemSpace15);
+    }];
+}
+
+- (void)layoutTagListView
+{
+    
+}
+
+#pragma mark - action
+
+- (void)handleBackAction
+{
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void)handleConfirmAction
+{
+    
+}
+
+#pragma mark -  BTagLabelViewDelegate
+
+- (void)BTagLabelView:(BTagLabelView *)aLabel didSetTag:(NSString *)aTag
+{
+    NSLog(@"set tag = %@", aTag);
+}
+
+- (void)BTagLabelView:(BTagLabelView *)aLabel didDeleteTag:(NSString *)aTag
+{
+    NSLog(@"delete tag = %@", aTag);
+}
+
+#pragma mark - UITextViewDelegate
+
+- (void)textViewDidBeginEditing:(UITextView *)textView
+{
+    if ([textView.text isEqual:placeHolder]) {
+        textView.text = @"";
+        textView.textColor = [UIColor blackColor];
+    }
+}
+
+- (void)textViewDidEndEditing:(UITextView *)textView
+{
+    if ([textView.text length] == 0) {
+        textView.text = placeHolder;
+        textView.textColor = [UIColor lightGrayColor];
+    }
+}
+
+- (void)textViewDidChange:(UITextView *)textView
+{
+//    [self layoutSubViews];
+    [self layoutInputView];
+    
+    [UIView animateWithDuration:0.3
+                     animations:^{
+                         [self.view layoutIfNeeded];
+                     }
+                     completion:^(BOOL finished) {
+                         
+                     }];
+}
+
+-(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString*)text
+{
+    if ([text isEqualToString:@"\n"]) {
+        if ([textView.text length] == 0) {
+            [textView resignFirstResponder];
+            return NO;
+        }
+        
+        if (_itemName == nil) {
+            _itemName = textView.text;
+        } else {
+            [_propertyArray addObject:textView.text];
+        }
+        textView.text = nil;
+        
+        [self refreshData];
+        [self.view layoutIfNeeded];
+//        [UIView animateWithDuration:0.3
+//                         animations:^{
+//                             [self.view layoutIfNeeded];
+//                         }
+//                         completion:^(BOOL finished) {
+//                             
+//                         }];
+        return NO;
+    }
+    return YES;
+}
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

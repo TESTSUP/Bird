@@ -7,10 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "BItemContent.h"
 
 /**
  *  物品的名称，标签和描述编辑页面
  */
 @interface BEditItemViewController : UIViewController
+
+@property (nonatomic, strong) BItemContent *itemContent;
 
 @end

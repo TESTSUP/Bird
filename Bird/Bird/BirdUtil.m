@@ -71,17 +71,6 @@
         NSLog(@"save image failed, param can not be nil");
     }
     
-    NSLog(@"=======save image,image id = %@", aImageId);
-    NSData *imageData = UIImagePNGRepresentation(aImgae);
-    if (imageData == nil) {
-        imageData = UIImageJPEGRepresentation(aImgae, 1);
-    }
-    
-    NSString *filePath = [[BGlobalConfig shareInstance].imageSourcePath stringByAppendingPathComponent:aImageId];
-    if (imageData) {
-        [imageData writeToFile:filePath atomically:YES];
-    }
-    
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         NSData *imageData = UIImagePNGRepresentation(aImgae);
         if (imageData == nil) {
