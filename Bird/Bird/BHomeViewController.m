@@ -15,6 +15,8 @@
 #import "BModelInterface.h"
 #import "BCreateItemViewController.h"
 #import "BItemDetailViewController.h"
+#import "BSearchItemViewController.h"
+#import "BirdUtil.h"
 
 #define TAG_ADD     9999
 #define TAG_LABEL   9998
@@ -22,6 +24,7 @@
 static const CGFloat SideWidth = 75;
 static const CGFloat SideCellHeight = 50;
 static const NSTimeInterval animationDur3 = 0.3;
+static const NSInteger MAX_ItemImageCount = 9;
 
 @interface BHomeViewController ()
 <UITableViewDataSource,
@@ -490,13 +493,15 @@ BCreateItemViewDelegate>
 
 - (void)handleSearchAction
 {
+    BSearchItemViewController *searchVC = [[BSearchItemViewController alloc] init];
     
+    [self.navigationController pushViewController:searchVC animated:YES];
 }
 
 - (void)handlePhotoButtonAction
 {
     ZYQAssetPickerController *picker = [[ZYQAssetPickerController alloc] init];
-    picker.maximumNumberOfSelection = 5;
+    picker.maximumNumberOfSelection = MAX_ItemImageCount;
     picker.assetsFilter = [ALAssetsFilter allPhotos];
     picker.showEmptyGroups=NO;
     picker.delegate=self;
@@ -606,7 +611,6 @@ BCreateItemViewDelegate>
             ALAsset *asset=assets[i];
             UIImage *tempImg=[UIImage imageWithCGImage:asset.defaultRepresentation.fullScreenImage];
             [imageArray addObject:tempImg];
-           
         }
         dispatch_async(dispatch_get_main_queue(), ^{
             [self presentCreateItemViewWithImages:imageArray];

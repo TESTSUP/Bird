@@ -26,4 +26,6 @@
 //删除
 - (void)deleteImages;
 
+- (UIImage *)imageWithId:(NSString *)aImageId;
+
 @end

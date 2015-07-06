@@ -48,6 +48,7 @@
 		CF7CB6411B46848B00164278 /* defaultProperty.plist in Resources */ = {isa = PBXBuildFile; fileRef = CF3EA6841B413BFC006A21E5 /* defaultProperty.plist */; };
 		CFCEA32F1B44D7A0002DE1F6 /* BSquareImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = CFCEA32E1B44D7A0002DE1F6 /* BSquareImageView.m */; };
 		CFD1EA161B3D583600C9C588 /* BHomeFloadView.m in Sources */ = {isa = PBXBuildFile; fileRef = CFD1EA151B3D583600C9C588 /* BHomeFloadView.m */; };
+		CFEB1D131B4A2485005FE929 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFEB1D121B4A2485005FE929 /* StoreKit.framework */; };
 		CFFAB76E1B451B75006716A3 /* BWaterfallView.m in Sources */ = {isa = PBXBuildFile; fileRef = CFFAB76D1B451B75006716A3 /* BWaterfallView.m */; };
 		CFFAB7711B451B8C006716A3 /* BWaterfallCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = CFFAB7701B451B8C006716A3 /* BWaterfallCellView.m */; };
 		CFFAB7741B451BDF006716A3 /* BTagLabelView.m in Sources */ = {isa = PBXBuildFile; fileRef = CFFAB7731B451BDF006716A3 /* BTagLabelView.m */; };
@@ -150,6 +151,7 @@
 		CFCEA32E1B44D7A0002DE1F6 /* BSquareImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BSquareImageView.m; sourceTree = "<group>"; };
 		CFD1EA141B3D583600C9C588 /* BHomeFloadView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BHomeFloadView.h; sourceTree = "<group>"; };
 		CFD1EA151B3D583600C9C588 /* BHomeFloadView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BHomeFloadView.m; sourceTree = "<group>"; };
+		CFEB1D121B4A2485005FE929 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		CFFAB76C1B451B75006716A3 /* BWaterfallView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWaterfallView.h; sourceTree = "<group>"; };
 		CFFAB76D1B451B75006716A3 /* BWaterfallView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BWaterfallView.m; sourceTree = "<group>"; };
 		CFFAB76F1B451B8C006716A3 /* BWaterfallCellView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWaterfallCellView.h; sourceTree = "<group>"; };
@@ -163,6 +165,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFEB1D131B4A2485005FE929 /* StoreKit.framework in Frameworks */,
 				CF3EA6711B4116C5006A21E5 /* libsqlite3.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -230,6 +233,7 @@
 		98E9B9AC1B31C0EF00366D58 = {
 			isa = PBXGroup;
 			children = (
+				CFEB1D121B4A2485005FE929 /* StoreKit.framework */,
 				CF3EA6701B4116C5006A21E5 /* libsqlite3.dylib */,
 				98E9B9B71B31C0F000366D58 /* Bird */,
 				98E9B9D11B31C0F000366D58 /* BirdTests */,

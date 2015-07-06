@@ -11,19 +11,11 @@
 
 @implementation BItemContent
 
-- (NSString *)itemID
-{
-    if (_itemID == nil) {
-        _itemID = [BirdUtil createItemID];
-    }
-    return _itemID;
-}
-
 - (void)createImageIds
 {
     NSMutableArray *imageIds = [[NSMutableArray alloc] initWithCapacity:0];
     for (UIImage *image in self.imageDatas) {
-        NSString *imageId = [NSString stringWithFormat:@"%@_%lu", self.itemID, (unsigned long)[self.imageDatas indexOfObject:image]];
+        NSString *imageId = [BirdUtil createImageID];
         [BirdUtil saveImage:image withId:imageId];
         [imageIds addObject:imageId];
     }
@@ -43,6 +35,31 @@
     for (NSString *imageId in self.imageIDs) {
         [BirdUtil deleteImageWithId:imageId];
     }
+}
+
+- (UIImage *)imageWithId:(NSString *)aImageId
+{
+    if ([self.imageDatas count] > 0 &&
+        [self.imageDatas count] != [self.imageIDs count]) {
+        NSLog(@"....item image data error");
+        return [BirdUtil getImageWithID:aImageId];
+    }
+    
+    for (NSString *imageid in self.imageIDs) {
+        if ([imageid isEqualToString:aImageId]) {
+            
+            NSInteger index = [self.imageIDs indexOfObject:imageid];
+            if (index < [self.imageDatas count]) {
+                return [self.imageDatas objectAtIndex:index];
+            } else {
+                return [BirdUtil getImageWithID:aImageId];
+            }
+            
+            break;
+        }
+    }
+
+    return nil;
 }
 
 @end

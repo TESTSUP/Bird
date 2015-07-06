@@ -91,14 +91,25 @@
     
     CGContextDrawLinearGradient(context, gradient, startPoint, endPoint, kCGGradientDrawsBeforeStartLocation);
     
-    CGSize titleSize        = [self.text sizeWithFont:self.font];
     [self.textColor set];
-    [self.text drawAtPoint:CGPointMake(rect.size.width - titleSize.width - 2 , (height - 12) / 2)
-                   forWidth:kThumbnailLength
-                   withFont:self.font
-                   fontSize:12
-              lineBreakMode:NSLineBreakByTruncatingTail
-         baselineAdjustment:UIBaselineAdjustmentAlignCenters];
+    
+    CGSize titleSize        = [self.text sizeWithAttributes:@{NSFontAttributeName:self.font}];
+    
+    NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+    paragraphStyle.lineBreakMode = NSLineBreakByTruncatingTail;
+    [self.text drawInRect:CGRectMake(rect.size.width - titleSize.width - 2 ,
+                                     (height - 12) / 2,
+                                     kThumbnailLength,
+                                     CGFLOAT_MAX)
+           withAttributes:@{NSFontAttributeName:self.font, NSParagraphStyleAttributeName:paragraphStyle}];
+    
+//    CGSize titleSize        = [self.text sizeWithFont:self.font];
+//    [self.text drawAtPoint:CGPointMake(rect.size.width - titleSize.width - 2 , (height - 12) / 2)
+//                   forWidth:kThumbnailLength
+//                   withFont:self.font
+//                   fontSize:12
+//              lineBreakMode:NSLineBreakByTruncatingTail
+//         baselineAdjustment:UIBaselineAdjustmentAlignCenters];
 
     UIImage *videoIcon=[UIImage imageWithContentsOfFile:[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"ZYQAssetPicker.Bundle/Images/AssetsPickerVideo@2x.png"]];
     
@@ -403,8 +414,14 @@ static UIColor *titleColor;
         if ([self respondsToSelector:@selector(setEdgesForExtendedLayout:)])
             [self setEdgesForExtendedLayout:UIRectEdgeNone];
         
-        if ([self respondsToSelector:@selector(setContentSizeForViewInPopover:)])
-            [self setContentSizeForViewInPopover:kPopoverContentSize];
+//        if ([self respondsToSelector:@selector(setContentSizeForViewInPopover:)])
+//        {
+//            [self setContentSizeForViewInPopover:kPopoverContentSize];
+//        }
+        if ([self respondsToSelector:@selector(setPreferredContentSize:)]) {
+            self.preferredContentSize = kPopoverContentSize;
+        }
+        
     }
     
     [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];

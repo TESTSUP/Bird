@@ -7,8 +7,16 @@
 //
 
 #import "BSettingViewController.h"
+#import <MessageUI/MFMailComposeViewController.h>
+#import <StoreKit/StoreKit.h>
 
-@interface BSettingViewController () <UITableViewDataSource, UITableViewDelegate>
+static NSString *const Mail_Receiver = @"w15964236402@126.com";
+static NSString *const App_ID = @"594467299";
+
+@interface BSettingViewController () <UITableViewDataSource,
+UITableViewDelegate,
+MFMailComposeViewControllerDelegate,
+SKStoreProductViewControllerDelegate>
 {
     UIButton *_backBtn;
     UILabel *_titleLabel;
@@ -140,6 +148,150 @@
     // Dispose of any resources that can be recreated.
 }
 
+#pragma mark - store
+
+- (void)scoreSupport
+{
+    NSString* m_appleID = App_ID;    //tinyray 此处的appID是在iTunes Connect创建应用程序时生成的Apple ID
+    //应用外打开
+    if (1) {
+        NSString *str = [NSString stringWithFormat:
+                         @"itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=%@",
+                         m_appleID ];
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:str]];
+        //NSLog(@"打分支持！！");
+    }
+    //应用内打开
+    else
+    {
+//        //初始化控制器
+//        SKStoreProductViewController *storeProductViewContorller =[[SKStoreProductViewController alloc] init];
+//        //设置代理请求为当前控制器本身
+//        storeProductViewContorller.delegate = self;
+//        //加载一个新的视图展示
+//        [storeProductViewContorller loadProductWithParameters:
+//         @{SKStoreProductParameterITunesItemIdentifier:m_appleID}//appId唯一的
+//                                              completionBlock:^(BOOL result, NSError *error) {
+//                                                  //block回调
+//                                                  if(error){
+//                                                      NSLog(@"error %@ with userInfo %@",error,[error userInfo]);
+//                                                  }else{
+//                                                      //模态弹出appstore
+//                                                      [self presentViewController:storeProductViewContorller animated:YES completion:^{}];
+//                                                  }
+//                                              }
+//         ];
+    }
+}
+
+- (void)productViewControllerDidFinish:(SKStoreProductViewController *)viewController {
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+#pragma mark - email
+
+- (void) alertWithTitle: (NSString *)_title_ msg: (NSString *)msg
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:_title_
+                                                    message:msg
+                                                   delegate:nil
+                                          cancelButtonTitle:@"确定"
+                                          otherButtonTitles:nil];
+    [alert show];
+    
+//    UIAlertController *alertVC = [UIAlertController alertControllerWithTitle:_title_
+//                                                                     message:msg
+//                                                              preferredStyle:UIAlertControllerStyleAlert];
+//    UIAlertAction *action = [UIAlertAction actionWithTitle:@"确定"
+//                                                     style:UIAlertActionStyleDefault
+//                                                   handler:^(UIAlertAction *action) {
+//                                                       [self dismissViewControllerAnimated:YES completion:nil];
+//                                                   }];
+//    [alertVC addAction:action];
+//    [self presentViewController:alertVC animated:YES completion:nil];
+}
+
+//点击按钮后，触发这个方法
+-(void)sendEMail
+{
+    Class mailClass = (NSClassFromString(@"MFMailComposeViewController"));
+    
+    if (mailClass != nil)
+    {
+        if ([mailClass canSendMail])
+        {
+            [self displayComposerSheet];
+        }
+        else
+        {
+            [self launchMailAppOnDevice];
+        }
+    }
+    else
+    {
+        [self launchMailAppOnDevice];
+    }
+}
+//可以发送邮件的话
+- (void)displayComposerSheet
+{
+    MFMailComposeViewController *mailPicker = [[MFMailComposeViewController alloc] init];
+    
+    mailPicker.mailComposeDelegate = self;
+    
+    //设置主题
+    [mailPicker setSubject: @"意见反馈"];
+    
+    // 添加发送者
+    NSArray *toRecipients = @[Mail_Receiver];
+    [mailPicker setToRecipients: toRecipients];
+
+    NSString *emailBody = @"请填写您的意见\n";
+    [mailPicker setMessageBody:emailBody isHTML:YES];
+    [self presentViewController:mailPicker animated:YES completion:nil];
+}
+
+- (void)launchMailAppOnDevice
+{
+    NSString *recipients = @"mailto:first@example.com&subject=my email!";
+    //@"mailto:first@example.com?cc=second@example.com,third@example.com&subject=my email!";
+    NSString *body = @"&body=email body!";
+    
+    NSString *email = [NSString stringWithFormat:@"%@%@", recipients, body];
+    email = [email stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
+    
+    [[UIApplication sharedApplication] openURL: [NSURL URLWithString:email]];
+}
+
+- (void)mailComposeController:(MFMailComposeViewController *)controller
+          didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error
+{
+    NSString *msg;
+    
+    switch (result)
+    {
+        case MFMailComposeResultCancelled:
+            msg = @"邮件发送取消";
+            break;
+        case MFMailComposeResultSaved:
+            msg = @"邮件保存成功";
+            [self alertWithTitle:nil msg:msg];
+            break;
+        case MFMailComposeResultSent:
+            msg = @"邮件发送成功";
+            [self alertWithTitle:nil msg:msg];
+            break;
+        case MFMailComposeResultFailed:
+            msg = @"邮件发送失败";
+            [self alertWithTitle:nil msg:msg];
+            break;
+        default:
+            break;
+    }
+    
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
 #pragma mark - UITableViewDelegate
 
 -(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
@@ -166,6 +318,7 @@
         case 0:
         {
             //评分
+            [self scoreSupport];
         }
             break;
         case 1:
@@ -176,6 +329,7 @@
         case 2:
         {
             //反馈
+            [self sendEMail];
         }
             break;
         case 3:

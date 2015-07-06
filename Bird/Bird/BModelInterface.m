@@ -50,7 +50,6 @@ static BModelInterface *modelInstance = nil;
             break;
         case ModelAction_create:
         {
-            aCategory.categoryId = [BirdUtil createCategoryID];
             aCategory.createTime = [[NSDate date] timeIntervalSince1970];
             aCategory.updateTime = aCategory.createTime;
             [[BirdDB share] insertCategory:aCategory];

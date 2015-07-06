@@ -8,6 +8,7 @@
 
 #import "BSelectCatrgoryViewController.h"
 #import "BCreateCategoryViewController.h"
+#import "BirdUtil.h"
 
 @interface BSelectCatrgoryViewController () <UITableViewDataSource, UITableViewDelegate>
 {
@@ -127,6 +128,7 @@
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     BCategoryContent *content = [[BCategoryContent alloc] init];
+    content.categoryId = [BirdUtil createCategoryID];
     content.name = name;
     
     BCreateCategoryViewController *createVC = [[BCreateCategoryViewController alloc] init];

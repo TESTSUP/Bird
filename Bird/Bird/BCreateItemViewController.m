@@ -16,6 +16,7 @@ static const CGFloat Cell_Height = 50;
 static const CGFloat Table_Width = 300;
 static const CGFloat Table_Height = 405;
 static const CGFloat CornerRadius = 5;
+static const CGFloat CoverSide = 40;
 
 @interface BCreateItemViewController () <UITableViewDelegate, UITableViewDataSource>
 {
@@ -73,7 +74,7 @@ static const CGFloat CornerRadius = 5;
     
     _iTemCover = [[UIImageView alloc] initWithFrame:CGRectZero];
     _iTemCover.image = [_imageArray count]? [_imageArray firstObject]:nil;
-    _iTemCover.backgroundColor = [UIColor redColor];
+    _iTemCover.backgroundColor = [UIColor clearColor];
     UIButton * _closeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     [_closeBtn setImage:[UIImage imageNamed:@"nav_close"] forState:UIControlStateNormal];
     [_closeBtn addTarget:self action:@selector(handleCloseAction) forControlEvents:UIControlEventTouchUpInside];
@@ -103,7 +104,7 @@ static const CGFloat CornerRadius = 5;
     [_iTemCover makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(5);
         make.centerY.equalTo(_headerView);
-        make.size.equalTo(CGSizeMake(40, 40));
+        make.size.equalTo(CGSizeMake(CoverSide, CoverSide));
     }];
     
     [_closeBtn makeConstraints:^(MASConstraintMaker *make) {
@@ -183,8 +184,7 @@ static const CGFloat CornerRadius = 5;
     
     UIImage *orgImage = [_imageArray count]? [_imageArray firstObject]:nil;
     
-    
-    _iTemCover.image = [BirdUtil generatePhotoThumbnail:orgImage];
+    _iTemCover.image = [BirdUtil squareThumbnailWithOrgImage:orgImage andSideLength:CoverSide];
 }
 
 #pragma mark - action
@@ -236,11 +236,11 @@ static const CGFloat CornerRadius = 5;
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     BItemContent *content = [[BItemContent alloc] init];
+    content.itemID = [BirdUtil createItemID];
     content.imageDatas = self.imageArray;
     if (indexPath.row >= [_categoryArray count]) {
         //添加分类
         if (self.delegate && [self.delegate respondsToSelector:@selector(BCreateItemViewController:didAddCategory:)]) {
-            
             [self.delegate BCreateItemViewController:self didAddCategory:content];
         }
     } else {

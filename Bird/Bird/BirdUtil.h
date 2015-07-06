@@ -14,6 +14,8 @@
 
 + (NSString *)createCategoryID;
 
++ (NSString *)createImageID;
+
 + (NSString *)MD5:(NSString *)aString;
 
 + (UIImage *)getImageWithID:(NSString *)aImageId;
@@ -24,6 +26,7 @@
 
 + (CGSize)compressImage:(UIImage*)aImage withWidth:(CGFloat)width;
 
-+ (UIImage *)generatePhotoThumbnail:(UIImage *)image;
++ (UIImage *)squareThumbnailWithOrgImage:(UIImage *)image
+                           andSideLength:(CGFloat)aLength;
 
 @end

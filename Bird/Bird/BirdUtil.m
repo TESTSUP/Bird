@@ -11,10 +11,10 @@
 
 @implementation BirdUtil
 
-+ (NSString *)createItemID
++ (NSString *)createDataIDWithPrefix:(NSString *)aPrefix
 {
     static NSInteger magicItem = 0;
-    NSString* timestamp = [NSString stringWithFormat:@"item%f%@", [[NSDate date] timeIntervalSince1970], @(magicItem)];
+    NSString* timestamp = [NSString stringWithFormat:@"%@%f%@", aPrefix,[[NSDate date] timeIntervalSince1970], @(magicItem)];
     ++magicItem;
     
     if ([BGlobalConfig shareInstance].currentUser)
@@ -25,18 +25,19 @@
     return [BirdUtil MD5:timestamp];
 }
 
++ (NSString *)createItemID
+{
+    return [BirdUtil createDataIDWithPrefix:@"item"];
+}
+
 + (NSString *)createCategoryID
 {
-    static NSInteger magicCategory = 0;
-    NSString* timestamp = [NSString stringWithFormat:@"category%f%@", [[NSDate date] timeIntervalSince1970], @(magicCategory)];
-    ++magicCategory;
-    
-    if ([BGlobalConfig shareInstance].currentUser)
-    {
-        NSString* str = [[BGlobalConfig shareInstance].currentUser stringByAppendingString:timestamp];
-        return [BirdUtil MD5:str];
-    }
-    return [BirdUtil MD5:timestamp];
+    return [BirdUtil createDataIDWithPrefix:@"category"];
+}
+
++ (NSString *)createImageID
+{
+    return [BirdUtil createDataIDWithPrefix:@"image"];
 }
 
 + (NSString *)MD5:(NSString *)aString
@@ -68,6 +69,17 @@
 {
     if (aImageId == nil && [aImageId length] == 0) {
         NSLog(@"save image failed, param can not be nil");
+    }
+    
+    NSLog(@"=======save image,image id = %@", aImageId);
+    NSData *imageData = UIImagePNGRepresentation(aImgae);
+    if (imageData == nil) {
+        imageData = UIImageJPEGRepresentation(aImgae, 1);
+    }
+    
+    NSString *filePath = [[BGlobalConfig shareInstance].imageSourcePath stringByAppendingPathComponent:aImageId];
+    if (imageData) {
+        [imageData writeToFile:filePath atomically:YES];
     }
     
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -102,11 +114,13 @@
     return CGSizeMake(new_width, new_height);
 }
 
-+ (UIImage *)generatePhotoThumbnail:(UIImage *)image {
++ (UIImage *)squareThumbnailWithOrgImage:(UIImage *)image
+                           andSideLength:(CGFloat)aLength
+{
     // Create a thumbnail version of the image for the event object.
     CGSize size = image.size;
     CGSize croppedSize;
-    CGFloat ratio = 64.0;
+    CGFloat ratio = aLength*[UIScreen mainScreen].scale;
     CGFloat offsetX = 0.0;
     CGFloat offsetY = 0.0;
     
@@ -124,6 +138,10 @@
     CGRect clippedRect = CGRectMake(offsetX * -1, offsetY * -1, croppedSize.width, croppedSize.height);
     CGImageRef imageRef = CGImageCreateWithImageInRect([image CGImage], clippedRect);
     // Done cropping
+    
+    if (ratio >= clippedRect.size.width) {
+        return [UIImage imageWithCGImage:imageRef];
+    }
     
     // Resize the image
     CGRect rect = CGRectMake(0.0, 0.0, ratio, ratio);
