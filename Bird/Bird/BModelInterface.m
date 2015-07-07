@@ -12,7 +12,7 @@
 
 @interface BModelInterface ()
 {
-
+    NSMutableArray *_itemsArray;
 }
 
 @end
@@ -33,7 +33,7 @@ static BModelInterface *modelInstance = nil;
 - (id)init {
     self = [super init];
     if (self) {
-
+        
     }
     
     return self;
@@ -75,6 +75,11 @@ static BModelInterface *modelInstance = nil;
             aItem.updateTime = aItem.createTime;
             [aItem createImageIds];
             [[BirdDB share] insertItem:aItem];
+            if ([_itemsArray count]) {
+                [_itemsArray insertObject:aItem atIndex:0];
+            } else {
+                [_itemsArray addObject:aItem];
+            }
         }
             break;
         case ModelAction_update:
@@ -88,6 +93,7 @@ static BModelInterface *modelInstance = nil;
         {
             [aItem deleteImages];
             [[BirdDB share] deleteItmeWithId:aItem.itemID];
+            [_itemsArray removeObject:aItem];
         }
             break;
         default:
@@ -107,6 +113,26 @@ static BModelInterface *modelInstance = nil;
 
 - (NSArray *)getItemsWithCategoryId:(NSString *)aCategoryId
 {
+    if (_itemsArray == nil) {
+        _itemsArray = [[NSMutableArray alloc] initWithCapacity:0];
+        NSArray *temp = [[BirdDB share] getItemWithCategory:nil];
+        if ([temp count]) {
+            [_itemsArray addObjectsFromArray:temp];
+        }
+    }
+    
+    if ([aCategoryId length] == 0) {
+        return _itemsArray;
+    } else {
+        NSMutableArray *tempArray = [[NSMutableArray alloc] initWithCapacity:0];
+        for (BItemContent *content in _itemsArray) {
+            if ([content.categoryId isEqualToString:aCategoryId]) {
+                [tempArray addObject:content];
+            }
+        }
+        return tempArray;
+    }
+    
     return [[BirdDB share] getItemWithCategory:aCategoryId];
 }
 

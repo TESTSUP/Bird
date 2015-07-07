@@ -14,6 +14,7 @@
 @property (nonatomic, strong) NSString *itemTitle;
 
 + (CGSize)cellSizeWithImage:(UIImage *)aImage
+                     titile:(NSString *)aTitle
                    andWidth:(CGFloat)width;
 
 @end

@@ -480,6 +480,10 @@ BWaterfallViewDelagate>
     if(selected)
         [_categoryTableView deselectRowAtIndexPath:selected animated:YES];
     
+    _selectedCategoryId = nil;
+    _itemsData = [[BModelInterface shareInstance] getItemsWithCategoryId:_selectedCategoryId];
+    [self refreshItemData];
+    
     [self configLeftNavButtonTextColor];
 }
 
@@ -680,8 +684,8 @@ BWaterfallViewDelagate>
         //选中分类
         BCategoryContent *content = [_categoryData objectAtIndex:indexPath.row];
         _selectedCategoryId = content.categoryId;
-        
-        
+        _itemsData = [[BModelInterface shareInstance] getItemsWithCategoryId:_selectedCategoryId];
+        [self refreshItemData];
     }
 }
 

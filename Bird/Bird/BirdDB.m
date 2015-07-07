@@ -202,6 +202,13 @@ static BirdDB *DBInstance = nil;
     item.createTime = [rs intForColumnIndex:5];
     item.updateTime = [rs intForColumnIndex:6];
     
+    NSMutableArray *imageArray = [[NSMutableArray alloc] initWithCapacity:0];
+    for (NSString *imageID in item.imageIDs) {
+        UIImage *image = [BirdUtil getImageWithID:imageID];
+        [imageArray addObject:image];
+    }
+    item.imageDatas = imageArray;
+    
     return item;
 }
 
@@ -211,7 +218,7 @@ static BirdDB *DBInstance = nil;
     
     if ([category length]) {
         [self.dbQueue inDatabase:^(FMDatabase *db) {
-            FMResultSet *rs = [db executeQuery:@"SELECT * FROM bird_db_items WHERE categoryid = ?", category];
+            FMResultSet *rs = [db executeQuery:@"SELECT * FROM bird_db_items WHERE categoryid = ? ORDER BY createtime DESC", category];
             [self checkError:db];
             if ([rs next]) {
                 BItemContent *item = [self createItemWithResult:rs];
@@ -223,7 +230,7 @@ static BirdDB *DBInstance = nil;
         }];
     } else {
         [self.dbQueue inDatabase:^(FMDatabase *db) {
-            FMResultSet *rs = [db executeQuery:@"SELECT * FROM bird_db_items"];
+            FMResultSet *rs = [db executeQuery:@"SELECT * FROM bird_db_items ORDER BY createtime DESC"];
             [self checkError:db];
             while([rs next]) {
                 BItemContent *item = [self createItemWithResult:rs];

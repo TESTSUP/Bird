@@ -64,7 +64,7 @@ static const CGFloat ItemOffset10 = 10;
 - (void)configNavigationBar
 {
     UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    backBtn.frame = CGRectMake(0, 0, 80, 40);
+    backBtn.frame = CGRectMake(0, 0, 40, 40);
     [backBtn addTarget:self action:@selector(handleBackAction) forControlEvents:UIControlEventTouchUpInside];
     [backBtn setTitle:self.categoryName forState:UIControlStateNormal];
     [backBtn setImage:[UIImage imageNamed:@"nav_back"] forState:UIControlStateNormal];

@@ -9,7 +9,7 @@
 #import "BWaterfallCellView.h"
 #import "BirdUtil.h"
 
-static const CGFloat labelHeight = 40;
+static const CGFloat labelHeight = 27;
 
 @interface BWaterfallCellView ()
 {
@@ -70,7 +70,7 @@ static const CGFloat labelHeight = 40;
         make.top.equalTo(_imageView.bottom);
         make.left.equalTo(5);
         make.right.equalTo(0);
-        make.height.equalTo([_titleLabel.text length]>0? 27:0);
+        make.height.equalTo([_titleLabel.text length]>0? labelHeight:0);
     }];
     
     [self makeConstraints:^(MASConstraintMaker *make) {
@@ -78,12 +78,12 @@ static const CGFloat labelHeight = 40;
     }];
 }
 
-+ (CGSize)cellSizeWithImage:(UIImage *)aImage andWidth:(CGFloat)width
++ (CGSize)cellSizeWithImage:(UIImage *)aImage titile:(NSString *)aTitle andWidth:(CGFloat)width
 {
     CGFloat orgi_width = aImage.size.width;
     CGFloat orgi_height = aImage.size.height;
     
-    return CGSizeMake(width, (orgi_height/orgi_width)*width + labelHeight);
+    return CGSizeMake(width, (orgi_height/orgi_width)*width + ([aTitle length]>0? labelHeight:0));
 }
 
 #pragma mark -

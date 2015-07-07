@@ -93,7 +93,7 @@ static const CGFloat itemSpace = 10.0;
 
 - (void)layoutContentView
 {
-    [_leftView makeConstraints:^(MASConstraintMaker *make) {
+    [_leftView remakeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.top);
         make.left.equalTo(self.left).offset(edgeOffset);
         make.right.equalTo(_rightView.left).offset(-itemSpace);
@@ -105,7 +105,7 @@ static const CGFloat itemSpace = 10.0;
         }
     }];
     
-    [_rightView makeConstraints:^(MASConstraintMaker *make) {
+    [_rightView remakeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.top);
         make.right.equalTo(self.right).offset(-edgeOffset);
         make.left.equalTo(_leftView.right).offset(itemSpace);
@@ -127,10 +127,6 @@ static const CGFloat itemSpace = 10.0;
     [self.loadedImageArray makeObjectsPerformSelector:@selector(removeFromSuperview)];
     [self.loadedImageArray removeAllObjects];
     _itemArray = aItemArray;
-    
-//    for (BItemContent *content in aItemArray) {
-//        [self createCellWithData:content];
-//    }
 
     [self createCellDataWith:aItemArray];
     [self layoutCells];
@@ -176,23 +172,28 @@ static const CGFloat itemSpace = 10.0;
     [_rightCellArray makeObjectsPerformSelector:@selector(removeFromSuperview)];
     [_leftCellArray removeAllObjects];
     [_rightCellArray removeAllObjects];
-    _leftColumHeight = 0;
-    _rightColumHeight = 0;
-    
+    _leftColumHeight = itemSpace;
+    _rightColumHeight = itemSpace;
+    _lastLeftCell = nil;
+    _lastRightCell = nil;
+    _leftView.frame = CGRectZero;
+    _rightView.frame = CGRectZero;
     
     for (BItemContent *content in aItemArray) {
         BWaterfallCellView *cell = [[BWaterfallCellView alloc] initWithFrame:CGRectZero];
-        UIImage *image = [BirdUtil getImageWithID:[content.imageIDs firstObject]];
+        UIImage *image = [content imageWithId:[content.imageIDs firstObject]];
         cell.itemTitle = content.name;
-        cell.itemImage = image;
+        cell.itemImage = [BirdUtil compressImage:image withWidth:160];
         cell.tag = [aItemArray indexOfObject:content];
         //图片添加事件响应
         UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(imageClickWithTag:)];
         cell.userInteractionEnabled = YES;
         [cell addGestureRecognizer:tapRecognizer];
         
-        CGFloat width = (320-edgeOffset*2-itemSpace)/2;
-        CGSize size = [BWaterfallCellView cellSizeWithImage:image andWidth:width];
+        CGFloat width = 123;//(320-edgeOffset*2-itemSpace)/2;
+        CGSize size = [BWaterfallCellView cellSizeWithImage:image
+                                                   titile:content.name
+                                                   andWidth:width];
         float height = size.height;
         
         //判断哪一列的高度最低
@@ -218,7 +219,7 @@ static const CGFloat itemSpace = 10.0;
     UIView *lastCell = nil;
     for (BWaterfallCellView *cell in _leftCellArray) {
         [cell makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(lastCell? lastCell.bottom:_leftView).offset(itemSpace);
+            make.top.equalTo(lastCell? lastCell.bottom:_leftView.top).offset(itemSpace);
             make.left.equalTo(0);
             make.width.equalTo(_leftView);
         }];
@@ -229,80 +230,12 @@ static const CGFloat itemSpace = 10.0;
     lastCell = nil;
     for (BWaterfallCellView *cell in _rightCellArray) {
         [cell makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(lastCell? lastCell.bottom:_rightView).offset(itemSpace);
+            make.top.equalTo(lastCell? lastCell.bottom:_rightView.top).offset(itemSpace);
              make.left.equalTo(0);
             make.width.equalTo(_rightView);
         }];
         lastCell = cell;
     }
-}
-
-/*
- 添加一张图片
- 规则：根据每一列的高度来决定，优先加载列高度最短的那列
- 重新设置图片的x,y坐标
- imageView:图片视图
- imageName:图片名
- */
-- (void)createCellWithData:(BItemContent *)content{
-    
-    BWaterfallCellView *cell = [[BWaterfallCellView alloc] initWithFrame:CGRectZero];
-    
-    UIImage *image = [BirdUtil getImageWithID:[content.imageIDs firstObject]];
-    cell.itemImage = image;
-    cell.itemTitle = content.name;
-    CGFloat width = (320-edgeOffset*2-itemSpace)/2;
-    CGSize size = [BWaterfallCellView cellSizeWithImage:image andWidth:width];
-    
-    [self.loadedImageArray addObject:cell];
-
-    float height = size.height;
-    //判断哪一列的高度最低
-    if( _leftColumHeight <= _rightColumHeight){
-        [_leftView addSubview:cell];
-        //重新设置坐标
-        _leftColumHeight = _leftColumHeight + height + itemSpace;
-        
-        if (_lastLeftCell == nil) {
-            [cell makeConstraints:^(MASConstraintMaker *make) {
-                make.top.equalTo(itemSpace);
-                make.left.equalTo(0);
-                make.width.equalTo(_leftView.width);
-            }];
-        } else {
-            [cell makeConstraints:^(MASConstraintMaker *make) {
-                make.top.equalTo(_lastLeftCell.bottom).offset(itemSpace);
-                make.left.equalTo(0);
-                make.width.equalTo(_leftView.width);
-            }];
-        }
-        _lastLeftCell = cell;
-        
-    }else{
-        [_rightView addSubview:cell];
-
-        _rightColumHeight = _rightColumHeight + height + itemSpace;
-        
-        if (_lastRightCell == nil) {
-            [cell makeConstraints:^(MASConstraintMaker *make) {
-                make.top.equalTo(itemSpace);
-                make.left.equalTo(0);
-                make.width.equalTo(_leftView.width);
-            }];
-        } else {
-            [cell makeConstraints:^(MASConstraintMaker *make) {
-                make.top.equalTo(_lastRightCell.bottom).offset(itemSpace);
-                make.left.equalTo(0);
-                make.width.equalTo(_rightView.width);
-            }];
-        }
-        _lastRightCell = cell;
-    }
-    
-    //图片添加事件响应
-    UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(imageClickWithTag:)];
-    cell.userInteractionEnabled = YES;
-    [cell addGestureRecognizer:tapRecognizer];
 }
 
 /*
