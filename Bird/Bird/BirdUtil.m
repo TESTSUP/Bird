@@ -86,21 +86,31 @@
 
 + (void)deleteImageWithId:(NSString *)aImageId
 {
-    NSFileManager *defaultManager = [NSFileManager defaultManager];
-    NSString *filePath = [[BGlobalConfig shareInstance].imageSourcePath stringByAppendingPathComponent:aImageId];
-    [defaultManager removeItemAtPath:filePath error:nil];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSFileManager *defaultManager = [NSFileManager defaultManager];
+        NSString *filePath = [[BGlobalConfig shareInstance].imageSourcePath stringByAppendingPathComponent:aImageId];
+        [defaultManager removeItemAtPath:filePath error:nil];
+    });
 }
 
-+ (CGSize)compressImage:(UIImage*)aImage withWidth:(CGFloat)width
++ (UIImage *)compressImage:(UIImage*)aImage withWidth:(CGFloat)width
 {
     float orgi_width = aImage.size.width;
     float orgi_height = aImage.size.height;
     
     //按照每列的宽度，以及图片的宽高来按比例压缩
-    float new_width = width - 5;
+    float new_width = width;
     float new_height = (width * orgi_height)/orgi_width;
 
-    return CGSizeMake(new_width, new_height);
+    CGRect rect = CGRectMake(0.0, 0.0, new_width, new_height);
+    
+    UIGraphicsBeginImageContext(rect.size);
+    [aImage drawInRect:rect];
+    UIImage *thumbnail = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    // Done Resizing
+    
+    return thumbnail;
 }
 
 + (UIImage *)squareThumbnailWithOrgImage:(UIImage *)image

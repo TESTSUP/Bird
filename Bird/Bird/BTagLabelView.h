@@ -13,9 +13,9 @@
 
 @protocol BTagLabelViewDelegate <NSObject>
 
-- (void)BTagLabelView:(BTagLabelView *)aLabel didSetTag:(NSString *)aTag;
+- (void)BTagLabelView:(BTagLabelView *)aLabel didSetTagAtIndex:(NSInteger)aIndex;
 
-- (void)BTagLabelView:(BTagLabelView *)aLabel didDeleteTag:(NSString *)aTag;
+- (void)BTagLabelView:(BTagLabelView *)aLabel didDeleteTagAtIndex:(NSInteger)aIndex;
 
 @end
 

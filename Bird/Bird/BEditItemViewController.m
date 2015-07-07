@@ -8,11 +8,13 @@
 
 #import "BEditItemViewController.h"
 #import "BTagLabelView.h"
+#import "BModelInterface.h"
 
 static NSString *const placeHolder = @"输入";
 static const CGFloat left_offset = 20;
 static const CGFloat top_offset = 20;
 static const CGFloat itemSpace15 = 15;
+static const CGFloat defaultHeight = 50;
 
 @interface BEditItemViewController () <UITextViewDelegate, BTagLabelViewDelegate>
 {
@@ -25,8 +27,11 @@ static const CGFloat itemSpace15 = 15;
     UIView *_lineView;
     UITextView *_inputTextView;
     
+    UIView *_bottomView;
+    
     NSString *_itemName;
     NSMutableArray *_propertyArray;
+    NSMutableArray *_defaultProperty;
 }
 @end
 
@@ -130,7 +135,7 @@ static const CGFloat itemSpace15 = 15;
     
     _itemDescView.backgroundColor = [UIColor whiteColor];
     _itmeNameLabel.backgroundColor = [UIColor greenColor];
-    _itemTagLabel.backgroundColor = [UIColor redColor];
+    _itemTagLabel.backgroundColor = [UIColor lightGrayColor];
     _inputTextView.backgroundColor = [UIColor blueColor];
     
     [_itemDescView addSubview:_itmeNameLabel];
@@ -139,11 +144,131 @@ static const CGFloat itemSpace15 = 15;
     [_itemDescView addSubview:_inputTextView];
     
     [_contentView addSubview:_itemDescView];
+    
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapAction)];
+    [_itemDescView addGestureRecognizer:tap];
+}
+
+- (UIView *)createTagCellViewWith:(NSArray *)aTagArray
+{
+    if ([aTagArray count] == 0) {
+        return nil;
+    }
+    
+    UIScrollView *tempScroll = [[UIScrollView alloc] initWithFrame:CGRectZero];
+    tempScroll.backgroundColor = [UIColor greenColor];
+    tempScroll.showsHorizontalScrollIndicator = NO;
+    tempScroll.showsVerticalScrollIndicator = NO;
+    
+    UIView *contentView = [[UIView alloc] initWithFrame:CGRectZero];
+    contentView.backgroundColor = [UIColor clearColor];
+    
+    BTagLabelView *tempLabel = [[BTagLabelView alloc] initWithFrame:CGRectZero];
+    tempLabel.textAlignment = NSTextAlignmentLeft;
+//    tempLabel.text = [aTagArray componentsJoinedByString:@"   "];
+    tempLabel.tagArray = aTagArray;
+    tempLabel.font = [UIFont systemFontOfSize:12];
+    tempLabel.backgroundColor = [UIColor redColor];
+    tempLabel.textColor = [UIColor colorWithRed:154.0/255.0
+                                          green:154.0/255.0
+                                           blue:154.0/255.0
+                                          alpha:1.0];
+    
+    UIView *lineView = [[UIView alloc] initWithFrame:CGRectZero];
+    lineView.backgroundColor = [UIColor colorWithRed:204.0/255.0
+                                               green:204.0/255.0
+                                                blue:204.0/255.0
+                                               alpha:1.0];
+    [contentView addSubview:tempLabel];
+    [tempScroll addSubview:contentView];
+    [tempScroll addSubview:lineView];
+    
+    NSDictionary *attrDic = @{NSFontAttributeName:tempLabel.font};
+    CGRect rect = [tempLabel.text boundingRectWithSize:CGSizeMake(MAXFLOAT, defaultHeight)
+                                                   options:NSStringDrawingUsesLineFragmentOrigin
+                                                attributes:attrDic
+                                                   context:nil];
+    
+    [contentView makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(tempScroll);
+        make.height.equalTo(tempScroll);
+        make.right.equalTo(tempLabel.right).offset(top_offset);
+    }];
+    [tempLabel makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.equalTo(tempScroll);
+        make.left.equalTo(left_offset);
+        make.width.equalTo(rect.size.width);
+    }];
+    [lineView makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(0);
+        make.right.equalTo(0);
+        make.bottom.equalTo(0);
+        make.height.equalTo(0.5);
+    }];
+    
+//    tempScroll.contentSize = CGSizeMake(rect.size.width+left_offset*2, defaultHeight);
+    return tempScroll;
 }
 
 - (void)createTagListView
 {
+    if (_defaultProperty == nil) {
+        _defaultProperty = [[NSMutableArray alloc] initWithCapacity:0];
+    }
+    //常用标签
+    NSArray *usualArray = [[BModelInterface shareInstance] getUsuallyPropertyWithLimit:10];
+    if ([usualArray count]) {
+        [_defaultProperty addObject:usualArray];
+    }
+    //默认标签
+    NSArray *defaultP = [BGlobalConfig shareInstance].propertyList;
+    if (defaultP) {
+//        [_defaultProperty addObjectsFromArray:defaultP];
+    }
     
+    if ([_defaultProperty count] == 0) {
+        return;
+    }
+    
+    UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+    titleLabel.textColor = [UIColor blackColor];
+    titleLabel.backgroundColor = [UIColor clearColor];
+    titleLabel.font = [UIFont systemFontOfSize:12];
+    titleLabel.text = @"常用描述";
+    titleLabel.textAlignment = NSTextAlignmentLeft;
+    
+    [_contentView addSubview:titleLabel];
+    
+    [titleLabel makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(_itemDescView.bottom).offset(itemSpace15);
+        make.left.equalTo(left_offset);
+        make.width.equalTo(80);
+        make.height.equalTo(20);
+    }];
+    
+    UIView *lastView = nil;
+    for (NSArray *propertyArray in _defaultProperty) {
+        NSLog(@"property = %@", propertyArray);
+        
+        UIView *cell = [self createTagCellViewWith:propertyArray];
+        if (cell == nil) {
+            continue;
+        }
+        [_contentView addSubview:cell];
+        [cell makeConstraints:^(MASConstraintMaker *make) {
+            if (lastView) {
+                make.top.equalTo(lastView.bottom);
+            } else {
+                make.top.equalTo(titleLabel.bottom).offset(itemSpace15);
+            }
+            make.left.equalTo(0);
+            make.right.equalTo(0);
+            make.height.equalTo(defaultHeight);
+        }];
+        lastView = cell;
+    }
+    
+    _bottomView = lastView;
 }
 
 #pragma mark - data
@@ -179,7 +304,7 @@ static const CGFloat itemSpace15 = 15;
     [self layoutTagListView];
 
     [_contentView makeConstraints:^(MASConstraintMaker *make) {
-        make.bottom.equalTo(_itemDescView.bottom);
+        make.bottom.equalTo(_bottomView?  _bottomView.bottom:_itemDescView.bottom);
     }];
 }
 
@@ -278,19 +403,48 @@ static const CGFloat itemSpace15 = 15;
 
 - (void)handleConfirmAction
 {
+    self.itemContent.name = _itemName;
+    self.itemContent.property = _propertyArray;
     
+    [[BModelInterface shareInstance] handleItemWithAction:ModelAction_update andData:self.itemContent];
+    
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void)handleTapAction
+{
+    [_inputTextView becomeFirstResponder];
 }
 
 #pragma mark -  BTagLabelViewDelegate
 
-- (void)BTagLabelView:(BTagLabelView *)aLabel didSetTag:(NSString *)aTag
+- (void)BTagLabelView:(BTagLabelView *)aLabel didSetTagAtIndex:(NSInteger)aIndex
 {
-    NSLog(@"set tag = %@", aTag);
+    if (aIndex <[_propertyArray count]) {
+        NSString *temp = [_propertyArray objectAtIndex:aIndex];
+        [_propertyArray replaceObjectAtIndex:aIndex withObject:_itemName];
+        
+        NSLog(@"set tag = %@", temp);
+        _itemName = temp;
+        [self refreshData];
+        [self.view layoutIfNeeded];
+    } else {
+        NSLog(@"data error: %s", __func__);
+    }
 }
 
-- (void)BTagLabelView:(BTagLabelView *)aLabel didDeleteTag:(NSString *)aTag
+- (void)BTagLabelView:(BTagLabelView *)aLabel didDeleteTagAtIndex:(NSInteger)aIndex
 {
-    NSLog(@"delete tag = %@", aTag);
+    if (aIndex <[_propertyArray count]) {
+        NSLog(@"delete tag = %@", [_propertyArray objectAtIndex:aIndex]);
+        [_propertyArray removeObjectAtIndex:aIndex];
+        
+        _itemTagLabel.tagArray = _propertyArray;
+        [self refreshData];
+        [self.view layoutIfNeeded];
+    } else {
+        NSLog(@"data error: %s", __func__);
+    }
 }
 
 #pragma mark - UITextViewDelegate
@@ -342,13 +496,7 @@ static const CGFloat itemSpace15 = 15;
         
         [self refreshData];
         [self.view layoutIfNeeded];
-//        [UIView animateWithDuration:0.3
-//                         animations:^{
-//                             [self.view layoutIfNeeded];
-//                         }
-//                         completion:^(BOOL finished) {
-//                             
-//                         }];
+
         return NO;
     }
     return YES;

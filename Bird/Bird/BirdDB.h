@@ -32,5 +32,7 @@
 - (void)deleteCateGoryWithId:(NSString *)aCategoryId;
 
 //属性
+- (void)insertPropertyList:(NSArray *)aProperty;
+- (NSArray *)getUsuallyPropertyWithLimit:(NSInteger)aLimit;
 
 @end

@@ -32,7 +32,8 @@ UITableViewDelegate,
 UINavigationControllerDelegate,
 UIImagePickerControllerDelegate,
 ZYQAssetPickerControllerDelegate,
-BCreateItemViewDelegate>
+BCreateItemViewDelegate,
+BWaterfallViewDelagate>
 {
     BCreateItemViewController *_createItemVC;
     
@@ -268,6 +269,7 @@ BCreateItemViewDelegate>
 - (void)createContentView
 {
     _contentView = [[BWaterfallView alloc] initWithFrame:CGRectZero];
+    _contentView.waterfallDelegate = self;
     _contentView.backgroundColor = [UIColor colorWithRed:231.0/255.0
                                                    green:231.0/255.0
                                                     blue:231.0/255.0
@@ -419,8 +421,8 @@ BCreateItemViewDelegate>
 
 - (void)refreshItemData
 {
-    //    _itemsData = [[BModelInterface shareInstance] getItemsWithCategoryId:_selectedCategoryId];
-    //    _contentView.itemArray = _itemsData;
+    _itemsData = [[BModelInterface shareInstance] getItemsWithCategoryId:_selectedCategoryId];
+    _contentView.itemArray = _itemsData;
 }
 
 #pragma mark - set
@@ -548,6 +550,19 @@ BCreateItemViewDelegate>
     }
     
     self.showFloatView = NO;
+}
+
+#pragma mark - BWaterfallViewDelagate
+
+- (void)BWaterfallView:(BWaterfallView *)aWaterfall didSelectedItemAtIndex:(NSInteger)aIndex
+{
+    if (aIndex < [_itemsData count]) {
+        BItemContent *content = [_itemsData objectAtIndex:aIndex];
+        BItemDetailViewController *detailVC = [[BItemDetailViewController alloc] init];
+        detailVC.itemContent = content;
+        detailVC.categoryName = content.name;
+        [self.navigationController pushViewController:detailVC animated:YES];
+    }
 }
 
 #pragma mark - BCreateItemViewDelegate

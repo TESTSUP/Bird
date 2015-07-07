@@ -29,6 +29,10 @@ static const CGFloat itemSpace = 10.0;
     
     BWaterfallCellView *_lastLeftCell;
     BWaterfallCellView *_lastRightCell;
+    
+    NSArray *_itemArray;
+    NSMutableArray *_leftCellArray;
+    NSMutableArray *_rightCellArray;
 }
 @property (nonatomic, strong) NSMutableArray *loadedImageArray;
 @property (nonatomic, assign) CGFloat leftColumHeight;
@@ -93,23 +97,28 @@ static const CGFloat itemSpace = 10.0;
         make.top.equalTo(self.top);
         make.left.equalTo(self.left).offset(edgeOffset);
         make.right.equalTo(_rightView.left).offset(-itemSpace);
+        make.width.equalTo(_rightView.width);
         if (_lastLeftCell) {
-            make.height.equalTo(_lastLeftCell.bottom).offset(edgeOffset);
+            make.bottom.equalTo(_lastLeftCell.bottom).offset(edgeOffset);
         } else {
             make.height.equalTo(0);
         }
-        
     }];
     
     [_rightView makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.top);
         make.right.equalTo(self.right).offset(-edgeOffset);
         make.left.equalTo(_leftView.right).offset(itemSpace);
+        make.width.equalTo(_leftView.width);
         if (_lastRightCell) {
-            make.height.equalTo(_lastRightCell.bottom).offset(edgeOffset);
+            make.bottom.equalTo(_lastRightCell.bottom).offset(edgeOffset);
         } else {
             make.height.equalTo(0).offset(edgeOffset);
         }
+    }];
+    
+    [_contentView makeConstraints:^(MASConstraintMaker *make) {
+        make.bottom.equalTo(_leftColumHeight > _rightColumHeight? _lastLeftCell.bottom:_lastRightCell.bottom).offset(itemSpace);
     }];
 }
 
@@ -117,10 +126,15 @@ static const CGFloat itemSpace = 10.0;
 {
     [self.loadedImageArray makeObjectsPerformSelector:@selector(removeFromSuperview)];
     [self.loadedImageArray removeAllObjects];
+    _itemArray = aItemArray;
     
-    for (BItemContent *content in aItemArray) {
-        [self createCellWithData:content];
-    }
+//    for (BItemContent *content in aItemArray) {
+//        [self createCellWithData:content];
+//    }
+
+    [self createCellDataWith:aItemArray];
+    [self layoutCells];
+    
     [self checkImageIsVisible];
     
     //第一次加载图片
@@ -150,6 +164,79 @@ static const CGFloat itemSpace = 10.0;
     }
 }
 
+- (void)createCellDataWith:(NSArray *)aItemArray
+{
+    if (!_leftCellArray) {
+        _leftCellArray = [[NSMutableArray alloc] initWithCapacity:0];
+    }
+    if (!_rightCellArray) {
+        _rightCellArray = [[NSMutableArray alloc] initWithCapacity:0];
+    }
+    [_leftCellArray makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    [_rightCellArray makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    [_leftCellArray removeAllObjects];
+    [_rightCellArray removeAllObjects];
+    _leftColumHeight = 0;
+    _rightColumHeight = 0;
+    
+    
+    for (BItemContent *content in aItemArray) {
+        BWaterfallCellView *cell = [[BWaterfallCellView alloc] initWithFrame:CGRectZero];
+        UIImage *image = [BirdUtil getImageWithID:[content.imageIDs firstObject]];
+        cell.itemTitle = content.name;
+        cell.itemImage = image;
+        cell.tag = [aItemArray indexOfObject:content];
+        //图片添加事件响应
+        UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(imageClickWithTag:)];
+        cell.userInteractionEnabled = YES;
+        [cell addGestureRecognizer:tapRecognizer];
+        
+        CGFloat width = (320-edgeOffset*2-itemSpace)/2;
+        CGSize size = [BWaterfallCellView cellSizeWithImage:image andWidth:width];
+        float height = size.height;
+        
+        //判断哪一列的高度最低
+        if( _leftColumHeight <= _rightColumHeight){
+            [_leftCellArray addObject:cell];
+            [_leftView addSubview:cell];
+
+            _leftColumHeight = _leftColumHeight + (itemSpace +height);
+            _lastLeftCell = cell;
+            
+        }else{
+            [_rightCellArray addObject:cell];
+            [_rightView addSubview:cell];
+            
+            _rightColumHeight = _rightColumHeight + height + itemSpace;
+            _lastRightCell = cell;
+        }
+    }
+}
+
+- (void)layoutCells
+{
+    UIView *lastCell = nil;
+    for (BWaterfallCellView *cell in _leftCellArray) {
+        [cell makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(lastCell? lastCell.bottom:_leftView).offset(itemSpace);
+            make.left.equalTo(0);
+            make.width.equalTo(_leftView);
+        }];
+        
+        lastCell = cell;
+    }
+    
+    lastCell = nil;
+    for (BWaterfallCellView *cell in _rightCellArray) {
+        [cell makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(lastCell? lastCell.bottom:_rightView).offset(itemSpace);
+             make.left.equalTo(0);
+            make.width.equalTo(_rightView);
+        }];
+        lastCell = cell;
+    }
+}
+
 /*
  添加一张图片
  规则：根据每一列的高度来决定，优先加载列高度最短的那列
@@ -162,9 +249,9 @@ static const CGFloat itemSpace = 10.0;
     BWaterfallCellView *cell = [[BWaterfallCellView alloc] initWithFrame:CGRectZero];
     
     UIImage *image = [BirdUtil getImageWithID:[content.imageIDs firstObject]];
-    cell.itemImage = nil;
+    cell.itemImage = image;
     cell.itemTitle = content.name;
-    CGFloat width = (self.frame.size.width-edgeOffset*2-itemSpace)/2;
+    CGFloat width = (320-edgeOffset*2-itemSpace)/2;
     CGSize size = [BWaterfallCellView cellSizeWithImage:image andWidth:width];
     
     [self.loadedImageArray addObject:cell];
@@ -178,7 +265,7 @@ static const CGFloat itemSpace = 10.0;
         
         if (_lastLeftCell == nil) {
             [cell makeConstraints:^(MASConstraintMaker *make) {
-                make.top.equalTo(0);
+                make.top.equalTo(itemSpace);
                 make.left.equalTo(0);
                 make.width.equalTo(_leftView.width);
             }];
@@ -198,7 +285,7 @@ static const CGFloat itemSpace = 10.0;
         
         if (_lastRightCell == nil) {
             [cell makeConstraints:^(MASConstraintMaker *make) {
-                make.top.equalTo(0);
+                make.top.equalTo(itemSpace);
                 make.left.equalTo(0);
                 make.width.equalTo(_leftView.width);
             }];
@@ -232,25 +319,28 @@ static const CGFloat itemSpace = 10.0;
  检查图片是否可见，如果不在可见视线内，则把图片替换为nil
  */
 - (void)checkImageIsVisible{
-    for (BWaterfallCellView *cell in self.loadedImageArray) {
-        if((self.contentOffset.y - cell.frame.origin.y) > cell.frame.size.height ||
-           cell.frame.origin.y > (self.frame.size.height + self.contentOffset.y)){
-            //不显示图片
-            cell.itemImage = nil;
-        }else{
-            //重新根据tag值显示图片
-            NSInteger index = [self.loadedImageArray indexOfObject:cell];
-            BItemContent *content = [_itemArray objectAtIndex:index];
-            cell.itemImage = [BirdUtil getImageWithID:[content.imageIDs firstObject]];
-        }
-    }
+//    for (BWaterfallCellView *cell in self.loadedImageArray) {
+//        if((self.contentOffset.y - cell.frame.origin.y) > cell.frame.size.height ||
+//           cell.frame.origin.y > (self.frame.size.height + self.contentOffset.y)){
+//            //不显示图片
+//            cell.itemImage = nil;
+//        }else{
+//            //重新根据tag值显示图片
+//            NSInteger index = [self.loadedImageArray indexOfObject:cell];
+//            BItemContent *content = [_itemArray objectAtIndex:index];
+//            cell.itemImage = [BirdUtil getImageWithID:[content.imageIDs firstObject]];
+//        }
+//    }
 }
 
 //点击图片事件响应
 - (void)imageClickWithTag:(UITapGestureRecognizer *)sender{
 
-    
-
+    if (sender.view.tag < [self.itemArray count]) {
+        if (self.waterfallDelegate && [self.waterfallDelegate respondsToSelector:@selector(BWaterfallView:didSelectedItemAtIndex:)]) {
+            [self.waterfallDelegate BWaterfallView:self didSelectedItemAtIndex:sender.view.tag];
+        }
+    }
 }
 
 

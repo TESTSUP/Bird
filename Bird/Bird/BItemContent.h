@@ -17,7 +17,12 @@
 @property (nonatomic, strong) NSArray *property;            //属性列表，成员：NSString
 @property (nonatomic, assign) NSTimeInterval createTime;    //创建时间
 @property (nonatomic, assign) NSTimeInterval updateTime;    //更新时间
-@property (nonatomic, strong) NSArray *imageDatas;          //图片数据里诶包，成员：UIImage,暂时只在创建物品的时候有值
+//create用
+@property (nonatomic, strong) NSArray *imageDatas;          //图片数据
+//update时删除
+@property (nonatomic, strong) NSArray *deleteImageID;       //要删除的图片id
+//update时添加
+@property (nonatomic, strong) NSArray *addImageData;       //要添加的图片数据
 
 //创建时保存图片并生成本地id
 - (void)createImageIds;

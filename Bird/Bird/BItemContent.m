@@ -25,9 +25,38 @@
 
 - (void)updateImageIds
 {
-    [self deleteImages];
+    NSMutableArray *_tempImageID = [[NSMutableArray alloc] initWithArray:self.imageIDs];
+    NSMutableArray *_tempImageData = nil;
+    if ([self.imageDatas count]) {
+        _tempImageData = [[NSMutableArray alloc] initWithArray:self.imageDatas];
+    }
     
-    [self createImageIds];
+    for (NSString *imageId in self.deleteImageID) {
+        //删除文件
+        [BirdUtil deleteImageWithId:imageId];
+        //删除数据
+        for (NSString *orgImageid in _tempImageID) {
+            if ([orgImageid isEqualToString:imageId]) {
+                NSInteger index =[_tempImageID indexOfObject:orgImageid];
+                if ([_tempImageData count]) {
+                    [_tempImageData removeObjectAtIndex:index];
+                }
+                [_tempImageID removeObject:orgImageid];
+            }
+        }
+    }
+    
+    for (UIImage *imageData in self.addImageData) {
+        NSString *imageId = [BirdUtil createImageID];
+        [BirdUtil saveImage:imageData withId:imageId];
+        [_tempImageID addObject:imageId];
+        if ([_tempImageData count]) {
+            [_tempImageData addObject:imageData];
+        }
+    }
+    
+    self.imageIDs = _tempImageID;
+    self.imageDatas = _tempImageData;
 }
 
 - (void)deleteImages

@@ -24,7 +24,7 @@
 
 + (void)deleteImageWithId:(NSString *)aImageId;
 
-+ (CGSize)compressImage:(UIImage*)aImage withWidth:(CGFloat)width;
++ (UIImage *)compressImage:(UIImage*)aImage withWidth:(CGFloat)width;
 
 + (UIImage *)squareThumbnailWithOrgImage:(UIImage *)image
                            andSideLength:(CGFloat)aLength;

@@ -186,7 +186,7 @@ static BirdDB *DBInstance = nil;
         [self checkError:db];
     }];
     
-    
+    [self insertPropertyList:aItem.property];
 }
 
 - (BItemContent *)createItemWithResult:(FMResultSet *)rs
@@ -225,7 +225,7 @@ static BirdDB *DBInstance = nil;
         [self.dbQueue inDatabase:^(FMDatabase *db) {
             FMResultSet *rs = [db executeQuery:@"SELECT * FROM bird_db_items"];
             [self checkError:db];
-            if ([rs next]) {
+            while([rs next]) {
                 BItemContent *item = [self createItemWithResult:rs];
                 if (item) {
                     [rt addObject:item];
@@ -348,6 +348,37 @@ static BirdDB *DBInstance = nil;
 
 #pragma mark - property
 
+- (void)insertPropertyList:(NSArray *)aProperty
+{
+    [self.dbQueue inTransaction:^(FMDatabase *db, BOOL *rollback) {
+        for (NSString *name in aProperty) {
+            //查询次数
+            FMResultSet *rs = [db executeQuery:@"SELECT used_count FROM bird_db_property WHERE name = ?", name];
+            [self checkError:db];
+            NSInteger count = 0;
+            if ([rs next]) {
+                count = [rs intForColumnIndex:0];
+            }
+            //插入
+            [db executeUpdate:@"INSERT OR REPLACE INTO bird_db_property (name, used_count) VALUES (?,?)", name, @(++count)];
+            [self checkError:db];
+        }
+    }];
+}
 
+- (NSArray *)getUsuallyPropertyWithLimit:(NSInteger)aLimit
+{
+     NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:0];
+    [self.dbQueue inDatabase:^(FMDatabase *db) {
+        FMResultSet *rs = [db executeQuery:@"SELECT * FROM bird_db_property ORDER BY used_count DESC LIMIT 10"];
+        [self checkError:db];
+        while ([rs next]) {
+            NSString *property = [rs stringForColumnIndex:0];
+            [array addObject:property];
+        }
+    }];
+    
+    return array;
+}
 
 @end

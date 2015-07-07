@@ -9,11 +9,15 @@
 #import "BTagLabelView.h"
 #import <CoreText/CoreText.h>
 
-static NSString *const defaultSepStr = @"  |  ";
+static NSString *const defaultSepStr = @"|";
 
 @interface BTagLabelView ()
+{
+    NSMutableArray *_rangerArray;
+}
 
 @property(nonatomic) NSRange highlightedRange;
+@property (nonatomic) NSInteger highlightedIndex;
 
 @end
 
@@ -286,38 +290,6 @@ static NSString *const defaultSepStr = @"  |  ";
     self.attributedText = attributedString;
 }
 
-//是否点中了分隔符
-- (BOOL)isSeparateStringAtLocation:(NSUInteger)loc
-{
-    //    NSError *error = NULL;
-    //    NSString *expression = [NSString stringWithFormat:@"(%@)", self.separateStr];
-    //    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:expression
-    //                                                                           options:NSRegularExpressionCaseInsensitive
-    //                                                                             error:&error];
-    //    __block BOOL isSepStr = NO;
-    //    [regex enumerateMatchesInString:self.text
-    //                            options:0
-    //                              range:NSMakeRange(0, [[self text] length])
-    //                         usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
-    //                             NSRange scannedRange = [result range];
-    //                             if (NSLocationInRange(loc, scannedRange)) {
-    //                                 isSepStr = YES;
-    //                                 *stop = YES;
-    //                             }
-    //                         }];
-    
-    BOOL isSepStr = YES;
-    for (NSString *subStr in self.tagArray) {
-        NSRange subRanger = [self.text rangeOfString:subStr];
-        if (NSLocationInRange(loc, subRanger)) {
-            isSepStr = NO;
-            break;
-        }
-    }
-    
-    return isSepStr;
-}
-
 - (NSRange)getTapedRangeWithIndex:(CFIndex)charIndex
 {
     NSString* string = self.text;
@@ -343,6 +315,19 @@ static NSString *const defaultSepStr = @"  |  ";
     }
     
     return wordRange;
+}
+
+- (NSRange)getLongPressedRangeWithIndex:(CFIndex)charIndex
+{
+    for (NSString *rangeStr in _rangerArray) {
+        NSRange range = NSRangeFromString(rangeStr);
+        if (NSLocationInRange(charIndex, range))
+        {
+            self.highlightedIndex = [_rangerArray indexOfObject:rangeStr];
+            return range;
+        }
+    }
+    return NSMakeRange(NSNotFound, 0);
 }
 
 - (BOOL)canBecomeFirstResponder
@@ -386,14 +371,15 @@ static NSString *const defaultSepStr = @"  |  ";
     CGPoint point = [aTap locationInView:self];
     
     CFIndex charIndex = [self characterIndexAtPoint:point];
+    NSRange wordRange = [self getLongPressedRangeWithIndex:charIndex];
     
-    if (charIndex==NSNotFound || [self isSeparateStringAtLocation:charIndex]) {
+    if (charIndex==NSNotFound ||
+        wordRange.location == NSNotFound ||
+        wordRange.length == 0) {
         //user did nat click on any word
         [self removeHighlight];
         return;
     }
-    
-    NSRange wordRange = [self getTapedRangeWithIndex:charIndex];
     
     self.highlightedRange = wordRange;
 }
@@ -405,14 +391,17 @@ static NSString *const defaultSepStr = @"  |  ";
         CGPoint point = [aPan locationInView:self];
         
         CFIndex charIndex = [self characterIndexAtPoint:point];
-        if (charIndex==NSNotFound || [self isSeparateStringAtLocation:charIndex]) {
+        NSRange wordRange = [self getLongPressedRangeWithIndex:charIndex];
+        
+        if (charIndex==NSNotFound ||
+            wordRange.location == NSNotFound ||
+            wordRange.length == 0) {
             //user did nat click on any word
             [self removeHighlight];
             return;
         }
-        NSRange wordRange = [self getTapedRangeWithIndex:charIndex];
+
         self.highlightedRange = wordRange;
-        
         CGPoint popPoint = [self menuItemPopPointAtPoint:point];
         
         UIMenuController *popMenu = [UIMenuController sharedMenuController];
@@ -429,18 +418,16 @@ static NSString *const defaultSepStr = @"  |  ";
 - (void)handleDeleteAction
 {
     //delegate
-    if (self.delegate && [self.delegate respondsToSelector:@selector(BTagLabelView:didDeleteTag:)]) {
-        NSString *temp = [self.text substringWithRange:self.highlightedRange];
-        [self.delegate BTagLabelView:self didDeleteTag:temp];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(BTagLabelView:didDeleteTagAtIndex:)]) {
+        [self.delegate BTagLabelView:self didDeleteTagAtIndex:self.highlightedIndex];
     }
 }
 
 - (void)handleSetAction
 {
     //delegate
-    if (self.delegate && [self.delegate respondsToSelector:@selector(BTagLabelView:didSetTag:)]) {
-        NSString *temp = [self.text substringWithRange:self.highlightedRange];
-        [self.delegate BTagLabelView:self didSetTag:temp];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(BTagLabelView:didSetTagAtIndex:)]) {
+        [self.delegate BTagLabelView:self didSetTagAtIndex:self.highlightedIndex];
     }
 }
 
@@ -448,10 +435,35 @@ static NSString *const defaultSepStr = @"  |  ";
 
 - (void)setTagArray:(NSArray *)aTagArray
 {
-    if ([aTagArray count]) {
-        NSString *newStr = [aTagArray componentsJoinedByString:self.separateStr];
-        self.text = newStr;
+    if (_rangerArray == nil) {
+        _rangerArray = [[NSMutableArray alloc] initWithCapacity:0];
     }
+    [_rangerArray removeAllObjects];
+    
+    NSString *lastStr = nil;
+    for (NSString *subString in aTagArray) {
+        NSString *expandStr = [NSString stringWithFormat:@"  %@  ", subString];
+        NSInteger loc = 0;
+        
+        if (lastStr == nil) {
+            lastStr = expandStr;
+            loc = 0;
+        } else {
+            lastStr= [lastStr stringByAppendingString:self.separateStr];
+            loc = [lastStr length]-1;
+            lastStr = [lastStr stringByAppendingString:expandStr];
+        }
+         NSRange subRange = NSMakeRange(loc, [expandStr length]);
+        NSString *rangeStr = NSStringFromRange(subRange);
+        [_rangerArray addObject:rangeStr];
+    }
+    
+    self.text = lastStr;
+    
+//    if ([aTagArray count]) {
+//        NSString *newStr = [aTagArray componentsJoinedByString:self.separateStr];
+//        self.text = newStr;
+//    }
     
     _tagArray = aTagArray;
 }

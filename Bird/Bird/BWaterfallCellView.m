@@ -28,7 +28,7 @@ static const CGFloat labelHeight = 40;
 {
     self = [super initWithFrame:frame];
     if (self) {
-        
+        [self createSubViews];
     }
     
     return self;
@@ -36,21 +36,29 @@ static const CGFloat labelHeight = 40;
 
 - (void)createSubViews
 {
+    self.backgroundColor = [UIColor whiteColor];
+    self.layer.cornerRadius = 2.0;
+    self.clipsToBounds = YES;
+    
     _imageView = [[UIImageView alloc] initWithFrame:CGRectZero];
     
     _titleLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-    _titleLabel.textColor = [UIColor greenColor];
-    _titleLabel.textAlignment = NSTextAlignmentCenter;
-    _titleLabel.font = [UIFont systemFontOfSize:14];
+    _titleLabel.textColor = [UIColor colorWithRed:68.0/255.0
+                                            green:68.0/255.0
+                                             blue:68.0/255.0
+                                            alpha:1.0];
+    _titleLabel.textAlignment = NSTextAlignmentLeft;
+    _titleLabel.font = [UIFont systemFontOfSize:12];
+    
+    _imageView.backgroundColor = [UIColor clearColor];
+    _titleLabel.backgroundColor = [UIColor clearColor];
     
     [self addSubview:_imageView];
     [self addSubview:_titleLabel];
 }
 
-- (void)layoutSubviews
+- (void)layoutCell
 {
-    [super layoutSubviews];
-    
     [_imageView remakeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(0);
         make.left.equalTo(0);
@@ -60,9 +68,9 @@ static const CGFloat labelHeight = 40;
     
     [_titleLabel makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(_imageView.bottom);
-        make.left.equalTo(0);
+        make.left.equalTo(5);
         make.right.equalTo(0);
-        make.height.equalTo(40);
+        make.height.equalTo([_titleLabel.text length]>0? 27:0);
     }];
     
     [self makeConstraints:^(MASConstraintMaker *make) {
@@ -82,16 +90,20 @@ static const CGFloat labelHeight = 40;
 
 - (void)setItemImage:(UIImage *)itemImage
 {
+    if (!itemImage) {
+        return;
+    }
     CGFloat orgi_width = itemImage.size.width;
     CGFloat orgi_height = itemImage.size.height;
     _ratioHW = orgi_height/orgi_width;
-    
-    [self layoutSubviews];
+    _imageView.image = [BirdUtil compressImage:itemImage withWidth:160];
+    [self layoutCell];
 }
 
 - (void)setItemTitle:(NSString *)itemTitle
 {
     _titleLabel.text = itemTitle;
+    [self layoutCell];
 }
 
 @end

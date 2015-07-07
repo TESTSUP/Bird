@@ -112,7 +112,7 @@ static BModelInterface *modelInstance = nil;
 
 - (NSArray *)getUsuallyPropertyWithLimit:(NSInteger )aLimit
 {
-    return nil;
+    return [[BirdDB share] getUsuallyPropertyWithLimit:aLimit];
 }
 
 @end

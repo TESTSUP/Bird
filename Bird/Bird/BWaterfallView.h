@@ -12,12 +12,14 @@
 
 @protocol BWaterfallViewDelagate <NSObject>
 
-- (void)BWaterfallView:(BWaterfallView *)aWaterfall didSelectedItemAtIndexL:(NSInteger)aIndex;
+- (void)BWaterfallView:(BWaterfallView *)aWaterfall didSelectedItemAtIndex:(NSInteger)aIndex;
 
 @end
 
 
 @interface BWaterfallView : UIScrollView
+
+@property (nonatomic, weak) id<BWaterfallViewDelagate> waterfallDelegate;
 
 @property (nonatomic, strong) NSArray *itemArray;
 

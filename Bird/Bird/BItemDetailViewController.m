@@ -20,7 +20,7 @@ static const CGFloat ThumbnailSide = 70;
 static const CGFloat ItemOffset5 = 5;
 static const CGFloat ItemOffset10 = 10;
 
-@interface BItemDetailViewController ()
+@interface BItemDetailViewController () <UIActionSheetDelegate>
 {
     UIScrollView *_scrollView;
     UIView *_contentView;
@@ -48,7 +48,7 @@ static const CGFloat ItemOffset10 = 10;
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-
+    self.view.backgroundColor = [UIColor whiteColor];
     [self configNavigationBar];
     
     [self createSubViews];
@@ -150,9 +150,9 @@ static const CGFloat ItemOffset10 = 10;
     _titleView = [[UITextField alloc] initWithFrame:CGRectZero];
     _titleView.placeholder = @"物品/描述/标签";
     _titleView.enabled = NO;
-    
     _editeIcon = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"item_editeIcon"]];
     _tagView = [[BTagLabelView alloc] initWithFrame:CGRectZero];
+    _tagView.backgroundColor = [UIColor redColor];
     
     [_itemDescView addSubview:_topDescLine];
     [_itemDescView addSubview:_titleView];
@@ -236,7 +236,7 @@ static const CGFloat ItemOffset10 = 10;
                                                   context:nil];
         tagHeight = rect.size.height;
     }
-    [_tagView makeConstraints:^(MASConstraintMaker *make) {
+    [_tagView remakeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(DefaultDescViewHeight);
         make.left.equalTo(ItemOffset10);
         make.right.equalTo(-ItemOffset10);
@@ -254,7 +254,7 @@ static const CGFloat ItemOffset10 = 10;
      if ([_imageViewArray count] == 0) {
          lastView = _coverView;
      }
-    [_itemDescView makeConstraints:^(MASConstraintMaker *make) {
+    [_itemDescView remakeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(lastView.bottom).offset(ItemOffset5);
         make.left.equalTo(0);
         make.right.equalTo(0);
@@ -318,10 +318,19 @@ static const CGFloat ItemOffset10 = 10;
 {
     UIImage *cover = [self.itemContent imageWithId:[self.itemContent.imageIDs firstObject]];
     _coverView.image = [BirdUtil squareThumbnailWithOrgImage:cover andSideLength:CoverSide];
-
+    _titleView.text = self.itemContent.name;
+    _tagView.tagArray = self.itemContent.property;
+    
     [self loadImagesData];
     
     [self layoutsubViews];
+}
+
+#pragma mark - UIActionSheetDelegate
+
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    
 }
 
 #pragma mark - action 
@@ -341,12 +350,21 @@ static const CGFloat ItemOffset10 = 10;
 - (void)handleAddImageAction
 {
     NSLog(@"add image action");
+    
+    UIActionSheet *actionSheet = [[UIActionSheet alloc]
+                                  initWithTitle:@"选取图片"
+                                  delegate:self
+                                  cancelButtonTitle:@"取消"
+                                  destructiveButtonTitle:@"拍照"
+                                  otherButtonTitles:@"从相册选取",nil];
+    actionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
+    [actionSheet showInView:self.view];
 }
 
 - (void)handleEditTagAction
 {
     BEditItemViewController *editVC = [[BEditItemViewController alloc] init];
-    
+    editVC.itemContent = self.itemContent;
     [self.navigationController pushViewController:editVC animated:YES];
 }
 
