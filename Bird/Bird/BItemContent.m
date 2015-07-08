@@ -42,6 +42,7 @@
                     [_tempImageData removeObjectAtIndex:index];
                 }
                 [_tempImageID removeObject:orgImageid];
+                break;
             }
         }
     }

@@ -200,12 +200,12 @@ static BirdDB *DBInstance = nil;
     item.createTime = [rs intForColumnIndex:5];
     item.updateTime = [rs intForColumnIndex:6];
     
-    NSMutableArray *imageArray = [[NSMutableArray alloc] initWithCapacity:0];
-    for (NSString *imageID in item.imageIDs) {
-        UIImage *image = [BirdUtil getImageWithID:imageID];
-        [imageArray addObject:image];
-    }
-    item.imageDatas = imageArray;
+//    NSMutableArray *imageArray = [[NSMutableArray alloc] initWithCapacity:0];
+//    for (NSString *imageID in item.imageIDs) {
+//        UIImage *image = [BirdUtil getImageWithID:imageID];
+//        [imageArray addObject:image];
+//    }
+//    item.imageDatas = imageArray;
     
     return item;
 }

@@ -13,7 +13,7 @@
 #import "BEditItemViewController.h"
 #import "BModelInterface.h"
 #import "ZYQAssetPickerController.h"
-#import "BimageViewController.h"
+#import "BPageViewController.h"
 
 static const CGFloat CoverSide = 230;
 static const CGFloat AddBtnSide = 65;
@@ -27,7 +27,8 @@ static const CGFloat LineSpace = 15;
 <UIActionSheetDelegate,
 UINavigationControllerDelegate,
 UIImagePickerControllerDelegate,
-ZYQAssetPickerControllerDelegate>
+ZYQAssetPickerControllerDelegate,
+BPageViewControllerDelegate>
 {
     UIScrollView *_scrollView;
     UIView *_contentView;
@@ -47,8 +48,6 @@ ZYQAssetPickerControllerDelegate>
     UIImageView *_editeIcon;
     BTagLabelView *_tagView;
     UIView *_bottomDescLine;
-    
-    UIImageView *_tapView;
 }
 @end
 
@@ -363,6 +362,28 @@ ZYQAssetPickerControllerDelegate>
     [self layoutsubViews];
 }
 
+#pragma mark - BPageViewControllerDelegate
+
+- (void)BPageViewController:(BPageViewController *)aVC didSetCoverAtIndex:(NSInteger)aIndex
+{
+    if (aIndex == 0) {
+        return;
+    }
+    
+    NSMutableArray *temp = [[NSMutableArray alloc] initWithArray:self.itemContent.imageIDs];
+    [temp exchangeObjectAtIndex:aIndex withObjectAtIndex:0];
+    self.itemContent.imageIDs = temp;
+    
+    [[BModelInterface shareInstance] handleItemWithAction:ModelAction_update andData:self.itemContent];
+}
+
+- (void)BPageViewController:(BPageViewController *)aVC didDeleteImageAtIndex:(NSInteger)aIndex
+{
+    NSString *deleteId = [self.itemContent.imageIDs objectAtIndex:aIndex];
+    self.itemContent.deleteImageID = @[deleteId];
+    [[BModelInterface shareInstance] handleItemWithAction:ModelAction_update andData:self.itemContent];
+}
+
 #pragma mark - UIActionSheetDelegate
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
@@ -496,11 +517,13 @@ ZYQAssetPickerControllerDelegate>
 {
     NSLog(@"tap image, index = %ld", (long)aTap.view.tag);
     
-    _tapView = (UIImageView *)aTap.view;
+    UIView* tapView = (UIImageView *)aTap.view;
     
-    BimageViewController* imageVC = [[BimageViewController alloc] init];
-    imageVC.image = _tapView.image;
-    [self presentViewController:imageVC animated:NO completion:nil];
+    BPageViewController* imageVC = [[BPageViewController alloc] init];
+    imageVC.delegate = self;
+    imageVC.imageIds = self.itemContent.imageIDs;
+    imageVC.currentIndex = tapView.tag;
+    [self presentViewController:imageVC animated:YES completion:nil];
     
     return;
 }

@@ -7,6 +7,7 @@
 //
 
 #import "BimageViewController.h"
+#import "BirdUtil.h"
 
 @interface BimageViewController ()
 {
@@ -32,35 +33,32 @@
     
     sv.delegate = self;
     
-    [self loadImage:self.image];
+    [self loadImage];
 }
 // 加载图片
-- (void)loadImage:(UIImage *)aImage
+- (void)loadImage
 {
-    UIImage *image = aImage;
+    UIImage *image = nil;
+    if ([self.imageData isKindOfClass:[NSString class]]) {
+        image = [BirdUtil getImageWithID:self.imageData];
+    } else if ([self.imageData isKindOfClass:[UIImage class]]) {
+        image = self.imageData;
+    } else {
+        NSLog(@"image data error");
+    }
+
     // 重置UIImageView的Frame，让图片居中显示
-    
-    CGFloat origin_x = abs(sv.frame.size.width - image.size.width)/2.0;
-    CGFloat origin_y = abs(sv.frame.size.height - image.size.height)/2.0;
-    iv.frame = CGRectMake(origin_x, origin_y, sv.frame.size.width, sv.frame.size.width*image.size.height/image.size.width);
+    CGSize newSize = CGSizeMake(sv.frame.size.width, sv.frame.size.width*image.size.height/image.size.width);
+    CGFloat origin_x = abs(sv.frame.size.width - newSize.width)/2.0;
+    CGFloat origin_y = abs(sv.frame.size.height - newSize.height)/2.0;
+    iv.frame = CGRectMake(origin_x, origin_y, newSize.width, newSize.height);
     [iv setImage:image];
     
-    CGSize maxSize = sv.frame.size;
-    CGFloat widthRatio = maxSize.width/image.size.width;
-    CGFloat heightRatio = maxSize.height/image.size.height;
-    CGFloat initialZoom = (widthRatio > heightRatio) ? heightRatio : widthRatio;
-    /*
-     
-     ** 设置UIScrollView的最大和最小放大级别（注意如果MinimumZoomScale == MaximumZoomScale，
-     
-     ** 那么UIScrllView就缩放不了了
-     
-     */
-    [sv setMinimumZoomScale:initialZoom];
-    [sv setMaximumZoomScale:5];
+    [sv setMinimumZoomScale:0.8];
+    [sv setMaximumZoomScale:3.5];
     // 设置UIScrollView初始化缩放级别
     
-    [sv setZoomScale:initialZoom];
+    [sv setZoomScale:0.95];
 }
 
 // 设置UIScrollView中要缩放的视图

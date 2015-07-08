@@ -10,6 +10,6 @@
 
 @interface BimageViewController : UIViewController <UIScrollViewDelegate>
 
-@property (nonatomic, strong) UIImage *image;
+@property (nonatomic, strong) id imageData;
 
 @end;
