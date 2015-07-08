@@ -12,6 +12,8 @@
 #import "BTagLabelView.h"
 #import "BEditItemViewController.h"
 #import "BModelInterface.h"
+#import "ZYQAssetPickerController.h"
+#import "BimageViewController.h"
 
 static const CGFloat CoverSide = 230;
 static const CGFloat AddBtnSide = 65;
@@ -19,8 +21,13 @@ static const CGFloat DefaultDescViewHeight = 50;
 static const CGFloat ThumbnailSide = 70;
 static const CGFloat ItemOffset5 = 5;
 static const CGFloat ItemOffset10 = 10;
+static const CGFloat LineSpace = 15;
 
-@interface BItemDetailViewController () <UIActionSheetDelegate>
+@interface BItemDetailViewController ()
+<UIActionSheetDelegate,
+UINavigationControllerDelegate,
+UIImagePickerControllerDelegate,
+ZYQAssetPickerControllerDelegate>
 {
     UIScrollView *_scrollView;
     UIView *_contentView;
@@ -40,6 +47,8 @@ static const CGFloat ItemOffset10 = 10;
     UIImageView *_editeIcon;
     BTagLabelView *_tagView;
     UIView *_bottomDescLine;
+    
+    UIImageView *_tapView;
 }
 @end
 
@@ -94,7 +103,7 @@ static const CGFloat ItemOffset10 = 10;
 {
     _scrollView = [[UIScrollView alloc] initWithFrame:CGRectZero];
     _contentView = [[UIView alloc] initWithFrame:CGRectZero];
-    
+    _contentView.backgroundColor = [UIColor clearColor];
     [_scrollView addSubview:_contentView];
     [self.view addSubview:_scrollView];
     
@@ -121,12 +130,17 @@ static const CGFloat ItemOffset10 = 10;
     
     [_contentView addSubview:_coverView];
     [_contentView addSubview:_addImageBtn];
+    
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleThumbnailTap:)];
+    [_coverView addGestureRecognizer:tap];
+    _coverView.tag = 0;
+    _coverView.userInteractionEnabled = YES;
 }
 
 - (void)createThumbnailView
 {
     _thumbnailView = [[UIView alloc] initWithFrame:CGRectZero];
-    _thumbnailView.backgroundColor = [UIColor greenColor];
+    _thumbnailView.backgroundColor = [UIColor clearColor];
     [_contentView addSubview:_thumbnailView];
 }
 
@@ -150,9 +164,22 @@ static const CGFloat ItemOffset10 = 10;
     _titleView = [[UITextField alloc] initWithFrame:CGRectZero];
     _titleView.placeholder = @"物品/描述/标签";
     _titleView.enabled = NO;
+    _titleView.font = [UIFont systemFontOfSize:16];
+    _titleView.textColor = [UIColor colorWithRed:68.0/255.0
+                                           green:68.0/255.0
+                                            blue:68.0/255.0
+                                           alpha:1.0];
+    
     _editeIcon = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"item_editeIcon"]];
+    
     _tagView = [[BTagLabelView alloc] initWithFrame:CGRectZero];
-    _tagView.backgroundColor = [UIColor redColor];
+    _tagView.backgroundColor = [UIColor clearColor];
+    _tagView.numberOfLines = 0;
+    _tagView.font = [UIFont systemFontOfSize:14];
+    _tagView.textColor = [UIColor colorWithRed:154.0/255.0
+                                         green:154.0/255.0
+                                          blue:154.0/255.0
+                                         alpha:1.0];
     
     [_itemDescView addSubview:_topDescLine];
     [_itemDescView addSubview:_titleView];
@@ -230,11 +257,18 @@ static const CGFloat ItemOffset10 = 10;
     
     CGFloat tagHeight = 0;
     if ([_tagView.text length]) {
-        CGRect rect = [_tagView.text boundingRectWithSize:CGSizeMake(self.view.frame.size.width-2*ItemOffset10, 99999)
+        
+        NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+        [paragraphStyle setLineSpacing:LineSpace];//调整行间距
+        NSDictionary *attrDic = @{NSFontAttributeName:_tagView.font, NSParagraphStyleAttributeName:paragraphStyle};
+        NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:_tagView.text attributes:attrDic];
+        _tagView.attributedText = attributedString;
+        
+        CGRect rect = [_tagView.text boundingRectWithSize:CGSizeMake(self.view.frame.size.width-2*ItemOffset10, CGFLOAT_MAX)
                                                   options:NSStringDrawingUsesLineFragmentOrigin
-                                               attributes:@{NSFontAttributeName:_tagView.font}
+                                               attributes:attrDic
                                                   context:nil];
-        tagHeight = rect.size.height;
+        tagHeight = rect.size.height+1;
     }
     [_tagView remakeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(DefaultDescViewHeight);
@@ -244,7 +278,7 @@ static const CGFloat ItemOffset10 = 10;
     }];
     
     [_bottomDescLine makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(_tagView.bottom);
+        make.top.equalTo(_tagView.bottom).offset([_tagView.text length]? ItemOffset10:0);
         make.left.equalTo(0);
         make.right.equalTo(0);
         make.height.equalTo(0.5);
@@ -258,8 +292,7 @@ static const CGFloat ItemOffset10 = 10;
         make.top.equalTo(lastView.bottom).offset(ItemOffset5);
         make.left.equalTo(0);
         make.right.equalTo(0);
-        make.height.equalTo(DefaultDescViewHeight);
-//        make.bottom.equalTo(_bottomDescLine.bottom);
+        make.height.equalTo(DefaultDescViewHeight+tagHeight+ItemOffset10);
     }];
 }
 
@@ -311,6 +344,10 @@ static const CGFloat ItemOffset10 = 10;
         [_thumbnailView addSubview:imageView];
         imageView.tag = [self.itemContent.imageIDs indexOfObject:imageId];
         [_imageViewArray addObject:imageView];
+        
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleThumbnailTap:)];
+        [imageView addGestureRecognizer:tap];
+        imageView.userInteractionEnabled = YES;
     }
 }
 
@@ -330,7 +367,85 @@ static const CGFloat ItemOffset10 = 10;
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
+    switch (buttonIndex) {
+        case 0:
+        {
+            if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+                UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
+                imagePickerController.delegate = self;
+                imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
+                imagePickerController.showsCameraControls = YES;
+                imagePickerController.cameraFlashMode = UIImagePickerControllerCameraFlashModeAuto;
+                //取景框全屏
+                CGSize screenBounds = [UIScreen mainScreen].bounds.size;
+                CGFloat cameraAspectRatio = 4.0f/3.0f;
+                CGFloat camViewHeight = screenBounds.width * cameraAspectRatio;
+                CGFloat scale = screenBounds.height / camViewHeight;
+                imagePickerController.cameraViewTransform = CGAffineTransformMakeTranslation(0, (screenBounds.height - camViewHeight) / 2.0);
+                imagePickerController.cameraViewTransform = CGAffineTransformScale(imagePickerController.cameraViewTransform, scale, scale);
+                
+                [self presentViewController:imagePickerController animated:YES completion:nil];
+            } else {
+                NSLog(@"设备不支持拍照");
+            }
+        }
+            break;
+        case 1:
+        {
+            NSInteger count = MAX_ItemImageCount-[self.itemContent.imageIDs count];
+            
+            ZYQAssetPickerController *picker = [[ZYQAssetPickerController alloc] init];
+            picker.maximumNumberOfSelection = count;
+            picker.assetsFilter = [ALAssetsFilter allPhotos];
+            picker.showEmptyGroups=NO;
+            picker.delegate=self;
+            picker.selectionFilter = [NSPredicate predicateWithBlock:^BOOL(id evaluatedObject, NSDictionary *bindings) {
+                if ([[(ALAsset*)evaluatedObject valueForProperty:ALAssetPropertyType] isEqual:ALAssetTypeVideo]) {
+                    NSTimeInterval duration = [[(ALAsset*)evaluatedObject valueForProperty:ALAssetPropertyDuration] doubleValue];
+                    return duration >= 5;
+                } else {
+                    return YES;
+                }
+            }];
+
+            [self presentViewController:picker animated:YES completion:NULL];
+        }
+            break;
+        default:
+            break;
+    }
+}
+
+#pragma mark - UIImagePickerControllerDelegate
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
+{
+    UIImage *pickImage = [info objectForKey:UIImagePickerControllerOriginalImage];
+    NSLog(@"%@", pickImage);
     
+    [self dismissViewControllerAnimated:YES completion:^{
+
+    }];
+}
+
+#pragma mark - ZYQAssetPickerController Delegate
+-(void)assetPickerController:(ZYQAssetPickerController *)picker didFinishPickingAssets:(NSArray *)assets{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        
+        NSMutableArray *imageArray = [[NSMutableArray alloc] initWithCapacity:0];
+        for (int i=0; i<assets.count; i++) {
+            ALAsset *asset=assets[i];
+            UIImage *tempImg=[UIImage imageWithCGImage:asset.defaultRepresentation.fullScreenImage];
+            [imageArray addObject:tempImg];
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+
+        });
+    });
+}
+
+-(void)assetPickerControllerDidMaximum:(ZYQAssetPickerController *)picker{
+    NSLog(@"到达上限");
 }
 
 #pragma mark - action 
@@ -351,13 +466,22 @@ static const CGFloat ItemOffset10 = 10;
 {
     NSLog(@"add image action");
     
+    if ([self.itemContent.imageIDs count] >=9) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"图片数量已达上限"
+                                   message:nil
+                                  delegate:nil
+                         cancelButtonTitle:@"确定"
+                         otherButtonTitles:nil, nil];
+        [alert show];
+        return;
+    }
+    
     UIActionSheet *actionSheet = [[UIActionSheet alloc]
-                                  initWithTitle:@"选取图片"
+                                  initWithTitle:@"增加图片"
                                   delegate:self
                                   cancelButtonTitle:@"取消"
-                                  destructiveButtonTitle:@"拍照"
-                                  otherButtonTitles:@"从相册选取",nil];
-    actionSheet.actionSheetStyle = UIActionSheetStyleBlackOpaque;
+                                  destructiveButtonTitle:nil
+                                  otherButtonTitles:@"拍照", @"从相册选择",nil];
     [actionSheet showInView:self.view];
 }
 
@@ -366,6 +490,19 @@ static const CGFloat ItemOffset10 = 10;
     BEditItemViewController *editVC = [[BEditItemViewController alloc] init];
     editVC.itemContent = self.itemContent;
     [self.navigationController pushViewController:editVC animated:YES];
+}
+
+- (void)handleThumbnailTap:(UITapGestureRecognizer *)aTap
+{
+    NSLog(@"tap image, index = %ld", (long)aTap.view.tag);
+    
+    _tapView = (UIImageView *)aTap.view;
+    
+    BimageViewController* imageVC = [[BimageViewController alloc] init];
+    imageVC.image = _tapView.image;
+    [self presentViewController:imageVC animated:NO completion:nil];
+    
+    return;
 }
 
 - (void)didReceiveMemoryWarning {

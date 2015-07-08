@@ -141,4 +141,11 @@ static BModelInterface *modelInstance = nil;
     return [[BirdDB share] getUsuallyPropertyWithLimit:aLimit];
 }
 
+- (void)statisticsProperties:(NSArray *)propertyList
+{
+    if ([propertyList count]) {
+        [[BirdDB share] insertPropertyList:propertyList];
+    }
+}
+
 @end

@@ -49,6 +49,7 @@
 		CFCEA32F1B44D7A0002DE1F6 /* BSquareImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = CFCEA32E1B44D7A0002DE1F6 /* BSquareImageView.m */; };
 		CFD1EA161B3D583600C9C588 /* BHomeFloadView.m in Sources */ = {isa = PBXBuildFile; fileRef = CFD1EA151B3D583600C9C588 /* BHomeFloadView.m */; };
 		CFEB1D131B4A2485005FE929 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFEB1D121B4A2485005FE929 /* StoreKit.framework */; };
+		CFEB1D401B4D2D62005FE929 /* BimageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CFEB1D3F1B4D2D62005FE929 /* BimageViewController.m */; };
 		CFFAB76E1B451B75006716A3 /* BWaterfallView.m in Sources */ = {isa = PBXBuildFile; fileRef = CFFAB76D1B451B75006716A3 /* BWaterfallView.m */; };
 		CFFAB7711B451B8C006716A3 /* BWaterfallCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = CFFAB7701B451B8C006716A3 /* BWaterfallCellView.m */; };
 		CFFAB7741B451BDF006716A3 /* BTagLabelView.m in Sources */ = {isa = PBXBuildFile; fileRef = CFFAB7731B451BDF006716A3 /* BTagLabelView.m */; };
@@ -152,6 +153,8 @@
 		CFD1EA141B3D583600C9C588 /* BHomeFloadView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BHomeFloadView.h; sourceTree = "<group>"; };
 		CFD1EA151B3D583600C9C588 /* BHomeFloadView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BHomeFloadView.m; sourceTree = "<group>"; };
 		CFEB1D121B4A2485005FE929 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		CFEB1D3E1B4D2D62005FE929 /* BimageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BimageViewController.h; sourceTree = "<group>"; };
+		CFEB1D3F1B4D2D62005FE929 /* BimageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BimageViewController.m; sourceTree = "<group>"; };
 		CFFAB76C1B451B75006716A3 /* BWaterfallView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWaterfallView.h; sourceTree = "<group>"; };
 		CFFAB76D1B451B75006716A3 /* BWaterfallView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BWaterfallView.m; sourceTree = "<group>"; };
 		CFFAB76F1B451B8C006716A3 /* BWaterfallCellView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWaterfallCellView.h; sourceTree = "<group>"; };
@@ -336,6 +339,8 @@
 				CF7CB6371B4663BB00164278 /* BEditItemViewController.m */,
 				CF5135711B39537B006983FD /* BSettingViewController.h */,
 				CF5135721B39537B006983FD /* BSettingViewController.m */,
+				CFEB1D3E1B4D2D62005FE929 /* BimageViewController.h */,
+				CFEB1D3F1B4D2D62005FE929 /* BimageViewController.m */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -488,6 +493,7 @@
 				CF3EA6831B412A51006A21E5 /* BCategoryContent.m in Sources */,
 				CF5135801B396002006983FD /* BCreateCategoryViewController.m in Sources */,
 				CF3EA66B1B411653006A21E5 /* FMDatabase.m in Sources */,
+				CFEB1D401B4D2D62005FE929 /* BimageViewController.m in Sources */,
 				985E42F31B3307BC007F8C1A /* NSLayoutConstraint+MASDebugAdditions.m in Sources */,
 				CFCEA32F1B44D7A0002DE1F6 /* BSquareImageView.m in Sources */,
 				98AC4F351B3FABCA00E64E9B /* ZYQAssetPickerController.m in Sources */,

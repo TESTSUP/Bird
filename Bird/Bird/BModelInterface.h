@@ -63,6 +63,6 @@ typedef NS_ENUM(NSInteger, ModelAction) {
  */
 - (NSArray *)getUsuallyPropertyWithLimit:(NSInteger )aLimit;
 
-
+- (void)statisticsProperties:(NSArray *)propertyList;
 
 @end

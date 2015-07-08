@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 static NSString *const DefaultUser = @"bird_guest";
+static const NSInteger MAX_ItemImageCount = 9;
 
 @interface BGlobalConfig : NSObject
 

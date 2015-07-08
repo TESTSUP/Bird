@@ -24,7 +24,6 @@
 static const CGFloat SideWidth = 75;
 static const CGFloat SideCellHeight = 50;
 static const NSTimeInterval animationDur3 = 0.3;
-static const NSInteger MAX_ItemImageCount = 9;
 
 @interface BHomeViewController ()
 <UITableViewDataSource,

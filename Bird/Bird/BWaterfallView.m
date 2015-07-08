@@ -98,7 +98,7 @@ static const CGFloat itemSpace = 10.0;
         make.left.equalTo(self.left).offset(edgeOffset);
         make.right.equalTo(_rightView.left).offset(-itemSpace);
         make.width.equalTo(_rightView.width);
-        if (_lastLeftCell) {
+        if ([_leftCellArray count]) {
             make.bottom.equalTo(_lastLeftCell.bottom).offset(edgeOffset);
         } else {
             make.height.equalTo(0);
@@ -110,7 +110,7 @@ static const CGFloat itemSpace = 10.0;
         make.right.equalTo(self.right).offset(-edgeOffset);
         make.left.equalTo(_leftView.right).offset(itemSpace);
         make.width.equalTo(_leftView.width);
-        if (_lastRightCell) {
+        if ([_rightCellArray count]) {
             make.bottom.equalTo(_lastRightCell.bottom).offset(edgeOffset);
         } else {
             make.height.equalTo(0).offset(edgeOffset);
@@ -174,8 +174,8 @@ static const CGFloat itemSpace = 10.0;
     [_rightCellArray removeAllObjects];
     _leftColumHeight = itemSpace;
     _rightColumHeight = itemSpace;
-    _lastLeftCell = nil;
-    _lastRightCell = nil;
+    _lastLeftCell = [[BWaterfallCellView alloc] initWithFrame:CGRectZero];
+    _lastRightCell = [[BWaterfallCellView alloc] initWithFrame:CGRectZero];
     _leftView.frame = CGRectZero;
     _rightView.frame = CGRectZero;
     
@@ -211,6 +211,11 @@ static const CGFloat itemSpace = 10.0;
             _rightColumHeight = _rightColumHeight + height + itemSpace;
             _lastRightCell = cell;
         }
+    }
+    
+    if ([aItemArray count] == 0) {
+        [_leftView addSubview:_lastLeftCell];
+        [_rightView addSubview:_lastRightCell];
     }
 }
 

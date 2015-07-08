@@ -13,6 +13,10 @@
 
 @protocol BTagLabelViewDelegate <NSObject>
 
+@optional
+
+- (void)BTagLabelView:(BTagLabelView *)aLabel didTapTagAtIndex:(NSInteger)aIndex withString:(NSString *)aTapString;
+
 - (void)BTagLabelView:(BTagLabelView *)aLabel didSetTagAtIndex:(NSInteger)aIndex;
 
 - (void)BTagLabelView:(BTagLabelView *)aLabel didDeleteTagAtIndex:(NSInteger)aIndex;
@@ -22,6 +26,8 @@
 @interface BTagLabelView : UILabel
 
 @property (nonatomic, weak) id<BTagLabelViewDelegate> delegate;
+@property (nonatomic, assign) BOOL canTap;
+@property (nonatomic, assign) BOOL canShowMenu;
 @property (nonatomic, strong) NSString *separateStr;    //默认为“|”
 @property (nonatomic, strong) NSArray *tagArray;        //标签数组，NSString*
 

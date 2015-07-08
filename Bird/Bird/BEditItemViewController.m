@@ -13,8 +13,10 @@
 static NSString *const placeHolder = @"输入";
 static const CGFloat left_offset = 20;
 static const CGFloat top_offset = 20;
+static const CGFloat itemSpace10 = 10;
 static const CGFloat itemSpace15 = 15;
 static const CGFloat defaultHeight = 50;
+static const CGFloat LineSpace = 15;
 
 @interface BEditItemViewController () <UITextViewDelegate, BTagLabelViewDelegate>
 {
@@ -104,16 +106,24 @@ static const CGFloat defaultHeight = 50;
     _itemDescView = [[UIView alloc] initWithFrame:CGRectZero];
     
     _itmeNameLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-    _itmeNameLabel.textColor = [UIColor blackColor];
+    _itmeNameLabel.textColor = [UIColor colorWithRed:189.0/255.0
+                                               green:8.0/255.0
+                                                blue:28.0/255.0
+                                               alpha:1.0];
     _itmeNameLabel.font = [UIFont systemFontOfSize:15];
     _itmeNameLabel.text = self.itemContent.name;
     
     _itemTagLabel = [[BTagLabelView alloc] initWithFrame:CGRectZero];
     _itemTagLabel.delegate = self;
-    _itemTagLabel.textColor = [UIColor blackColor];
+    _itemTagLabel.textColor = [UIColor colorWithRed:68.0/255.0
+                                              green:68.0/255.0
+                                               blue:68.0/255.0
+                                              alpha:1.0];
     _itemTagLabel.font = [UIFont systemFontOfSize:15];
     _itemTagLabel.text = self.itemContent.name;
     _itemTagLabel.numberOfLines = 0;
+    _itemTagLabel.canTap = YES;
+    _itemTagLabel.canShowMenu = YES;
     
     _lineView = [[UIView alloc] initWithFrame:CGRectZero];
     _lineView.backgroundColor = [UIColor colorWithRed:204.0/255.0
@@ -134,9 +144,9 @@ static const CGFloat defaultHeight = 50;
     self.automaticallyAdjustsScrollViewInsets = NO;
     
     _itemDescView.backgroundColor = [UIColor whiteColor];
-    _itmeNameLabel.backgroundColor = [UIColor greenColor];
-    _itemTagLabel.backgroundColor = [UIColor lightGrayColor];
-    _inputTextView.backgroundColor = [UIColor blueColor];
+    _itmeNameLabel.backgroundColor = [UIColor clearColor];
+    _itemTagLabel.backgroundColor = [UIColor clearColor];
+    _inputTextView.backgroundColor = [UIColor clearColor];
     
     [_itemDescView addSubview:_itmeNameLabel];
     [_itemDescView addSubview:_itemTagLabel];
@@ -156,7 +166,7 @@ static const CGFloat defaultHeight = 50;
     }
     
     UIScrollView *tempScroll = [[UIScrollView alloc] initWithFrame:CGRectZero];
-    tempScroll.backgroundColor = [UIColor greenColor];
+    tempScroll.backgroundColor = [UIColor clearColor];
     tempScroll.showsHorizontalScrollIndicator = NO;
     tempScroll.showsVerticalScrollIndicator = NO;
     
@@ -165,10 +175,12 @@ static const CGFloat defaultHeight = 50;
     
     BTagLabelView *tempLabel = [[BTagLabelView alloc] initWithFrame:CGRectZero];
     tempLabel.textAlignment = NSTextAlignmentLeft;
-//    tempLabel.text = [aTagArray componentsJoinedByString:@"   "];
+    tempLabel.delegate = self;
+    tempLabel.canTap = YES;
+    tempLabel.canShowMenu = NO;
     tempLabel.tagArray = aTagArray;
     tempLabel.font = [UIFont systemFontOfSize:12];
-    tempLabel.backgroundColor = [UIColor redColor];
+    tempLabel.backgroundColor = [UIColor clearColor];
     tempLabel.textColor = [UIColor colorWithRed:154.0/255.0
                                           green:154.0/255.0
                                            blue:154.0/255.0
@@ -197,6 +209,7 @@ static const CGFloat defaultHeight = 50;
     [tempLabel makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.equalTo(tempScroll);
         make.left.equalTo(left_offset);
+        make.height.equalTo(contentView.height).offset(-5);
         make.width.equalTo(rect.size.width);
     }];
     [lineView makeConstraints:^(MASConstraintMaker *make) {
@@ -316,7 +329,7 @@ static const CGFloat defaultHeight = 50;
     CGFloat descriptionH = size.height;
     
     [_inputTextView remakeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(_lineView.bottom).offset(itemSpace15);
+        make.top.equalTo(_lineView.bottom).offset(itemSpace10);
         make.left.equalTo(left_offset);
         make.right.equalTo(-left_offset);
         make.height.equalTo(descriptionH);
@@ -325,22 +338,16 @@ static const CGFloat defaultHeight = 50;
 
 - (void)layoutTagView
 {
-//    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-//    [paragraphStyle setLineSpacing:10];//调整行间距
-//    if ([_itemTagLabel.text length]) {
-//        NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:_itemTagLabel.text];
-//        [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, [_itemTagLabel.text length])];
-//        _itemTagLabel.attributedText = attributedString;
-//        
-//    }
-//    NSDictionary *attrDic = @{NSFontAttributeName:_itemTagLabel.font,
-//                              NSParagraphStyleAttributeName:paragraphStyle};
-    
-    NSDictionary *attrDic = @{NSFontAttributeName:_itemTagLabel.font};
     //标签表高度
     CGFloat tagHeight = 0;
-    //    if ([_itemTagLabel.text length])
+    if ([_itemTagLabel.text length])
     {
+        NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+        [paragraphStyle setLineSpacing:LineSpace];//调整行间距
+        NSDictionary *attrDic = @{NSFontAttributeName:_itemTagLabel.font, NSParagraphStyleAttributeName:paragraphStyle};
+        NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:_itemTagLabel.text attributes:attrDic];
+        _itemTagLabel.attributedText = attributedString;
+        
         CGRect rect = [_itemTagLabel.text boundingRectWithSize:CGSizeMake(self.view.frame.size.width-2*left_offset, MAXFLOAT)
                                                        options:NSStringDrawingUsesLineFragmentOrigin
                                                     attributes:attrDic
@@ -348,10 +355,8 @@ static const CGFloat defaultHeight = 50;
         tagHeight = rect.size.height>0? rect.size.height+1:0;
     }
     
-    NSLog(@"=====tagview height = %f", tagHeight);
-    
     [_itemTagLabel remakeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(_itmeNameLabel.bottom).offset(itemSpace15);
+        make.top.equalTo(_itmeNameLabel.bottom).offset(0);
         make.left.equalTo(left_offset);
         make.right.equalTo(-left_offset);
         make.height.equalTo(tagHeight);
@@ -361,19 +366,21 @@ static const CGFloat defaultHeight = 50;
 - (void)layoutDescView
 {
     //物品名高度
-    CGFloat titleHeight = 20;
     [_itmeNameLabel remakeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(left_offset);
+        make.left.equalTo(top_offset);
         make.right.equalTo(-left_offset);
-        make.top.equalTo(top_offset);
-        make.height.equalTo(titleHeight);
+        make.top.equalTo(0);
+        make.height.equalTo(defaultHeight);
     }];
     
     [self layoutTagView];
     
-    UIView *lastView = [_itemTagLabel.text length]>0? _itemTagLabel:_itmeNameLabel;
     [_lineView remakeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(lastView.bottom).offset(top_offset);
+        if ([_itemTagLabel.text length]>0) {
+             make.top.equalTo(_itemTagLabel.bottom).offset(itemSpace10);
+        } else {
+             make.top.equalTo(_itmeNameLabel.bottom).offset(0);
+        }
         make.left.equalTo(0);
         make.right.equalTo(0);
         make.height.equalTo(0.5);
@@ -385,7 +392,7 @@ static const CGFloat defaultHeight = 50;
         make.top.equalTo(0);
         make.left.equalTo(0);
         make.right.equalTo(0);
-        make.bottom.equalTo(_inputTextView.bottom).offset(itemSpace15);
+        make.bottom.equalTo(_inputTextView.bottom).offset(itemSpace10);
     }];
 }
 
@@ -418,32 +425,51 @@ static const CGFloat defaultHeight = 50;
 
 #pragma mark -  BTagLabelViewDelegate
 
-- (void)BTagLabelView:(BTagLabelView *)aLabel didSetTagAtIndex:(NSInteger)aIndex
+- (void)BTagLabelView:(BTagLabelView *)aLabel didTapTagAtIndex:(NSInteger)aIndex withString:(NSString *)aTapString
 {
-    if (aIndex <[_propertyArray count]) {
-        NSString *temp = [_propertyArray objectAtIndex:aIndex];
-        [_propertyArray replaceObjectAtIndex:aIndex withObject:_itemName];
-        
-        NSLog(@"set tag = %@", temp);
-        _itemName = temp;
+    if (_itemTagLabel != aLabel && [aTapString length]) {
+        if (_itemName == nil) {
+            _itemName = aTapString;
+        } else {
+            [_propertyArray addObject:aTapString];
+            [[BModelInterface shareInstance] statisticsProperties:@[aTapString]];
+        }
+
         [self refreshData];
         [self.view layoutIfNeeded];
-    } else {
-        NSLog(@"data error: %s", __func__);
+    }
+}
+
+- (void)BTagLabelView:(BTagLabelView *)aLabel didSetTagAtIndex:(NSInteger)aIndex
+{
+    if (_itemTagLabel == aLabel) {
+        if (aIndex <[_propertyArray count]) {
+            NSString *temp = [_propertyArray objectAtIndex:aIndex];
+            [_propertyArray replaceObjectAtIndex:aIndex withObject:_itemName];
+            
+            NSLog(@"set tag = %@", temp);
+            _itemName = temp;
+            [self refreshData];
+            [self.view layoutIfNeeded];
+        } else {
+            NSLog(@"data error: %s", __func__);
+        }
     }
 }
 
 - (void)BTagLabelView:(BTagLabelView *)aLabel didDeleteTagAtIndex:(NSInteger)aIndex
 {
-    if (aIndex <[_propertyArray count]) {
-        NSLog(@"delete tag = %@", [_propertyArray objectAtIndex:aIndex]);
-        [_propertyArray removeObjectAtIndex:aIndex];
-        
-        _itemTagLabel.tagArray = _propertyArray;
-        [self refreshData];
-        [self.view layoutIfNeeded];
-    } else {
-        NSLog(@"data error: %s", __func__);
+    if (_itemTagLabel == aLabel) {
+        if (aIndex <[_propertyArray count]) {
+            NSLog(@"delete tag = %@", [_propertyArray objectAtIndex:aIndex]);
+            [_propertyArray removeObjectAtIndex:aIndex];
+            
+            _itemTagLabel.tagArray = _propertyArray;
+            [self refreshData];
+            [self.view layoutIfNeeded];
+        } else {
+            NSLog(@"data error: %s", __func__);
+        }
     }
 }
 
@@ -487,11 +513,21 @@ static const CGFloat defaultHeight = 50;
             return NO;
         }
         
-        if (_itemName == nil) {
-            _itemName = textView.text;
-        } else {
-            [_propertyArray addObject:textView.text];
+        //去除空格和换行
+        NSString* s1=[textView.text stringByReplacingOccurrencesOfString:@" " withString:@""];
+        NSString* s2=[s1 stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+        if ([s2 length] == 0) {
+            [textView resignFirstResponder];
+            return NO;
         }
+        
+        if (_itemName == nil) {
+            _itemName = s2;
+        } else {
+            [_propertyArray addObject:s2];
+        }
+        [[BModelInterface shareInstance] statisticsProperties:@[s2]];
+        
         textView.text = nil;
         
         [self refreshData];

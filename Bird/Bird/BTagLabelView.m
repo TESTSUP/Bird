@@ -14,6 +14,9 @@ static NSString *const defaultSepStr = @"|";
 @interface BTagLabelView ()
 {
     NSMutableArray *_rangerArray;
+    
+    UITapGestureRecognizer *tap;
+    UILongPressGestureRecognizer *pan;
 }
 
 @property(nonatomic) NSRange highlightedRange;
@@ -46,11 +49,6 @@ static NSString *const defaultSepStr = @"|";
     self.userInteractionEnabled = YES;
     
     _separateStr = defaultSepStr;
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapAction:)];
-    UILongPressGestureRecognizer *pan = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPressAction:)];
-    
-    [self addGestureRecognizer:tap];
-    [self addGestureRecognizer:pan];
 }
 
 - (CFIndex)characterIndexAtPoint:(CGPoint)point {
@@ -286,7 +284,7 @@ static NSString *const defaultSepStr = @"|";
     
     //highlight selected word
     NSMutableAttributedString* attributedString = [self.attributedText mutableCopy];
-    [attributedString addAttribute:NSBackgroundColorAttributeName value:[UIColor redColor] range:wordRange];
+    [attributedString addAttribute:NSBackgroundColorAttributeName value:[UIColor clearColor] range:wordRange];
     self.attributedText = attributedString;
 }
 
@@ -370,6 +368,7 @@ static NSString *const defaultSepStr = @"|";
     
     CGPoint point = [aTap locationInView:self];
     
+    
     CFIndex charIndex = [self characterIndexAtPoint:point];
     NSRange wordRange = [self getLongPressedRangeWithIndex:charIndex];
     
@@ -382,6 +381,10 @@ static NSString *const defaultSepStr = @"|";
     }
     
     self.highlightedRange = wordRange;
+    
+    if (self.delegate && [self.delegate respondsToSelector:@selector(BTagLabelView:didTapTagAtIndex:withString:)]) {
+        [self.delegate BTagLabelView:self didTapTagAtIndex:self.highlightedIndex withString:[self.tagArray objectAtIndex:self.highlightedIndex]];
+    }
 }
 
 - (void)handleLongPressAction:(UIPanGestureRecognizer *)aPan
@@ -402,21 +405,25 @@ static NSString *const defaultSepStr = @"|";
         }
 
         self.highlightedRange = wordRange;
-        CGPoint popPoint = [self menuItemPopPointAtPoint:point];
         
-        UIMenuController *popMenu = [UIMenuController sharedMenuController];
-        UIMenuItem *deleteItem = [[UIMenuItem alloc] initWithTitle:@"删除" action:@selector(handleDeleteAction)];
-        UIMenuItem *setIitem = [[UIMenuItem alloc] initWithTitle:@"设置名字" action:@selector(handleSetAction)];
-        [popMenu setMenuItems:@[deleteItem, setIitem]];
-        [popMenu setArrowDirection:UIMenuControllerArrowDown];
-        [popMenu setTargetRect:CGRectMake(popPoint.x,popPoint.y,0,0) inView:self];
-        [self becomeFirstResponder];
-        [popMenu setMenuVisible:YES animated:YES];
+        if (self.canShowMenu) {
+            CGPoint popPoint = [self menuItemPopPointAtPoint:point];
+            
+            UIMenuController *popMenu = [UIMenuController sharedMenuController];
+            UIMenuItem *deleteItem = [[UIMenuItem alloc] initWithTitle:@"删除" action:@selector(handleDeleteAction)];
+            UIMenuItem *setIitem = [[UIMenuItem alloc] initWithTitle:@"设置名字" action:@selector(handleSetAction)];
+            [popMenu setMenuItems:@[deleteItem, setIitem]];
+            [popMenu setArrowDirection:UIMenuControllerArrowDown];
+            [popMenu setTargetRect:CGRectMake(popPoint.x,popPoint.y,0,0) inView:self];
+            [self becomeFirstResponder];
+            [popMenu setMenuVisible:YES animated:YES];
+        }
     }
 }
 
 - (void)handleDeleteAction
 {
+    [self removeHighlight];
     //delegate
     if (self.delegate && [self.delegate respondsToSelector:@selector(BTagLabelView:didDeleteTagAtIndex:)]) {
         [self.delegate BTagLabelView:self didDeleteTagAtIndex:self.highlightedIndex];
@@ -425,6 +432,7 @@ static NSString *const defaultSepStr = @"|";
 
 - (void)handleSetAction
 {
+    [self removeHighlight];
     //delegate
     if (self.delegate && [self.delegate respondsToSelector:@selector(BTagLabelView:didSetTagAtIndex:)]) {
         [self.delegate BTagLabelView:self didSetTagAtIndex:self.highlightedIndex];
@@ -442,15 +450,17 @@ static NSString *const defaultSepStr = @"|";
     
     NSString *lastStr = nil;
     for (NSString *subString in aTagArray) {
-        NSString *expandStr = [NSString stringWithFormat:@"  %@  ", subString];
+        NSString *expandStr = nil;
         NSInteger loc = 0;
         
         if (lastStr == nil) {
+            expandStr = [NSString stringWithFormat:@"%@  ", subString];
             lastStr = expandStr;
             loc = 0;
         } else {
+            expandStr = [NSString stringWithFormat:@"  %@  ", subString];
             lastStr= [lastStr stringByAppendingString:self.separateStr];
-            loc = [lastStr length]-1;
+            loc = [lastStr length];
             lastStr = [lastStr stringByAppendingString:expandStr];
         }
          NSRange subRange = NSMakeRange(loc, [expandStr length]);
@@ -459,14 +469,24 @@ static NSString *const defaultSepStr = @"|";
     }
     
     self.text = lastStr;
-    
-//    if ([aTagArray count]) {
-//        NSString *newStr = [aTagArray componentsJoinedByString:self.separateStr];
-//        self.text = newStr;
-//    }
-    
     _tagArray = aTagArray;
 }
 
+- (void)setCanTap:(BOOL)aCanTap
+{
+    if (aCanTap) {
+        tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapAction:)];
+        pan = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPressAction:)];
+        
+        [self addGestureRecognizer:tap];
+        [self addGestureRecognizer:pan];
+    } else {
+        [self removeGestureRecognizer:tap];
+        [self removeGestureRecognizer:pan];
+        
+        tap = nil;
+        pan = nil;
+    }
+}
 
 @end

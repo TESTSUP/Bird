@@ -185,8 +185,6 @@ static BirdDB *DBInstance = nil;
          @(aItem.updateTime)];
         [self checkError:db];
     }];
-    
-    [self insertPropertyList:aItem.property];
 }
 
 - (BItemContent *)createItemWithResult:(FMResultSet *)rs

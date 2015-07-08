@@ -104,6 +104,8 @@ static NSString *const placeHolder = @"备注名称";
     _contentView.layer.cornerRadius = 4.0;
     [self.view addSubview:_contentView];
     [self configContentView];
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapAction)];
+    [_contentView addGestureRecognizer:tap];
     
     _deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [_deleteButton setTitle:@"删除" forState:UIControlStateNormal];
@@ -168,6 +170,11 @@ static NSString *const placeHolder = @"备注名称";
 }
 
 #pragma mark - action
+
+- (void)handleTapAction
+{
+    [_categoryDescription becomeFirstResponder];
+}
 
 - (void)handleBackbuttonAction
 {
