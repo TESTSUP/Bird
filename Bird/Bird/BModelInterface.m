@@ -66,8 +66,23 @@ static BModelInterface *modelInstance = nil;
 }
 
 
+- (void)setItemWithNewData:(BItemContent *)aItem
+{
+    for (BItemContent *item in _itemsArray) {
+        if ([aItem.itemID isEqualToString:item.itemID]) {
+            if (item != aItem) {
+                [_itemsArray replaceObjectAtIndex:[_itemsArray indexOfObject:item]
+                                       withObject:aItem];
+            }
+            break;
+        }
+    }
+}
+
 - (void)handleItemWithAction:(ModelAction)aAction andData:(BItemContent *)aItem
 {
+    [self setItemWithNewData:aItem];
+    
     switch (aAction) {
         case ModelAction_create:
         {

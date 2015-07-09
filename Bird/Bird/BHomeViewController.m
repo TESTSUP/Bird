@@ -750,7 +750,6 @@ BWaterfallViewDelagate>
         
         //选中刷新
         if ([category.categoryId isEqualToString:_selectedCategoryId]) {
-            cell.selected = YES;
             [tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionMiddle];
         }
         

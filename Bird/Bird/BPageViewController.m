@@ -12,9 +12,10 @@
 @interface BPageViewController ()<UIPageViewControllerDelegate, UIPageViewControllerDataSource>
 {
     UILabel *_pageLabel;
+    UIButton *_setBtn;
 }
 @property (strong, nonatomic) UIPageViewController *pageController;
-@property (strong, nonatomic) NSArray *pageContent;
+@property (strong, nonatomic) NSMutableArray *pageContent;
 
 @end
 
@@ -41,11 +42,16 @@
     [backBtn addTarget:self action:@selector(handleBackAction) forControlEvents:UIControlEventTouchUpInside];
     [backBtn setImage:[UIImage imageNamed:@"nav_back"] forState:UIControlStateNormal];
     
-    UIButton *setBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    setBtn.backgroundColor = [UIColor clearColor];
-    [setBtn setTitle:@"设为封面" forState:UIControlStateNormal];
-    [setBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [setBtn addTarget:self action:@selector(handleSetAction) forControlEvents:UIControlEventTouchUpInside];
+    _setBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    _setBtn.backgroundColor = [UIColor clearColor];
+    [_setBtn setTitle:@"设为封面" forState:UIControlStateNormal];
+    [_setBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [_setBtn addTarget:self action:@selector(handleSetAction) forControlEvents:UIControlEventTouchUpInside];
+    if (_currentIndex == 0) {
+        _setBtn.hidden =YES;
+    } else {
+        _setBtn.hidden = NO;
+    }
     
     UIButton *deleteBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     deleteBtn.backgroundColor = [UIColor clearColor];
@@ -60,7 +66,7 @@
     _pageLabel.text = [NSString stringWithFormat:@"%ld/%ld", _currentIndex+1, [self.pageContent count]];
     
     [self.view addSubview:backBtn];
-    [self.view addSubview:setBtn];
+    [self.view addSubview:_setBtn];
     [self.view addSubview:deleteBtn];
     [self.view addSubview:_pageLabel];
     
@@ -70,7 +76,7 @@
         make.size.equalTo(CGSizeMake(44, 44));
     }];
     
-    [setBtn makeConstraints:^(MASConstraintMaker *make) {
+    [_setBtn makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(0);
         make.bottom.equalTo(0);
         make.size.equalTo(CGSizeMake(80, 44));
@@ -135,6 +141,9 @@
     {
         [self.delegate BPageViewController:self didSetCoverAtIndex:self.currentIndex];
     }
+    
+    [self.pageContent exchangeObjectAtIndex:0 withObjectAtIndex:self.currentIndex];
+    self.currentIndex = 0;
 }
 
 - (void)handleDeleteAction
@@ -212,6 +221,12 @@
                                    animated:NO
                                  completion:nil];
     }
+    
+    if (_currentIndex == 0) {
+        _setBtn.hidden =YES;
+    } else {
+        _setBtn.hidden = NO;
+    }
 }
 
 - (void)setImageDatas:(NSArray *)imageDatas
@@ -241,6 +256,12 @@
         _currentIndex = [self indexOfViewController:(BimageViewController *)[self.pageController.viewControllers objectAtIndex:0]];
         
         _pageLabel.text = [NSString stringWithFormat:@"%ld/%ld", _currentIndex+1, [self.pageContent count]];
+        
+        if (_currentIndex == 0) {
+            _setBtn.hidden =YES;
+        } else {
+            _setBtn.hidden = NO;
+        }
     }
 }
 

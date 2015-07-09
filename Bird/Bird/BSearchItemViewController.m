@@ -104,6 +104,8 @@ static NSString *identifier = @"collectionView";
     _collectionView.backgroundColor = [UIColor clearColor];
     _collectionView.delegate = self;
     _collectionView.dataSource = self;
+    _collectionView.showsHorizontalScrollIndicator = NO;
+    _collectionView.showsVerticalScrollIndicator = NO;
     [_collectionView registerClass:[BCollectionViewCell class] forCellWithReuseIdentifier:identifier];
     [self.view addSubview:_collectionView];
     

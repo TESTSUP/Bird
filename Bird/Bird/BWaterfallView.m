@@ -127,8 +127,12 @@ static const CGFloat itemSpace = 10.0;
     [self.loadedImageArray makeObjectsPerformSelector:@selector(removeFromSuperview)];
     [self.loadedImageArray removeAllObjects];
     _itemArray = aItemArray;
-
+    
     [self createCellDataWith:aItemArray];
+    if ([aItemArray count] == 0) {
+        return;
+    }
+    
     [self layoutCells];
     
     [self checkImageIsVisible];
@@ -211,11 +215,6 @@ static const CGFloat itemSpace = 10.0;
             _rightColumHeight = _rightColumHeight + height + itemSpace;
             _lastRightCell = cell;
         }
-    }
-    
-    if ([aItemArray count] == 0) {
-        [_leftView addSubview:_lastLeftCell];
-        [_rightView addSubview:_lastRightCell];
     }
 }
 
