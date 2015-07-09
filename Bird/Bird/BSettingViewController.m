@@ -10,7 +10,7 @@
 #import <MessageUI/MFMailComposeViewController.h>
 #import <StoreKit/StoreKit.h>
 
-static NSString *const Mail_Receiver = @"w15964236402@126.com";
+static NSString *const Mail_Receiver = @"37105787@qq.com";
 static NSString *const App_ID = @"594467299";
 
 @interface BSettingViewController () <UITableViewDataSource,
@@ -36,7 +36,7 @@ SKStoreProductViewControllerDelegate>
                                                 green:231.0/255.0
                                                  blue:231.0/255.0
                                                 alpha:1.0];
-    _dataArray = @[@"请为我们评分", @"使用教程", @"意见反馈", @"关于我们"];
+    _dataArray = @[@"请为我们评分", @"意见反馈"];
     
     [self configNavigationBar];
     
@@ -246,8 +246,8 @@ SKStoreProductViewControllerDelegate>
     NSArray *toRecipients = @[Mail_Receiver];
     [mailPicker setToRecipients: toRecipients];
 
-    NSString *emailBody = @"请填写您的意见\n";
-    [mailPicker setMessageBody:emailBody isHTML:YES];
+    NSString *emailBody = @"星鸟，是一款物品管理和共享的APP。大家可以用它来管理自己的个人物品，还可以用它与朋友们相互分享有趣的物品或借出、赠送闲置物品（开发中）。\n\n\n\n\n联系微信：chenke2080\nEmail： 37105787@qq.com";
+    [mailPicker setMessageBody:emailBody isHTML:NO];
     [self presentViewController:mailPicker animated:YES completion:nil];
 }
 
@@ -323,18 +323,8 @@ SKStoreProductViewControllerDelegate>
             break;
         case 1:
         {
-            //教程
-        }
-            break;
-        case 2:
-        {
             //反馈
             [self sendEMail];
-        }
-            break;
-        case 3:
-        {
-            //关于我们
         }
             break;
         default:

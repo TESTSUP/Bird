@@ -51,6 +51,8 @@ static const CGFloat LineSpace = 15;
     [self createSubViews];
     
     [self loadData];
+    
+    [_inputTextView becomeFirstResponder];
 }
 
 - (void)configNavigationBar

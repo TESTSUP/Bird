@@ -169,5 +169,13 @@
     return image;
 }
 
++ (void)showAlertViewWithMsg:(NSString *)aMsg
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
+                                                    message:aMsg
+                                                   delegate:nil cancelButtonTitle:@"确定"
+                                          otherButtonTitles:nil, nil];
+    [alert show];
+}
 
 @end

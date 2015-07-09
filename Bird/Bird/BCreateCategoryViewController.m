@@ -213,9 +213,18 @@ static NSString *const placeHolder = @"备注名称";
 
 - (void)handleDeleteAction
 {
-    [[BModelInterface shareInstance] handleCategoryWithAction:ModelAction_delete andData:self.category];
-    
-    [self popToViewControllerNamed:@"BCategoryListViewController"];
+    NSArray *itemArray = [[BModelInterface shareInstance] getItemsWithCategoryId:self.category.categoryId];
+    if ([itemArray count]) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
+                                                        message:@"该分类下还有物品，清空物品后才能删除"
+                                                       delegate:nil cancelButtonTitle:@"确定"
+                                              otherButtonTitles:nil, nil];
+        [alert show];
+    } else {
+        [[BModelInterface shareInstance] handleCategoryWithAction:ModelAction_delete andData:self.category];
+        [self popToViewControllerNamed:@"BCategoryListViewController"];
+    }
+
 }
 
 - (void)handleDisappearKeybord

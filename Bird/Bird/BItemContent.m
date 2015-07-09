@@ -46,6 +46,7 @@
             }
         }
     }
+    self.deleteImageID = nil;
     
     for (UIImage *imageData in self.addImageData) {
         NSString *imageId = [BirdUtil createImageID];
@@ -55,7 +56,9 @@
             [_tempImageData addObject:imageData];
         }
     }
+    self.addImageData = nil;
     
+    self.coverImage = [BirdUtil getImageWithID:[_tempImageID firstObject]];
     self.imageIDs = _tempImageID;
     self.imageDatas = _tempImageData;
 }
@@ -92,6 +95,7 @@
         }
     }
 
+    NSLog(@"....item image data error");
     return nil;
 }
 

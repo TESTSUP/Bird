@@ -438,6 +438,7 @@ BWaterfallViewDelagate>
 {
     _categoryData = [[BModelInterface shareInstance] getCategoryList];
     [_categoryTableView reloadData];
+    
 }
 
 - (void)refreshItemData
@@ -668,6 +669,7 @@ BWaterfallViewDelagate>
 
 -(void)assetPickerControllerDidMaximum:(ZYQAssetPickerController *)picker{
     NSLog(@"到达上限");
+    [BirdUtil showAlertViewWithMsg:@"图片数量已达上限"];
 }
 
 #pragma mark - UITableViewDelegate
@@ -747,10 +749,10 @@ BWaterfallViewDelagate>
         textLabel.text = [category.descr length]? category.descr:category.name;
         
         //选中刷新
-//        if ([category.categoryId isEqualToString:_selectedCategoryId]) {
-//            cell.selected = YES;
-//            [tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionMiddle];
-//        }
+        if ([category.categoryId isEqualToString:_selectedCategoryId]) {
+            cell.selected = YES;
+            [tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionMiddle];
+        }
         
     } else if (indexPath.row == [_categoryData count]) {
         textLabel.hidden = YES;

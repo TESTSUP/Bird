@@ -30,4 +30,7 @@
                            andSideLength:(CGFloat)aLength;
 
 + (UIImage *)imageWithColor:(UIColor *)color;
+
++ (void)showAlertViewWithMsg:(NSString *)aMsg;
+
 @end

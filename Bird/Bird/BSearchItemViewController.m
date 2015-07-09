@@ -32,6 +32,8 @@ static NSString *identifier = @"collectionView";
     
     UIButton *cancelButton;
     UIButton *_cancelBtn;
+    
+    NSString *_keyWord;
 }
 
 @property (nonatomic, strong) UICollectionView *collectionView;
@@ -61,6 +63,7 @@ static NSString *identifier = @"collectionView";
 {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:YES];
+    [self loadDataWithKeyWord:_keyWord];
 }
 
 - (void)createSearchBar
@@ -197,7 +200,8 @@ static NSString *identifier = @"collectionView";
     [searchBar resignFirstResponder];
     
     if ([searchBar.text length]) {
-        [self loadDataWithKeyWord:searchBar.text];
+        _keyWord = searchBar.text;
+        [self loadDataWithKeyWord:_keyWord];
     }
 }
 

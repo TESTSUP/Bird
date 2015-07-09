@@ -344,11 +344,16 @@ BPageViewControllerDelegate>
     NSMutableArray *tempArray = [[NSMutableArray alloc] initWithArray:self.itemContent.imageIDs];
     [tempArray removeObjectAtIndex:0];
     
+    NSMutableArray *imageDataArray = [[NSMutableArray alloc] initWithCapacity:0];
+    [imageDataArray addObject:self.itemContent.coverImage];
     for (NSString *imageId in tempArray) {
         UIImage *image = [self.itemContent imageWithId:imageId];
+        if (image == nil) {
+            continue;
+        }
+        [imageDataArray addObject:image];
         UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, ThumbnailSide, ThumbnailSide)];
         imageView.image = [BirdUtil squareThumbnailWithOrgImage:image andSideLength:ThumbnailSide];
-        
         [_thumbnailView addSubview:imageView];
         imageView.tag = [self.itemContent.imageIDs indexOfObject:imageId];
         [_imageViewArray addObject:imageView];
@@ -357,6 +362,8 @@ BPageViewControllerDelegate>
         [imageView addGestureRecognizer:tap];
         imageView.userInteractionEnabled = YES;
     }
+    
+    self.itemContent.imageDatas = imageDataArray;
 }
 
 - (void)loadData
@@ -380,10 +387,17 @@ BPageViewControllerDelegate>
     }
     
     NSMutableArray *temp = [[NSMutableArray alloc] initWithArray:self.itemContent.imageIDs];
+    if (self.itemContent.imageDatas) {
+        NSMutableArray *tempData = [[NSMutableArray alloc] initWithArray:self.itemContent.imageDatas];
+        [tempData exchangeObjectAtIndex:aIndex withObjectAtIndex:0];
+        self.itemContent.imageDatas = tempData;
+    }
     [temp exchangeObjectAtIndex:aIndex withObjectAtIndex:0];
     self.itemContent.imageIDs = temp;
     
     [[BModelInterface shareInstance] handleItemWithAction:ModelAction_update andData:self.itemContent];
+    
+    [BirdUtil showAlertViewWithMsg:@"设置封面成功"];
 }
 
 - (void)BPageViewController:(BPageViewController *)aVC didDeleteImageAtIndex:(NSInteger)aIndex
@@ -391,6 +405,8 @@ BPageViewControllerDelegate>
     NSString *deleteId = [self.itemContent.imageIDs objectAtIndex:aIndex];
     self.itemContent.deleteImageID = @[deleteId];
     [[BModelInterface shareInstance] handleItemWithAction:ModelAction_update andData:self.itemContent];
+    
+    [BirdUtil showAlertViewWithMsg:@"删除成功"];
 }
 
 #pragma mark - UIActionSheetDelegate
@@ -453,6 +469,9 @@ BPageViewControllerDelegate>
     UIImage *pickImage = [info objectForKey:UIImagePickerControllerOriginalImage];
     NSLog(@"%@", pickImage);
     
+    self.itemContent.addImageData = @[pickImage];
+    [[BModelInterface shareInstance] handleItemWithAction:ModelAction_update andData:self.itemContent];
+    
     [self dismissViewControllerAnimated:YES completion:^{
 
     }];
@@ -460,22 +479,24 @@ BPageViewControllerDelegate>
 
 #pragma mark - ZYQAssetPickerController Delegate
 -(void)assetPickerController:(ZYQAssetPickerController *)picker didFinishPickingAssets:(NSArray *)assets{
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    
+    NSMutableArray *imageArray = [[NSMutableArray alloc] initWithCapacity:0];
+    for (int i=0; i<assets.count; i++) {
+        ALAsset *asset=assets[i];
+        UIImage *tempImg=[UIImage imageWithCGImage:asset.defaultRepresentation.fullScreenImage];
+        [imageArray addObject:tempImg];
+    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.itemContent.addImageData = imageArray;
+        [[BModelInterface shareInstance] handleItemWithAction:ModelAction_update andData:self.itemContent];
         
-        NSMutableArray *imageArray = [[NSMutableArray alloc] initWithCapacity:0];
-        for (int i=0; i<assets.count; i++) {
-            ALAsset *asset=assets[i];
-            UIImage *tempImg=[UIImage imageWithCGImage:asset.defaultRepresentation.fullScreenImage];
-            [imageArray addObject:tempImg];
-        }
-        dispatch_async(dispatch_get_main_queue(), ^{
-
-        });
     });
+    return;
 }
 
 -(void)assetPickerControllerDidMaximum:(ZYQAssetPickerController *)picker{
     NSLog(@"到达上限");
+    [BirdUtil showAlertViewWithMsg:@"图片数量已达上限"];
 }
 
 #pragma mark - action 
