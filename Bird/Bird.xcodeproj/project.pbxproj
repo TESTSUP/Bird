@@ -49,8 +49,10 @@
 		CF7CB6411B46848B00164278 /* defaultProperty.plist in Resources */ = {isa = PBXBuildFile; fileRef = CF3EA6841B413BFC006A21E5 /* defaultProperty.plist */; };
 		CFCEA32F1B44D7A0002DE1F6 /* BSquareImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = CFCEA32E1B44D7A0002DE1F6 /* BSquareImageView.m */; };
 		CFD1EA161B3D583600C9C588 /* BHomeFloadView.m in Sources */ = {isa = PBXBuildFile; fileRef = CFD1EA151B3D583600C9C588 /* BHomeFloadView.m */; };
+		CFDFCAFC1B4E540D0070C36C /* BCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CFDFCAFB1B4E540D0070C36C /* BCollectionViewCell.m */; };
 		CFEB1D131B4A2485005FE929 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFEB1D121B4A2485005FE929 /* StoreKit.framework */; };
 		CFEB1D401B4D2D62005FE929 /* BimageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CFEB1D3F1B4D2D62005FE929 /* BimageViewController.m */; };
+		CFEB1D431B4E1EFA005FE929 /* BWaterfallLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = CFEB1D421B4E1EFA005FE929 /* BWaterfallLayout.m */; };
 		CFFAB76E1B451B75006716A3 /* BWaterfallView.m in Sources */ = {isa = PBXBuildFile; fileRef = CFFAB76D1B451B75006716A3 /* BWaterfallView.m */; };
 		CFFAB7711B451B8C006716A3 /* BWaterfallCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = CFFAB7701B451B8C006716A3 /* BWaterfallCellView.m */; };
 		CFFAB7741B451BDF006716A3 /* BTagLabelView.m in Sources */ = {isa = PBXBuildFile; fileRef = CFFAB7731B451BDF006716A3 /* BTagLabelView.m */; };
@@ -155,9 +157,13 @@
 		CFCEA32E1B44D7A0002DE1F6 /* BSquareImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BSquareImageView.m; sourceTree = "<group>"; };
 		CFD1EA141B3D583600C9C588 /* BHomeFloadView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BHomeFloadView.h; sourceTree = "<group>"; };
 		CFD1EA151B3D583600C9C588 /* BHomeFloadView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BHomeFloadView.m; sourceTree = "<group>"; };
+		CFDFCAFA1B4E540D0070C36C /* BCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCollectionViewCell.h; sourceTree = "<group>"; };
+		CFDFCAFB1B4E540D0070C36C /* BCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCollectionViewCell.m; sourceTree = "<group>"; };
 		CFEB1D121B4A2485005FE929 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		CFEB1D3E1B4D2D62005FE929 /* BimageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BimageViewController.h; sourceTree = "<group>"; };
 		CFEB1D3F1B4D2D62005FE929 /* BimageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BimageViewController.m; sourceTree = "<group>"; };
+		CFEB1D411B4E1EF9005FE929 /* BWaterfallLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWaterfallLayout.h; sourceTree = "<group>"; };
+		CFEB1D421B4E1EFA005FE929 /* BWaterfallLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BWaterfallLayout.m; sourceTree = "<group>"; };
 		CFFAB76C1B451B75006716A3 /* BWaterfallView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWaterfallView.h; sourceTree = "<group>"; };
 		CFFAB76D1B451B75006716A3 /* BWaterfallView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BWaterfallView.m; sourceTree = "<group>"; };
 		CFFAB76F1B451B8C006716A3 /* BWaterfallCellView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWaterfallCellView.h; sourceTree = "<group>"; };
@@ -361,6 +367,10 @@
 				CFFAB76D1B451B75006716A3 /* BWaterfallView.m */,
 				CFFAB76F1B451B8C006716A3 /* BWaterfallCellView.h */,
 				CFFAB7701B451B8C006716A3 /* BWaterfallCellView.m */,
+				CFDFCAFA1B4E540D0070C36C /* BCollectionViewCell.h */,
+				CFDFCAFB1B4E540D0070C36C /* BCollectionViewCell.m */,
+				CFEB1D411B4E1EF9005FE929 /* BWaterfallLayout.h */,
+				CFEB1D421B4E1EFA005FE929 /* BWaterfallLayout.m */,
 				CFFAB7721B451BDF006716A3 /* BTagLabelView.h */,
 				CFFAB7731B451BDF006716A3 /* BTagLabelView.m */,
 			);
@@ -514,11 +524,13 @@
 				CFFAB7711B451B8C006716A3 /* BWaterfallCellView.m in Sources */,
 				CF3EA68A1B42791B006A21E5 /* BirdUtil.m in Sources */,
 				CFD1EA161B3D583600C9C588 /* BHomeFloadView.m in Sources */,
+				CFEB1D431B4E1EFA005FE929 /* BWaterfallLayout.m in Sources */,
 				CFFAB76E1B451B75006716A3 /* BWaterfallView.m in Sources */,
 				CF7CB6381B4663BB00164278 /* BEditItemViewController.m in Sources */,
 				CF3EA67A1B411D66006A21E5 /* BGlobalConfig.m in Sources */,
 				98E9B9C11B31C0F000366D58 /* BHomeViewController.m in Sources */,
 				98E9B9BE1B31C0F000366D58 /* AppDelegate.m in Sources */,
+				CFDFCAFC1B4E540D0070C36C /* BCollectionViewCell.m in Sources */,
 				985E42EF1B3307BC007F8C1A /* MASLayoutConstraint.m in Sources */,
 				98E9B9BB1B31C0F000366D58 /* main.m in Sources */,
 				98AC4F391B401A3C00E64E9B /* BSelectCatrgoryViewController.m in Sources */,

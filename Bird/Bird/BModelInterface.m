@@ -136,6 +136,11 @@ static BModelInterface *modelInstance = nil;
     return [[BirdDB share] getItemWithCategory:aCategoryId];
 }
 
+- (NSArray *)getItemsWithKeyWord:(NSString *)aKey
+{
+    return [[BirdDB share] getItemsWithKeyWord:aKey];
+}
+
 - (NSArray *)getUsuallyPropertyWithLimit:(NSInteger )aLimit
 {
     return [[BirdDB share] getUsuallyPropertyWithLimit:aLimit];

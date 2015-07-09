@@ -75,7 +75,7 @@ BWaterfallViewDelagate>
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
+    [self.navigationController setNavigationBarHidden:NO];
     [self refreshCatagoryData];
     
     [self refreshItemData];
@@ -88,6 +88,7 @@ BWaterfallViewDelagate>
 {
     [super viewWillDisappear:animated];
     
+    self.showFloatView = NO;
     [self setCreateItemViewAlpha:0.0];
 }
 
@@ -205,99 +206,6 @@ BWaterfallViewDelagate>
     }];
 }
 
-- (void)createSideFooterView
-{
-    _tableFooter = [[UIView alloc] initWithFrame:CGRectZero];
-    _tableFooter.backgroundColor = [UIColor colorWithRed:247.0/255.0
-                                                   green:247.0/255.0
-                                                    blue:247.0/255.0
-                                                   alpha:1.0];
-    UIImageView *left = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"home_sideFooter_left"]];
-    UIImageView *right = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"home_sideFooter_right"]];
-    
-    [self.view addSubview:_tableFooter];
-    [_tableFooter addSubview:left];
-    [_tableFooter addSubview:right];
-    
-    [left makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(0);
-        make.left.equalTo(0);
-        make.bottom.equalTo(0);
-//        make.width.equalTo(SideWidth/2.0);
-        make.width.equalTo(34);
-    }];
-    
-    [right makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(0);
-        make.right.equalTo(0);
-        make.bottom.equalTo(0);
-//        make.width.equalTo(SideWidth/2.0);
-         make.width.equalTo(34);
-    }];
-}
-
-- (void)createSideTableView
-{
-    _categoryTableView = [[UITableView alloc] initWithFrame:CGRectZero
-                                                      style:UITableViewStylePlain];
-    _categoryTableView.delegate = self;
-    _categoryTableView.dataSource = self;
-    _categoryTableView.backgroundColor = [UIColor whiteColor];
-    UIView *footView = [[UIView alloc] init];
-    footView.backgroundColor = [UIColor clearColor];
-    _categoryTableView.tableFooterView = footView;
-    _categoryTableView.separatorColor = [UIColor colorWithRed:204.0/255.0
-                                                        green:204.0/255.0
-                                                         blue:204.0/255.0
-                                                        alpha:1.0];
-    [self.view addSubview:_categoryTableView];
-
-    if ([_categoryTableView respondsToSelector:@selector(setSeparatorInset:)]) {
-        
-        [_categoryTableView setSeparatorInset:UIEdgeInsetsZero];
-    }
-    if ([_categoryTableView respondsToSelector:@selector(setLayoutMargins:)]) {
-        [_categoryTableView setLayoutMargins:UIEdgeInsetsZero];
-        
-    }
-    
-    [self createSideFooterView];
-    
-}
-
-- (void)createContentView
-{
-    _contentView = [[BWaterfallView alloc] initWithFrame:CGRectZero];
-    _contentView.waterfallDelegate = self;
-    _contentView.backgroundColor = [UIColor colorWithRed:231.0/255.0
-                                                   green:231.0/255.0
-                                                    blue:231.0/255.0
-                                                   alpha:1.0];
-    [self.view addSubview:_contentView];
-}
-
-- (void)createFloatView
-{
-    _floadView = [[BHomeFloadView alloc] initWithFrame:CGRectZero];
-    _floadView.alpha = 0.0;
-    [self.view addSubview:_floadView];
-    [self.view bringSubviewToFront:_floadView];
-    
-    [_floadView.photoButton addTarget:self action:@selector(handlePhotoButtonAction) forControlEvents:UIControlEventTouchUpInside];
-    [_floadView.cameraButton addTarget:self action:@selector(handleCameraButtonAction) forControlEvents:UIControlEventTouchUpInside];
-}
-
-- (void)createGestureSwipe
-{
-    UISwipeGestureRecognizer *swipeLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeGesture:)];
-    swipeLeft.direction = UISwipeGestureRecognizerDirectionLeft;
-    UISwipeGestureRecognizer *swipeRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeGesture:)];
-    swipeRight.direction = UISwipeGestureRecognizerDirectionRight;
-    
-    [self.view addGestureRecognizer:swipeLeft];
-    [self.view addGestureRecognizer:swipeRight];
-}
-
 - (void)showCategoryView
 {
     CATransition *transition = [CATransition animation];
@@ -374,14 +282,128 @@ BWaterfallViewDelagate>
                      }];
 }
 
+#pragma mark - create view
+
+- (void)createSideFooterView
+{
+    _tableFooter = [[UIView alloc] initWithFrame:CGRectZero];
+    _tableFooter.backgroundColor = [UIColor colorWithRed:247.0/255.0
+                                                   green:247.0/255.0
+                                                    blue:247.0/255.0
+                                                   alpha:1.0];
+    UIImageView *left = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"home_sideFooter_left"]];
+    UIImageView *right = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"home_sideFooter_right"]];
+    UIView *VLineView = [[UIView alloc] initWithFrame:CGRectZero];
+    VLineView.backgroundColor = [UIColor colorWithRed:231.0/255.0
+                                               green:231.0/255.0
+                                                blue:231.0/255.0
+                                               alpha:1.0];
+    UIView *HLineView = [[UIView alloc] initWithFrame:CGRectZero];
+    HLineView.backgroundColor = VLineView.backgroundColor;
+    
+    [self.view addSubview:_tableFooter];
+    [_tableFooter addSubview:left];
+    [_tableFooter addSubview:right];
+    [_tableFooter addSubview:VLineView];
+    [_tableFooter addSubview:HLineView];
+    
+    [left makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(0);
+        make.left.equalTo(0);
+        make.bottom.equalTo(0);
+        make.width.equalTo(34);
+    }];
+    
+    [right makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(0);
+        make.right.equalTo(0);
+        make.bottom.equalTo(0);
+        make.width.equalTo(34);
+    }];
+    
+    [HLineView makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(0);
+        make.left.equalTo(0);
+        make.right.equalTo(0);
+        make.height.equalTo(0.5);
+    }];
+    
+    [VLineView makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(0);
+        make.bottom.equalTo(0);
+        make.centerX.equalTo(_tableFooter);
+        make.width.equalTo(0.5);
+    }];
+}
+
+- (void)createSideTableView
+{
+    _categoryTableView = [[UITableView alloc] initWithFrame:CGRectZero
+                                                      style:UITableViewStylePlain];
+    _categoryTableView.delegate = self;
+    _categoryTableView.dataSource = self;
+    _categoryTableView.backgroundColor = [UIColor whiteColor];
+    UIView *footView = [[UIView alloc] init];
+    footView.backgroundColor = [UIColor clearColor];
+    _categoryTableView.tableFooterView = footView;
+    _categoryTableView.separatorColor = [UIColor colorWithRed:204.0/255.0
+                                                        green:204.0/255.0
+                                                         blue:204.0/255.0
+                                                        alpha:1.0];
+    
+    
+    if ([_categoryTableView respondsToSelector:@selector(setSeparatorInset:)]) {
+        [_categoryTableView setSeparatorInset:UIEdgeInsetsZero];
+    }
+    if ([_categoryTableView respondsToSelector:@selector(setLayoutMargins:)]) {
+        [_categoryTableView setLayoutMargins:UIEdgeInsetsZero];
+    }
+    
+    [self.view addSubview:_categoryTableView];
+    [self createSideFooterView];
+}
+
+- (void)createContentView
+{
+    _contentView = [[BWaterfallView alloc] initWithFrame:CGRectZero];
+    _contentView.waterfallDelegate = self;
+    _contentView.backgroundColor = [UIColor colorWithRed:231.0/255.0
+                                                   green:231.0/255.0
+                                                    blue:231.0/255.0
+                                                   alpha:1.0];
+    [self.view addSubview:_contentView];
+}
+
+- (void)createFloatView
+{
+    _floadView = [[BHomeFloadView alloc] initWithFrame:CGRectZero];
+    _floadView.alpha = 0.0;
+    [self.view addSubview:_floadView];
+    [self.view bringSubviewToFront:_floadView];
+    
+    [_floadView.photoButton addTarget:self action:@selector(handlePhotoButtonAction) forControlEvents:UIControlEventTouchUpInside];
+    [_floadView.cameraButton addTarget:self action:@selector(handleCameraButtonAction) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void)createGestureSwipe
+{
+    UISwipeGestureRecognizer *swipeLeft = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeGesture:)];
+    swipeLeft.direction = UISwipeGestureRecognizerDirectionLeft;
+    UISwipeGestureRecognizer *swipeRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipeGesture:)];
+    swipeRight.direction = UISwipeGestureRecognizerDirectionRight;
+    
+    [self.view addGestureRecognizer:swipeLeft];
+    [self.view addGestureRecognizer:swipeRight];
+}
+
 - (UITableViewCell *)createCategoryTableCellWithId:(NSString *)aCellId
 {
     UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
-                                  reuseIdentifier:aCellId];
+                                                   reuseIdentifier:aCellId];
     UIView *selectedBgView =[[UIView alloc] init];
     selectedBgView.backgroundColor = _contentView.backgroundColor;
     cell.selectedBackgroundView = selectedBgView;
-
+    
     UILabel *textLabel = [[UILabel alloc] initWithFrame:CGRectZero];
     textLabel.tag = TAG_LABEL;
     textLabel.backgroundColor = [UIColor clearColor];
@@ -410,7 +432,7 @@ BWaterfallViewDelagate>
     return cell;
 }
 
-#pragma mark data
+#pragma mark - data
 
 - (void)refreshCatagoryData
 {
@@ -461,6 +483,8 @@ BWaterfallViewDelagate>
 
 - (void)handleSwipeGesture:(UISwipeGestureRecognizer *)aGesture
 {
+    self.showFloatView = NO;
+    
     if (aGesture.direction == UISwipeGestureRecognizerDirectionLeft) {
         self.showSideView = NO;
     } else if (aGesture.direction == UISwipeGestureRecognizerDirectionRight) {
@@ -475,6 +499,8 @@ BWaterfallViewDelagate>
 
 - (void)handleHomeButtonAction
 {
+    self.showFloatView = NO;
+    
     NSIndexPath *selected = [_categoryTableView indexPathForSelectedRow];
     if(selected)
         [_categoryTableView deselectRowAtIndexPath:selected animated:YES];
@@ -488,6 +514,7 @@ BWaterfallViewDelagate>
 
 - (void)handleShowSideViewAction
 {
+    self.showFloatView = NO;
     self.showSideView = YES;
 }
 
@@ -498,6 +525,7 @@ BWaterfallViewDelagate>
 
 - (void)handleSearchAction
 {
+    self.showFloatView = NO;
     BSearchItemViewController *searchVC = [[BSearchItemViewController alloc] init];
     
     [self.navigationController pushViewController:searchVC animated:YES];
@@ -559,6 +587,8 @@ BWaterfallViewDelagate>
 
 - (void)BWaterfallView:(BWaterfallView *)aWaterfall didSelectedItemAtIndex:(NSInteger)aIndex
 {
+    self.showFloatView = NO;
+    
     if (aIndex < [_itemsData count]) {
         BItemContent *content = [_itemsData objectAtIndex:aIndex];
         BItemDetailViewController *detailVC = [[BItemDetailViewController alloc] init];
@@ -660,6 +690,8 @@ BWaterfallViewDelagate>
 
 - (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    self.showFloatView = NO;
+    
     if (indexPath.row >= [_categoryData count]) {
         //添加分类
         BSelectCatrgoryViewController *selectedVC = [[BSelectCatrgoryViewController alloc] init];

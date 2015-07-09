@@ -22,6 +22,7 @@
 //物品操作
 - (void)insertItem:(BItemContent *)aItem;
 - (NSArray *)getItemWithCategory:(NSString *)category;
+- (NSArray *)getItemsWithKeyWord:(NSString *)aKey;
 - (void)deleteItmeWithId:(NSString *)aItemId;
 
 //分类操作

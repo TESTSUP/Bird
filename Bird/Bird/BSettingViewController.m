@@ -88,7 +88,7 @@ SKStoreProductViewControllerDelegate>
         [_settingTable setLayoutMargins:UIEdgeInsetsZero];
     }
     
-    _settingTable.backgroundColor = [UIColor greenColor];
+    _settingTable.backgroundColor = [UIColor clearColor];
     
     [self.view addSubview:_settingTable];
 }

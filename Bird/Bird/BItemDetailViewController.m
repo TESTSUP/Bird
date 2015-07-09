@@ -71,12 +71,21 @@ BPageViewControllerDelegate>
 
 - (void)configNavigationBar
 {
+    [self.navigationController setNavigationBarHidden:NO];
+    
     UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    backBtn.frame = CGRectMake(0, 0, 40, 40);
+    backBtn.backgroundColor = [UIColor clearColor];
+    backBtn.frame = CGRectMake(0, 0, 120, 40);
     [backBtn addTarget:self action:@selector(handleBackAction) forControlEvents:UIControlEventTouchUpInside];
-    [backBtn setTitle:self.categoryName forState:UIControlStateNormal];
+    NSString *title = self.itemContent.name;
+    if ([title length] == 0) {
+        title = self.categoryName;
+    }
+    [backBtn setTitle:title forState:UIControlStateNormal];
     [backBtn setImage:[UIImage imageNamed:@"nav_back"] forState:UIControlStateNormal];
     [backBtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
+    backBtn.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
+//    backBtn.contentEdgeInsets = UIEdgeInsetsMake(0,10, 0, 0);
     backBtn.titleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     backBtn.titleLabel.numberOfLines = 1;
     UIBarButtonItem *leftBarItem = [[UIBarButtonItem alloc] initWithCustomView:backBtn];
@@ -473,7 +482,11 @@ BPageViewControllerDelegate>
 
 - (void)handleBackAction
 {
-    [self popToViewControllerNamed:@"BHomeViewController"];
+    if ([self popToViewControllerNamed:@"BSearchItemViewController"]) {
+        
+    } else {
+        [self popToViewControllerNamed:@"BHomeViewController"];
+    }
 }
 
 - (void)handleDeleteAction

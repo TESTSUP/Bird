@@ -186,14 +186,8 @@ static const CGFloat LineSpace = 15;
                                            blue:154.0/255.0
                                           alpha:1.0];
     
-    UIView *lineView = [[UIView alloc] initWithFrame:CGRectZero];
-    lineView.backgroundColor = [UIColor colorWithRed:204.0/255.0
-                                               green:204.0/255.0
-                                                blue:204.0/255.0
-                                               alpha:1.0];
     [contentView addSubview:tempLabel];
     [tempScroll addSubview:contentView];
-    [tempScroll addSubview:lineView];
     
     NSDictionary *attrDic = @{NSFontAttributeName:tempLabel.font};
     CGRect rect = [tempLabel.text boundingRectWithSize:CGSizeMake(MAXFLOAT, defaultHeight)
@@ -211,12 +205,6 @@ static const CGFloat LineSpace = 15;
         make.left.equalTo(left_offset);
         make.height.equalTo(contentView.height).offset(-5);
         make.width.equalTo(rect.size.width);
-    }];
-    [lineView makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(0);
-        make.right.equalTo(0);
-        make.bottom.equalTo(0);
-        make.height.equalTo(0.5);
     }];
     
 //    tempScroll.contentSize = CGSizeMake(rect.size.width+left_offset*2, defaultHeight);
@@ -267,7 +255,13 @@ static const CGFloat LineSpace = 15;
         if (cell == nil) {
             continue;
         }
+        UIView *lineView = [[UIView alloc] initWithFrame:CGRectZero];
+        lineView.backgroundColor = [UIColor colorWithRed:204.0/255.0
+                                                   green:204.0/255.0
+                                                    blue:204.0/255.0
+                                                   alpha:1.0];
         [_contentView addSubview:cell];
+        [_contentView addSubview:lineView];
         [cell makeConstraints:^(MASConstraintMaker *make) {
             if (lastView) {
                 make.top.equalTo(lastView.bottom);
@@ -277,6 +271,12 @@ static const CGFloat LineSpace = 15;
             make.left.equalTo(0);
             make.right.equalTo(0);
             make.height.equalTo(defaultHeight);
+        }];
+        [lineView makeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(0);
+            make.right.equalTo(0);
+            make.top.equalTo(cell.bottom).offset(-1);
+            make.height.equalTo(0.5);
         }];
         lastView = cell;
     }

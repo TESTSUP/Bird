@@ -1,17 +1,17 @@
 //
-//  BWaterfallCellView.m
+//  BCollectionViewCell.m
 //  Bird
 //
-//  Created by 孙永刚 on 15-7-2.
+//  Created by 孙永刚 on 15-7-9.
 //  Copyright (c) 2015年 孙永刚. All rights reserved.
 //
 
-#import "BWaterfallCellView.h"
+#import "BCollectionViewCell.h"
 #import "BirdUtil.h"
 
 static const CGFloat labelHeight = 27;
 
-@interface BWaterfallCellView ()
+@interface BCollectionViewCell ()
 {
     UIImageView *_imageView;
     UILabel *_titleLabel;
@@ -22,7 +22,7 @@ static const CGFloat labelHeight = 27;
 
 @end
 
-@implementation BWaterfallCellView
+@implementation BCollectionViewCell
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -68,13 +68,9 @@ static const CGFloat labelHeight = 27;
     
     [_titleLabel remakeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(_imageView.bottom);
-        make.left.equalTo(0);
+        make.left.equalTo(5);
         make.right.equalTo(0);
         make.height.equalTo([_titleLabel.text length]>0? labelHeight:0);
-    }];
-    
-    [self makeConstraints:^(MASConstraintMaker *make) {
-        make.bottom.equalTo(_titleLabel.bottom);
     }];
 }
 
@@ -102,7 +98,7 @@ static const CGFloat labelHeight = 27;
 
 - (void)setItemTitle:(NSString *)itemTitle
 {
-    _titleLabel.text = [@"  " stringByAppendingString:itemTitle];
+    _titleLabel.text = itemTitle;
     [self layoutCell];
 }
 

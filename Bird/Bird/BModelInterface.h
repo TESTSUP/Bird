@@ -54,6 +54,8 @@ typedef NS_ENUM(NSInteger, ModelAction) {
  */
 - (NSArray *)getItemsWithCategoryId:(NSString *)aCategoryId;
 
+- (NSArray *)getItemsWithKeyWord:(NSString *)aKey;
+
 /**
  *  获取常用属性列表
  *

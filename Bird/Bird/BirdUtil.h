@@ -29,4 +29,5 @@
 + (UIImage *)squareThumbnailWithOrgImage:(UIImage *)image
                            andSideLength:(CGFloat)aLength;
 
++ (UIImage *)imageWithColor:(UIColor *)color;
 @end

@@ -77,8 +77,11 @@
     
     for (NSString *imageid in self.imageIDs) {
         if ([imageid isEqualToString:aImageId]) {
-            
             NSInteger index = [self.imageIDs indexOfObject:imageid];
+            if (index == 0) {
+                return self.coverImage;
+            }
+            
             if (index < [self.imageDatas count]) {
                 return [self.imageDatas objectAtIndex:index];
             } else {

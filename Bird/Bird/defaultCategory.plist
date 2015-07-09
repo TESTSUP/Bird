@@ -3,10 +3,13 @@
 <plist version="1.0">
 <array>
 	<string>衣服</string>
-	<string>饰品</string>
-	<string>书籍</string>
-	<string>收藏</string>
-	<string>玩具</string>
+	<string>玩乐</string>
+	<string>用品</string>
+	<string>票券</string>
+	<string>衣服</string>
+	<string>食品</string>
+	<string>电器</string>
+	<string>家具</string>
 	<string>其它</string>
 </array>
 </plist>

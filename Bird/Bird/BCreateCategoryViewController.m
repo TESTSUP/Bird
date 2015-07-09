@@ -77,7 +77,7 @@ static NSString *const placeHolder = @"备注名称";
     _catigoryName = [[UILabel alloc] initWithFrame:CGRectZero];
     _catigoryName.textColor = [UIColor blackColor];
     _catigoryName.font = [UIFont systemFontOfSize:17];
-    _catigoryName.backgroundColor = [UIColor greenColor];
+    _catigoryName.backgroundColor = [UIColor clearColor];
     _catigoryName.text = self.category.name;
     
     _categoryDescription = [[UITextView alloc] initWithFrame:CGRectZero];
@@ -88,7 +88,7 @@ static NSString *const placeHolder = @"备注名称";
     _categoryDescription.text =  self.category.descr? self.category.descr:placeHolder;
     _categoryDescription.textColor = [UIColor lightGrayColor];
     _categoryDescription.font = [UIFont systemFontOfSize:14];
-    _categoryDescription.backgroundColor = [UIColor redColor];
+    _categoryDescription.backgroundColor = [UIColor clearColor];
     _categoryDescription.textAlignment = NSTextAlignmentLeft;
     _categoryDescription.returnKeyType = UIReturnKeyDone;
     self.automaticallyAdjustsScrollViewInsets = NO;

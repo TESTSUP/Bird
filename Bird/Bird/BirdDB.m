@@ -199,13 +199,7 @@ static BirdDB *DBInstance = nil;
     item.property = [proStr componentsSeparatedByString:@","];
     item.createTime = [rs intForColumnIndex:5];
     item.updateTime = [rs intForColumnIndex:6];
-    
-//    NSMutableArray *imageArray = [[NSMutableArray alloc] initWithCapacity:0];
-//    for (NSString *imageID in item.imageIDs) {
-//        UIImage *image = [BirdUtil getImageWithID:imageID];
-//        [imageArray addObject:image];
-//    }
-//    item.imageDatas = imageArray;
+    item.coverImage = [BirdUtil getImageWithID:[item.imageIDs firstObject]];
     
     return item;
 }
@@ -240,6 +234,26 @@ static BirdDB *DBInstance = nil;
         }];
     }
     
+    return rt;
+}
+
+- (NSArray *)getItemsWithKeyWord:(NSString *)aKey
+{
+    NSMutableArray *rt = [[NSMutableArray alloc] initWithCapacity:0];
+    NSString *sqStr = [NSString stringWithFormat:@"SELECT * FROM bird_db_items WHERE name Like '%%%@%%' OR properties LIKE '%%%@%%' ORDER BY createtime DESC", aKey, aKey];
+    if ([aKey length]) {
+        [self.dbQueue inDatabase:^(FMDatabase *db) {
+            FMResultSet *rs = [db executeQuery:sqStr];
+            [self checkError:db];
+            while([rs next]) {
+                BItemContent *item = [self createItemWithResult:rs];
+                if (item) {
+                    [rt addObject:item];
+                }
+            }
+            [rs close];
+        }];
+    }
     return rt;
 }
 
@@ -317,6 +331,18 @@ static BirdDB *DBInstance = nil;
         }
         [rs close];
     }];
+    
+    if ([rt count] == 0) {
+        BCategoryContent *category = [[BCategoryContent alloc] init];
+        category.name = @"其它";
+        category.categoryId = [BirdUtil createCategoryID];
+        category.descr = nil;
+        category.createTime = [[NSDate date] timeIntervalSince1970];
+        category.updateTime = category.createTime;
+        
+        [self insertCategory:category];
+        [rt addObject:category];
+    }
     
     return rt;
 }

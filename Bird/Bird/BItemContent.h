@@ -17,6 +17,7 @@
 @property (nonatomic, strong) NSArray *property;            //属性列表，成员：NSString
 @property (nonatomic, assign) NSTimeInterval createTime;    //创建时间
 @property (nonatomic, assign) NSTimeInterval updateTime;    //更新时间
+@property (nonatomic, strong) UIImage *coverImage;          //封面图
 //create用
 @property (nonatomic, strong) NSArray *imageDatas;          //图片数据
 //update时删除
