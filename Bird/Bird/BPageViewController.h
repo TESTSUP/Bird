@@ -20,6 +20,7 @@
 @interface BPageViewController : UIViewController
 
 @property (nonatomic, assign) id<BPageViewControllerDelegate> delegate;
+@property (nonatomic, assign) BOOL showToolbar;
 @property (nonatomic, assign) NSInteger currentIndex;
 @property (nonatomic, strong) NSArray *imageDatas;
 @property (nonatomic, strong) NSArray *imageIds;

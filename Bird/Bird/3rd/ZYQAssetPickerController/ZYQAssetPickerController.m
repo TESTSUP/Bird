@@ -7,6 +7,7 @@
 //
 
 #import "ZYQAssetPickerController.h"
+#import "BPageViewController.h"
 
 #define IS_IOS7             ([[[UIDevice currentDevice] systemVersion] compare:@"7.0" options:NSNumericSearch] != NSOrderedAscending)
 #define kThumbnailLength    78.0f
@@ -502,10 +503,10 @@ static UIColor *titleColor;
 - (void)setupButtons
 {
     self.navigationItem.rightBarButtonItem =
-    [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"完成", nil)
+    [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"取消", nil)
                                      style:UIBarButtonItemStylePlain
                                     target:self
-                                    action:@selector(finishPickingAssets:)];
+                                    action:@selector(handleCancelAction)];
 }
 
 - (void)setupAssets
@@ -697,12 +698,30 @@ static UIColor *titleColor;
 
 - (void)handlePreviewAction
 {
+    if ([_indexPathsForSelectedItems count] == 0) {
+        return;
+    }
     
+    NSMutableArray *imageArray = [[NSMutableArray alloc] initWithCapacity:0];
+    for (int i=0; i<_indexPathsForSelectedItems.count; i++) {
+        ALAsset *asset=_indexPathsForSelectedItems[i];
+        UIImage *tempImg=[UIImage imageWithCGImage:asset.defaultRepresentation.fullScreenImage];
+        [imageArray addObject:tempImg];
+    }
+    
+    BPageViewController *pageVC = [[BPageViewController alloc] init];
+    pageVC.imageDatas = imageArray;
+    [self.navigationController pushViewController:pageVC animated:YES];
 }
 
 - (void)handleCancelAction
 {
+    ZYQAssetPickerController *picker = (ZYQAssetPickerController *)self.navigationController;
     
+    if ([picker.delegate respondsToSelector:@selector(assetPickerControllerDidCancel:)])
+        [picker.delegate assetPickerControllerDidCancel:picker];
+    
+    [picker.presentingViewController dismissViewControllerAnimated:YES completion:NULL];
 }
 
 - (void)finishPickingAssets:(id)sender

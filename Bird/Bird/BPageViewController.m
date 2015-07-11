@@ -25,6 +25,8 @@
 {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor blackColor];
+    self.navigationController.toolbarHidden = YES;
+    self.navigationController.navigationBarHidden = YES;
     [self createPageController];
     
     [self createButtons];
@@ -93,6 +95,11 @@
         make.bottom.equalTo(0);
         make.size.equalTo(CGSizeMake(60, 44));
     }];
+    
+    if (!_showToolbar) {
+        _setBtn.hidden = YES;
+        deleteBtn.hidden = YES;
+    }
 }
 
 - (void)createPageController
@@ -257,10 +264,12 @@
         
         _pageLabel.text = [NSString stringWithFormat:@"%ld/%ld", _currentIndex+1, [self.pageContent count]];
         
-        if (_currentIndex == 0) {
-            _setBtn.hidden =YES;
-        } else {
-            _setBtn.hidden = NO;
+        if (_showToolbar) {
+            if (_currentIndex == 0) {
+                _setBtn.hidden =YES;
+            } else {
+                _setBtn.hidden = NO;
+            }
         }
     }
 }

@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "UIColor+Bird.h"
 
 @interface BirdUtil : NSObject
 

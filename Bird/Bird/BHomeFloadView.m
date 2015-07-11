@@ -7,6 +7,7 @@
 //
 
 #import "BHomeFloadView.h"
+#import "UIColor+Bird.h"
 
 @interface BHomeFloadView()
 {
@@ -40,16 +41,10 @@
     _cameraButton.backgroundColor = [UIColor whiteColor];
     [_cameraButton setImage:[UIImage imageNamed:@"camera_btn_n"] forState:UIControlStateNormal];
     [_cameraButton setTitle:@"拍照" forState:UIControlStateNormal];
-    [_cameraButton setTitleColor:[UIColor colorWithRed:68.0/255.0
-                                                 green:68.0/255.0
-                                                  blue:68.0/255.0
-                                                 alpha:1.0] forState:UIControlStateNormal];
+    [_cameraButton setTitleColor:[UIColor normalTextColor] forState:UIControlStateNormal];
     
     _lineView = [[UIView alloc] initWithFrame:CGRectZero];
-    _lineView.backgroundColor = [UIColor colorWithRed:204.0/255.0
-                                                green:204.0/255.0
-                                                 blue:204.0/255.0
-                                                alpha:1.0];
+    _lineView.backgroundColor = [UIColor separatorColor];
     
     _photoButton = [UIButton buttonWithType:UIButtonTypeCustom];
     _photoButton.titleLabel.font = [UIFont systemFontOfSize:15];
@@ -57,10 +52,7 @@
     _photoButton.backgroundColor = [UIColor whiteColor];
     [_photoButton setImage:[UIImage imageNamed:@"photo_btn_n"] forState:UIControlStateNormal];
     [_photoButton setTitle:@"相册" forState:UIControlStateNormal];
-    [_photoButton setTitleColor:[UIColor colorWithRed:68.0/255.0
-                                                green:68.0/255.0
-                                                 blue:68.0/255.0
-                                                alpha:1.0] forState:UIControlStateNormal];
+    [_photoButton setTitleColor:[UIColor normalTextColor] forState:UIControlStateNormal];
     
     [self addSubview:_sharpView];
     [self addSubview:_cameraButton];

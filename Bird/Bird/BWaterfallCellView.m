@@ -102,7 +102,11 @@ static const CGFloat labelHeight = 27;
 
 - (void)setItemTitle:(NSString *)itemTitle
 {
-    _titleLabel.text = [@"  " stringByAppendingString:itemTitle];
+    if (itemTitle == nil) {
+        return;
+    }
+    NSString *temp = @"    ";
+    _titleLabel.text = [temp stringByAppendingString:itemTitle];
     [self layoutCell];
 }
 

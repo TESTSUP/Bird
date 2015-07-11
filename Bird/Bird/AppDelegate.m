@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 #import "BHomeViewController.h"
+#import "UIColor+Bird.h"
 
 @interface AppDelegate ()
 
@@ -26,10 +27,7 @@
     BHomeViewController *homeVC = [[BHomeViewController alloc] init];
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:homeVC];
     nav.navigationBar.translucent = NO;
-    nav.navigationBar.barTintColor = [UIColor colorWithRed:247.0/255.0
-                                                     green:247.0/255.0
-                                                      blue:247.0/255.0
-                                                     alpha:1.0];
+    nav.navigationBar.barTintColor = [UIColor navBgColor];
     self.window.rootViewController = nav;
     
     [self.window makeKeyAndVisible];

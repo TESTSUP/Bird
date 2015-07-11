@@ -19,6 +19,7 @@
 		985E42F81B330DD6007F8C1A /* BCategoryListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 985E42F71B330DD6007F8C1A /* BCategoryListViewController.m */; };
 		98707F931B4D5D4F00C9663E /* BPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 98707F921B4D5D4F00C9663E /* BPageViewController.m */; };
 		9877B3681B48F1B900AF7ED1 /* BSearchItemViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9877B3671B48F1B900AF7ED1 /* BSearchItemViewController.m */; };
+		989FDE4A1B50F5F400D40A98 /* UIColor+Bird.m in Sources */ = {isa = PBXBuildFile; fileRef = 989FDE491B50F5F400D40A98 /* UIColor+Bird.m */; };
 		98AC4F341B3FABCA00E64E9B /* ZYQAssetPicker.Bundle in Resources */ = {isa = PBXBuildFile; fileRef = 98AC4F311B3FABCA00E64E9B /* ZYQAssetPicker.Bundle */; };
 		98AC4F351B3FABCA00E64E9B /* ZYQAssetPickerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 98AC4F331B3FABCA00E64E9B /* ZYQAssetPickerController.m */; };
 		98AC4F391B401A3C00E64E9B /* BSelectCatrgoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 98AC4F381B401A3C00E64E9B /* BSelectCatrgoryViewController.m */; };
@@ -99,6 +100,8 @@
 		98707F921B4D5D4F00C9663E /* BPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BPageViewController.m; sourceTree = "<group>"; };
 		9877B3661B48F1B900AF7ED1 /* BSearchItemViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BSearchItemViewController.h; sourceTree = "<group>"; };
 		9877B3671B48F1B900AF7ED1 /* BSearchItemViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BSearchItemViewController.m; sourceTree = "<group>"; };
+		989FDE481B50F5F400D40A98 /* UIColor+Bird.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+Bird.h"; sourceTree = "<group>"; };
+		989FDE491B50F5F400D40A98 /* UIColor+Bird.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+Bird.m"; sourceTree = "<group>"; };
 		98AC4F311B3FABCA00E64E9B /* ZYQAssetPicker.Bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ZYQAssetPicker.Bundle; sourceTree = "<group>"; };
 		98AC4F321B3FABCA00E64E9B /* ZYQAssetPickerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZYQAssetPickerController.h; sourceTree = "<group>"; };
 		98AC4F331B3FABCA00E64E9B /* ZYQAssetPickerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZYQAssetPickerController.m; sourceTree = "<group>"; };
@@ -397,6 +400,8 @@
 			children = (
 				CF3EA6881B42791B006A21E5 /* BirdUtil.h */,
 				CF3EA6891B42791B006A21E5 /* BirdUtil.m */,
+				989FDE481B50F5F400D40A98 /* UIColor+Bird.h */,
+				989FDE491B50F5F400D40A98 /* UIColor+Bird.m */,
 				CF7CB63D1B46732500164278 /* UIViewController+Bird.h */,
 				CF7CB63E1B46732500164278 /* UIViewController+Bird.m */,
 			);
@@ -537,6 +542,7 @@
 				CF3EA6801B412A40006A21E5 /* BItemContent.m in Sources */,
 				985E42F41B3307BC007F8C1A /* View+MASAdditions.m in Sources */,
 				CF3EA66F1B411653006A21E5 /* FMResultSet.m in Sources */,
+				989FDE4A1B50F5F400D40A98 /* UIColor+Bird.m in Sources */,
 				98707F931B4D5D4F00C9663E /* BPageViewController.m in Sources */,
 				985E42F01B3307BC007F8C1A /* MASViewAttribute.m in Sources */,
 				CFFAB7741B451BDF006716A3 /* BTagLabelView.m in Sources */,

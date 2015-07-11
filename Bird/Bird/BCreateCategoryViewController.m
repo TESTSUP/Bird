@@ -15,13 +15,13 @@
 
 static const CGFloat left_offset = 20;
 static const CGFloat top_offset = 20;
-static const CGFloat itemSpace15 = 15;
-static NSString *const placeHolder = @"备注名称";
+static const CGFloat itemSpace15 = 10;
 
 @interface BCreateCategoryViewController () <UITextViewDelegate, UITextFieldDelegate>
 {
     UIView *_contentView;
     UILabel *_catigoryName;
+    UILabel *_infoLabel;
     UITextView *_categoryDescription;
     
     UIButton *_deleteButton;
@@ -75,39 +75,67 @@ static NSString *const placeHolder = @"备注名称";
 - (void)configContentView
 {
     _catigoryName = [[UILabel alloc] initWithFrame:CGRectZero];
-    _catigoryName.textColor = [UIColor blackColor];
-    _catigoryName.font = [UIFont systemFontOfSize:17];
+    _catigoryName.textColor = [UIColor normalTextColor];
+    _catigoryName.font = [UIFont systemFontOfSize:16];
     _catigoryName.backgroundColor = [UIColor clearColor];
     _catigoryName.text = self.category.name;
+    
+    _infoLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+    _infoLabel.backgroundColor = [UIColor clearColor];
+    _infoLabel.text = @"备注名：";
+    _infoLabel.textColor = [UIColor colorWithHexString:@"#9a9a9a"];
+    _infoLabel.font = [UIFont systemFontOfSize:14];
     
     _categoryDescription = [[UITextView alloc] initWithFrame:CGRectZero];
     _categoryDescription.showsHorizontalScrollIndicator = NO;
     _categoryDescription.showsVerticalScrollIndicator = NO;
     _categoryDescription.scrollEnabled = NO;
     _categoryDescription.delegate = self;
-    _categoryDescription.text =  self.category.descr? self.category.descr:placeHolder;
-    _categoryDescription.textColor = [UIColor lightGrayColor];
-    _categoryDescription.font = [UIFont systemFontOfSize:14];
+    _categoryDescription.text =  self.category.descr;
+    _categoryDescription.textColor = [UIColor normalTextColor];
+    _categoryDescription.font = [UIFont systemFontOfSize:16];
     _categoryDescription.backgroundColor = [UIColor clearColor];
     _categoryDescription.textAlignment = NSTextAlignmentLeft;
     _categoryDescription.returnKeyType = UIReturnKeyDone;
     self.automaticallyAdjustsScrollViewInsets = NO;
     
+    UIView *topLine = [[UIView alloc] initWithFrame:CGRectZero];
+    topLine.backgroundColor = [UIColor separatorColor];
+    UIView *bottomLine = [[UIView alloc] initWithFrame:CGRectZero];
+    bottomLine.backgroundColor = [UIColor separatorColor];
+    
     [_contentView addSubview:_catigoryName];
+    [_contentView addSubview:_infoLabel];
     [_contentView addSubview:_categoryDescription];
+    [_contentView addSubview:topLine];
+    [_contentView addSubview:bottomLine];
+    
+    [topLine makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(0);
+        make.right.equalTo(0);
+        make.left.equalTo(0);
+        make.height.equalTo(0.5);
+    }];
+    [bottomLine makeConstraints:^(MASConstraintMaker *make) {
+        make.bottom.equalTo(0);
+        make.right.equalTo(0);
+        make.left.equalTo(0);
+        make.height.equalTo(0.5);
+    }];
 }
 
 - (void)createSuViews
 {
     _contentView = [[UIView alloc] initWithFrame:CGRectZero];
     _contentView.backgroundColor = [UIColor whiteColor];
-    _contentView.layer.cornerRadius = 4.0;
     [self.view addSubview:_contentView];
     [self configContentView];
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapAction)];
     [_contentView addGestureRecognizer:tap];
     
     _deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    _deleteButton.layer.borderWidth = 0.5;
+    _deleteButton.layer.borderColor = [[UIColor separatorColor] CGColor];
     [_deleteButton setTitle:@"删除" forState:UIControlStateNormal];
     [_deleteButton addTarget:self action:@selector(handleDeleteAction) forControlEvents:UIControlEventTouchUpInside];
     [_deleteButton setTitleColor:[UIColor colorWithRed:167.0/255.0
@@ -125,9 +153,9 @@ static NSString *const placeHolder = @"备注名称";
 
 - (void)layoutSubviews
 {
-    CGSize constraintSize = CGSizeMake(self.view.frame.size.width-2*left_offset, MAXFLOAT);
+    CGSize constraintSize = CGSizeMake(self.view.frame.size.width-2*left_offset-60, MAXFLOAT);
     CGSize size = [_categoryDescription sizeThatFits:constraintSize];
-    CGFloat descriptionH = size.height;
+    CGFloat descriptionH = MAX(33, size.height);
     CGFloat titleHeight = 20;
     
     [_catigoryName remakeConstraints:^(MASConstraintMaker *make) {
@@ -137,9 +165,16 @@ static NSString *const placeHolder = @"备注名称";
         make.height.equalTo(titleHeight);
     }];
     
-    [_categoryDescription remakeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(_catigoryName.bottom).offset(itemSpace15);
+    [_infoLabel makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(_catigoryName.bottom).offset(0);
         make.left.equalTo(left_offset);
+        make.width.equalTo(60);
+        make.height.equalTo(33);
+    }];
+    
+    [_categoryDescription remakeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(_infoLabel.top);
+        make.left.equalTo(_infoLabel.right);
         make.right.equalTo(-left_offset);
         make.height.equalTo(descriptionH);
     }];
@@ -147,8 +182,8 @@ static NSString *const placeHolder = @"备注名称";
     [_contentView remakeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(22);
         make.left.equalTo(self.view).offset(0);
-        make.right.equalTo(self.view.right).offset(-5);
-        make.height.equalTo(2*top_offset +titleHeight + itemSpace15 + descriptionH);
+        make.right.equalTo(self.view.right).offset(0);
+        make.height.equalTo(top_offset +titleHeight + itemSpace15 + descriptionH);
     }];
     
     [_deleteButton remakeConstraints:^(MASConstraintMaker *make) {
@@ -183,7 +218,7 @@ static NSString *const placeHolder = @"备注名称";
 
 - (void)handleConfirmButtonAction
 {
-    self.category.descr = [_categoryDescription.text isEqualToString:placeHolder]? @"":_categoryDescription.text;
+    self.category.descr = _categoryDescription.text;
     self.category.updateTime = self.category.createTime;
     
     if (_isCreate) {
@@ -216,7 +251,7 @@ static NSString *const placeHolder = @"备注名称";
     NSArray *itemArray = [[BModelInterface shareInstance] getItemsWithCategoryId:self.category.categoryId];
     if ([itemArray count]) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
-                                                        message:@"该分类下还有物品，清空物品后才能删除"
+                                                        message:@"该分类下还有物品，若要删除，请先将该分类下的物品移除"
                                                        delegate:nil cancelButtonTitle:@"确定"
                                               otherButtonTitles:nil, nil];
         [alert show];
@@ -236,18 +271,12 @@ static NSString *const placeHolder = @"备注名称";
 
 - (void)textViewDidBeginEditing:(UITextView *)textView
 {
-    if ([textView.text isEqual:placeHolder]) {
-        textView.text = @"";
-        textView.textColor = [UIColor blackColor];
-    }
+
 }
 
 - (void)textViewDidEndEditing:(UITextView *)textView
 {
-    if ([textView.text length] == 0) {
-        textView.text = placeHolder;
-        textView.textColor = [UIColor lightGrayColor];
-    }
+
 }
 
 - (void)textViewDidChange:(UITextView *)textView

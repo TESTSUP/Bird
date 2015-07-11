@@ -170,7 +170,7 @@ BPageViewControllerDelegate>
     
     
     _titleView = [[UITextField alloc] initWithFrame:CGRectZero];
-    _titleView.placeholder = @"物品/描述/标签";
+    _titleView.placeholder = @"名字/描述/标签";
     _titleView.enabled = NO;
     _titleView.font = [UIFont systemFontOfSize:16];
     _titleView.textColor = [UIColor colorWithRed:68.0/255.0
@@ -555,6 +555,7 @@ BPageViewControllerDelegate>
     
     BPageViewController* imageVC = [[BPageViewController alloc] init];
     imageVC.delegate = self;
+    imageVC.showToolbar = YES;
     imageVC.imageIds = self.itemContent.imageIDs;
     imageVC.currentIndex = tapView.tag;
     [self presentViewController:imageVC animated:YES completion:nil];

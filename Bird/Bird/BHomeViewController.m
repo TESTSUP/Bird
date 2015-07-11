@@ -108,17 +108,11 @@ BWaterfallViewDelagate>
     if ([leftBtn isKindOfClass:[UIButton class]]) {
         NSIndexPath *selected = [_categoryTableView indexPathForSelectedRow];
         if(selected) {
-            [leftBtn setTitleColor:[UIColor colorWithRed:189.0/255.0
-                                                   green:8.0/255.0
-                                                    blue:28.0/255.0
-                                                   alpha:1.0]
+            [leftBtn setTitleColor:[UIColor selectedTextColor]
                           forState:UIControlStateNormal];
             
         } else {
-            [leftBtn setTitleColor:[UIColor colorWithRed:68.0/255.0
-                                                   green:68.0/255.0
-                                                    blue:68.0/255.0
-                                                   alpha:1.0]
+            [leftBtn setTitleColor:[UIColor normalTextColor]
                           forState:UIControlStateNormal];
         }
     }
@@ -287,17 +281,11 @@ BWaterfallViewDelagate>
 - (void)createSideFooterView
 {
     _tableFooter = [[UIView alloc] initWithFrame:CGRectZero];
-    _tableFooter.backgroundColor = [UIColor colorWithRed:247.0/255.0
-                                                   green:247.0/255.0
-                                                    blue:247.0/255.0
-                                                   alpha:1.0];
+    _tableFooter.backgroundColor = [UIColor navBgColor];
     UIImageView *left = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"home_sideFooter_left"]];
     UIImageView *right = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"home_sideFooter_right"]];
     UIView *VLineView = [[UIView alloc] initWithFrame:CGRectZero];
-    VLineView.backgroundColor = [UIColor colorWithRed:231.0/255.0
-                                               green:231.0/255.0
-                                                blue:231.0/255.0
-                                               alpha:1.0];
+    VLineView.backgroundColor = [UIColor viewBgColor];
     UIView *HLineView = [[UIView alloc] initWithFrame:CGRectZero];
     HLineView.backgroundColor = VLineView.backgroundColor;
     
@@ -346,11 +334,7 @@ BWaterfallViewDelagate>
     UIView *footView = [[UIView alloc] init];
     footView.backgroundColor = [UIColor clearColor];
     _categoryTableView.tableFooterView = footView;
-    _categoryTableView.separatorColor = [UIColor colorWithRed:204.0/255.0
-                                                        green:204.0/255.0
-                                                         blue:204.0/255.0
-                                                        alpha:1.0];
-    
+    _categoryTableView.separatorColor = [UIColor separatorColor];
     
     if ([_categoryTableView respondsToSelector:@selector(setSeparatorInset:)]) {
         [_categoryTableView setSeparatorInset:UIEdgeInsetsZero];
@@ -367,10 +351,7 @@ BWaterfallViewDelagate>
 {
     _contentView = [[BWaterfallView alloc] initWithFrame:CGRectZero];
     _contentView.waterfallDelegate = self;
-    _contentView.backgroundColor = [UIColor colorWithRed:231.0/255.0
-                                                   green:231.0/255.0
-                                                    blue:231.0/255.0
-                                                   alpha:1.0];
+    _contentView.backgroundColor = [UIColor viewBgColor];
     [self.view addSubview:_contentView];
 }
 
@@ -409,9 +390,8 @@ BWaterfallViewDelagate>
     textLabel.backgroundColor = [UIColor clearColor];
     textLabel.font = [UIFont systemFontOfSize:14];
     textLabel.textAlignment = NSTextAlignmentCenter;
-    textLabel.textColor = [UIColor colorWithRed:68.0/255.0
-                                          green:68.0/255.0
-                                           blue:68.0/255.0 alpha:1.0];
+    textLabel.textColor = [UIColor normalTextColor];
+    textLabel.highlightedTextColor = [UIColor selectedTextColor];
     
     UIImageView *addImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"home_add_category"]];
     addImage.tag = TAG_ADD;
@@ -554,14 +534,6 @@ BWaterfallViewDelagate>
 
 - (void)handleCameraButtonAction
 {
-//    createItemVC.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-//    [self presentViewController:createItemVC
-//                       animated:YES
-//                     completion:^{
-//                         
-//                     }];
-//    createItemVC.view.superview.backgroundColor = [UIColor clearColor];
-
     if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
         UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
         imagePickerController.delegate = self;
@@ -575,7 +547,7 @@ BWaterfallViewDelagate>
         CGFloat scale = screenBounds.height / camViewHeight;
         imagePickerController.cameraViewTransform = CGAffineTransformMakeTranslation(0, (screenBounds.height - camViewHeight) / 2.0);
         imagePickerController.cameraViewTransform = CGAffineTransformScale(imagePickerController.cameraViewTransform, scale, scale);
-
+        
         [self presentViewController:imagePickerController animated:YES completion:nil];
     } else {
         NSLog(@"设备不支持拍照");

@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-NSInteger const CollectionViewColCount = 2;
+static NSInteger const CollectionViewColCount = 2;
 
 @interface BWaterfallLayout : UICollectionViewFlowLayout
 
