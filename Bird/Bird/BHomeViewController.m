@@ -547,7 +547,6 @@ BWaterfallViewDelagate>
         CGFloat scale = screenBounds.height / camViewHeight;
         imagePickerController.cameraViewTransform = CGAffineTransformMakeTranslation(0, (screenBounds.height - camViewHeight) / 2.0);
         imagePickerController.cameraViewTransform = CGAffineTransformScale(imagePickerController.cameraViewTransform, scale, scale);
-        
         [self presentViewController:imagePickerController animated:YES completion:nil];
     } else {
         NSLog(@"设备不支持拍照");
@@ -616,6 +615,7 @@ BWaterfallViewDelagate>
 //    NSString *const  UIImagePickerControllerMediaMetadata;当来数据来源是照相机的时候这个值才有效
 
     UIImage *pickImage = [info objectForKey:UIImagePickerControllerOriginalImage];
+    pickImage = [BirdUtil fixOrientation:pickImage];
     NSLog(@"%@", pickImage);
     
     [self dismissViewControllerAnimated:YES completion:^{

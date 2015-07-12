@@ -155,6 +155,7 @@ BPageViewControllerDelegate>
 - (void)createDescView
 {
     _itemDescView = [[UIView alloc] initWithFrame:CGRectZero];
+    _itemDescView.backgroundColor = [UIColor clearColor];
     
     _topDescLine = [[UIView alloc] initWithFrame:CGRectZero];
     _bottomDescLine = [[UIView alloc] initWithFrame:CGRectZero];
@@ -232,14 +233,16 @@ BPageViewControllerDelegate>
     
     NSInteger count = [_imageViewArray count];
     NSInteger line = count/4+ ((count%4)? 1:0);
-    CGFloat height = line*ThumbnailSide +(line-1)*ItemOffset10;
+    CGFloat thumbHeight = line*ThumbnailSide +(line-1)*ItemOffset10;
     
-    [_thumbnailView makeConstraints:^(MASConstraintMaker *make) {
+    [_thumbnailView remakeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(_coverView.bottom).offset(ItemOffset10);
         make.left.equalTo(ItemOffset5);
         make.right.equalTo(-ItemOffset5);
-        make.height.equalTo(height);
+        make.height.equalTo(thumbHeight);
     }];
+    
+    [_thumbnailView layoutIfNeeded];
 }
 
 - (void)layoutDescView
@@ -467,6 +470,7 @@ BPageViewControllerDelegate>
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
     UIImage *pickImage = [info objectForKey:UIImagePickerControllerOriginalImage];
+    pickImage = [BirdUtil fixOrientation:pickImage];
     NSLog(@"%@", pickImage);
     
     self.itemContent.addImageData = @[pickImage];
@@ -486,12 +490,8 @@ BPageViewControllerDelegate>
         UIImage *tempImg=[UIImage imageWithCGImage:asset.defaultRepresentation.fullScreenImage];
         [imageArray addObject:tempImg];
     }
-    dispatch_async(dispatch_get_main_queue(), ^{
-        self.itemContent.addImageData = imageArray;
-        [[BModelInterface shareInstance] handleItemWithAction:ModelAction_update andData:self.itemContent];
-        
-    });
-    return;
+    self.itemContent.addImageData = imageArray;
+    [[BModelInterface shareInstance] handleItemWithAction:ModelAction_update andData:self.itemContent];
 }
 
 -(void)assetPickerControllerDidMaximum:(ZYQAssetPickerController *)picker{

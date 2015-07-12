@@ -23,6 +23,8 @@
 
 + (void)saveImage:(UIImage *)aImgae withId:(NSString *)aImageId;
 
++ (UIImage *)fixOrientation:(UIImage *)aImage;
+
 + (void)deleteImageWithId:(NSString *)aImageId;
 
 + (UIImage *)compressImage:(UIImage*)aImage withWidth:(CGFloat)width;
