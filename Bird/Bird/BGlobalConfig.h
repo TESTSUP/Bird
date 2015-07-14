@@ -13,6 +13,8 @@ static const NSInteger MAX_ItemImageCount = 9;
 
 @interface BGlobalConfig : NSObject
 
+@property (nonatomic, readonly) NSString *defaultCategoryId;
+
 +(BGlobalConfig *)shareInstance;
 
 //预留字段，用户概念扩展

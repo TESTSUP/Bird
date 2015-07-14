@@ -38,6 +38,11 @@ static BGlobalConfig *configInstance = nil;
     return configInstance;
 }
 
+- (NSString *)defaultCategoryId
+{
+    return @"1000000";
+}
+
 - (id)init
 {
     self = [super init];

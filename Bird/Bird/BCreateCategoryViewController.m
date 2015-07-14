@@ -146,7 +146,7 @@ static const CGFloat itemSpace15 = 10;
     _deleteButton.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:_deleteButton];
     
-    if (_isCreate) {
+    if ([self.category.categoryId isEqual:[BGlobalConfig shareInstance].defaultCategoryId] || _isCreate) {
         _deleteButton.hidden = YES;
     }
 }

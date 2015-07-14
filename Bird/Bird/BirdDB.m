@@ -296,6 +296,26 @@ static BirdDB *DBInstance = nil;
     }];
 }
 
+- (BCategoryContent *)getCategoryWithId:(NSString *)aCategoryId
+{
+    __block BCategoryContent *category = nil;
+    [self.dbQueue inDatabase:^(FMDatabase *db) {
+        FMResultSet *rs = [db executeQuery:@"SELECT * FROM bird_db_category WHERE categoryid = ?", aCategoryId];
+        [self checkError:db];
+        if ([rs next]) {
+            category = [[BCategoryContent alloc] init];
+            category.name = [rs stringForColumnIndex:0];
+            category.categoryId = [rs stringForColumnIndex:1];
+            category.descr = [rs stringForColumnIndex:2];
+            category.createTime = [rs intForColumnIndex:3];
+            category.updateTime = [rs intForColumnIndex:4];
+        }
+        [rs close];
+    }];
+    
+    return category;
+}
+
 - (void)updateCategoryListOrder:(NSArray *)aCategoryList
 {
     [self.dbQueue inDatabase:^(FMDatabase *db) {
@@ -334,8 +354,8 @@ static BirdDB *DBInstance = nil;
     
     if ([rt count] == 0) {
         BCategoryContent *category = [[BCategoryContent alloc] init];
-        category.name = @"其它";
-        category.categoryId = [BirdUtil createCategoryID];
+        category.name = @"默认";
+        category.categoryId = [BGlobalConfig shareInstance].defaultCategoryId;
         category.descr = nil;
         category.createTime = [[NSDate date] timeIntervalSince1970];
         category.updateTime = category.createTime;

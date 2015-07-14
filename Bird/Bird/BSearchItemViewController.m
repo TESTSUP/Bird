@@ -63,7 +63,7 @@ static NSString *identifier = @"collectionView";
 {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:YES];
-    [self loadDataWithKeyWord:_keyWord];
+    [self loadDataWithKeyWord:_keyWord showEmptyAlert:NO];
 }
 
 - (void)createSearchBar
@@ -135,11 +135,15 @@ static NSString *identifier = @"collectionView";
     }];
 }
 
-- (void)loadDataWithKeyWord:(NSString *)aKey
+- (void)loadDataWithKeyWord:(NSString *)aKey showEmptyAlert:(BOOL)aShow
 {
     _itemsData = [[BModelInterface shareInstance] getItemsWithKeyWord:aKey];
     
     [_collectionView reloadData];
+    
+    if (aShow && [_itemsData count] == 0) {
+        [BirdUtil showAlertViewWithMsg:@"没有找到该物品"];
+    }
 }
 
 #pragma mark -
@@ -203,7 +207,7 @@ static NSString *identifier = @"collectionView";
     
     if ([searchBar.text length]) {
         _keyWord = searchBar.text;
-        [self loadDataWithKeyWord:_keyWord];
+        [self loadDataWithKeyWord:_keyWord showEmptyAlert:YES];
     }
 }
 

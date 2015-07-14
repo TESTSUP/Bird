@@ -42,8 +42,10 @@ BWaterfallViewDelagate>
     BHomeFloadView *_floadView;
     
     NSArray *_itemsData;
-    NSArray *_categoryData;
+    NSMutableArray *_categoryData;
     NSString *_selectedCategoryId;
+    
+    BOOL _orderChanged;
 }
 
 @property (nonatomic, assign) BOOL showSideView;
@@ -108,11 +110,11 @@ BWaterfallViewDelagate>
     if ([leftBtn isKindOfClass:[UIButton class]]) {
         NSIndexPath *selected = [_categoryTableView indexPathForSelectedRow];
         if(selected) {
-            [leftBtn setTitleColor:[UIColor selectedTextColor]
+            [leftBtn setTitleColor:[UIColor normalTextColor]
                           forState:UIControlStateNormal];
             
         } else {
-            [leftBtn setTitleColor:[UIColor normalTextColor]
+            [leftBtn setTitleColor:[UIColor selectedTextColor]
                           forState:UIControlStateNormal];
         }
     }
@@ -132,7 +134,7 @@ BWaterfallViewDelagate>
         UIButton *categoryBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         categoryBtn.frame = CGRectMake(0, 0, 40, 40);
         [categoryBtn addTarget:self action:@selector(handleShowSideViewAction) forControlEvents:UIControlEventTouchUpInside];
-        [categoryBtn setImage:[UIImage imageNamed:@"NavigationBar_category"] forState:UIControlStateNormal];
+        [categoryBtn setImage:[UIImage imageNamed:@"nav_back"] forState:UIControlStateNormal];
         customView = categoryBtn;
     }
     
@@ -234,6 +236,7 @@ BWaterfallViewDelagate>
     }
     _createItemVC.delegate =self;
     _createItemVC.imageArray = aimages;
+    _createItemVC.view.tag = TAG_CREATE_VC;
     [self.navigationController.view addSubview:_createItemVC.view];
 //    [self.navigationController addChildViewController:_createItemVC];
     _createItemVC.view.alpha = 0.0;
@@ -343,6 +346,9 @@ BWaterfallViewDelagate>
         [_categoryTableView setLayoutMargins:UIEdgeInsetsZero];
     }
     
+    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressGestureRecognized:)];
+    [_categoryTableView addGestureRecognizer:longPress];
+    
     [self.view addSubview:_categoryTableView];
     [self createSideFooterView];
 }
@@ -416,9 +422,16 @@ BWaterfallViewDelagate>
 
 - (void)refreshCatagoryData
 {
-    _categoryData = [[BModelInterface shareInstance] getCategoryList];
-    [_categoryTableView reloadData];
+    if (_categoryData == nil) {
+        _categoryData = [[NSMutableArray alloc] initWithCapacity:0];
+    }
+    [_categoryData removeAllObjects];
     
+    NSArray *temp = [[BModelInterface shareInstance] getCategoryList];
+    if (temp) {
+        [_categoryData addObjectsFromArray:temp];
+    }
+    [_categoryTableView reloadData];
 }
 
 - (void)refreshItemData
@@ -458,6 +471,103 @@ BWaterfallViewDelagate>
                      completion:^(BOOL finished) {
                          
                      }];
+}
+
+#pragma mark - sort action
+
+- (void)longPressGestureRecognized:(id)sender {
+    
+    UILongPressGestureRecognizer *longPress = (UILongPressGestureRecognizer *)sender;
+    UIGestureRecognizerState state = longPress.state;
+    
+    CGPoint location = [longPress locationInView:_categoryTableView];
+    NSIndexPath *indexPath = [_categoryTableView indexPathForRowAtPoint:location];
+    
+    static UIView       *snapshot = nil;        ///< A snapshot of the row user is moving.
+    static NSIndexPath  *sourceIndexPath = nil; ///< Initial index path, where gesture begins.
+    
+    switch (state) {
+        case UIGestureRecognizerStateBegan: {
+            if (indexPath) {
+                sourceIndexPath = indexPath;
+
+                UITableViewCell *cell = [_categoryTableView cellForRowAtIndexPath:indexPath];
+                
+                // Take a snapshot of the selected row using helper method.
+                snapshot = [BirdUtil customSnapshoFromView:cell];
+                
+                // Add the snapshot as subview, centered at cell's center...
+                __block CGPoint center = cell.center;
+                snapshot.center = center;
+                snapshot.alpha = 0.0;
+                [_categoryTableView addSubview:snapshot];
+                [UIView animateWithDuration:0.25 animations:^{
+                    
+                    // Offset for gesture location.
+                    center.y = location.y;
+                    snapshot.center = center;
+                    snapshot.transform = CGAffineTransformMakeScale(1.05, 1.05);
+                    snapshot.alpha = 0.98;
+                    cell.alpha = 0.0;
+                    
+                } completion:^(BOOL finished) {
+                    
+                    cell.hidden = YES;
+                    
+                }];
+            }
+            break;
+        }
+            
+        case UIGestureRecognizerStateChanged: {
+            CGPoint center = snapshot.center;
+            center.y = location.y;
+            snapshot.center = center;
+            
+            // Is destination valid and is it different from source?
+            if (indexPath && ![indexPath isEqual:sourceIndexPath] && indexPath.row < [_categoryData count]) {
+                
+                // ... update data source.
+                [_categoryData exchangeObjectAtIndex:indexPath.row withObjectAtIndex:sourceIndexPath.row];
+                
+                // ... move the rows.
+                [_categoryTableView moveRowAtIndexPath:sourceIndexPath toIndexPath:indexPath];
+                
+                // ... and update source so it is in sync with UI changes.
+                sourceIndexPath = indexPath;
+                _orderChanged = YES;
+            }
+            break;
+        }
+            
+        default: {
+            // Clean up.
+            UITableViewCell *cell = [_categoryTableView cellForRowAtIndexPath:sourceIndexPath];
+            cell.hidden = NO;
+            cell.alpha = 0.0;
+            [_categoryTableView reloadData];
+
+            [UIView animateWithDuration:0.25 animations:^{
+                
+                snapshot.center = cell.center;
+                snapshot.transform = CGAffineTransformIdentity;
+                snapshot.alpha = 0.0;
+                cell.alpha = 1.0;
+                
+            } completion:^(BOOL finished) {
+                
+                sourceIndexPath = nil;
+                [snapshot removeFromSuperview];
+                snapshot = nil;
+            }];
+            //列表有变动则保存
+            if (_orderChanged) {
+                [[BModelInterface shareInstance] updateCategoryList:_categoryData];
+                _orderChanged = NO;
+            }
+            break;
+        }
+    }
 }
 
 #pragma mark - action
@@ -576,25 +686,16 @@ BWaterfallViewDelagate>
 {
     [self dismissCreateItemView:YES];
     
-    NSString *categoryName = nil;
-    for (BCategoryContent *category in _categoryData) {
-        if ([category.categoryId isEqualToString:aItem.categoryId]) {
-            categoryName = [category.descr length]? category.descr:category.name;
-            break;
-        }
-    }
-    
     [[BModelInterface shareInstance] handleItemWithAction:ModelAction_create
                                                   andData:aItem];
     BItemDetailViewController *detailVC = [[BItemDetailViewController alloc] init];
     detailVC.itemContent = aItem;
-    detailVC.categoryName = categoryName;
     [self.navigationController pushViewController:detailVC animated:YES];
 }
 
 - (void)BCreateItemViewController:(BCreateItemViewController *)aVC didAddCategory:(BItemContent *)aItem
 {
-    [self dismissCreateItemView:YES];
+//    [self dismissCreateItemView:YES];
     
     BSelectCatrgoryViewController *selectedVC = [[BSelectCatrgoryViewController alloc] init];
     selectedVC.item = aItem;

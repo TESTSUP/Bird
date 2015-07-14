@@ -43,6 +43,8 @@ typedef NS_ENUM(NSInteger, ModelAction) {
  */
 - (NSArray *)getCategoryList;
 
+- (BCategoryContent *)getCategoryWithId:(NSString *)aCategoryId;
+
 - (void)updateCategoryList:(NSArray *)categoryList;
 
 /**

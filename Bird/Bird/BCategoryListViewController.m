@@ -11,6 +11,7 @@
 #import "BCreateCategoryViewController.h"
 #import "BSelectCatrgoryViewController.h"
 #import "BModelInterface.h"
+#import "BirdUtil.h"
 
 @interface BCategoryListViewController () <UITableViewDataSource, UITableViewDelegate>
 {
@@ -82,6 +83,11 @@
     
     [self.view addSubview:_settingBtn];
     [self.view addSubview:_categoryTable];
+    
+    UISwipeGestureRecognizer *swipeRight = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleBackAction)];
+    swipeRight.direction = UISwipeGestureRecognizerDirectionLeft;
+    
+    [self.view addGestureRecognizer:swipeRight];
 }
 
 - (void)configNavBar
@@ -173,7 +179,7 @@
     [self presentViewController:settingVC animated:YES completion:nil];
 }
 
-- (IBAction)longPressGestureRecognized:(id)sender {
+- (void)longPressGestureRecognized:(id)sender {
     
     UILongPressGestureRecognizer *longPress = (UILongPressGestureRecognizer *)sender;
     UIGestureRecognizerState state = longPress.state;
@@ -192,7 +198,7 @@
                 UITableViewCell *cell = [_categoryTable cellForRowAtIndexPath:indexPath];
                 
                 // Take a snapshot of the selected row using helper method.
-                snapshot = [self customSnapshoFromView:cell];
+                snapshot = [BirdUtil customSnapshoFromView:cell];
                 
                 // Add the snapshot as subview, centered at cell's center...
                 __block CGPoint center = cell.center;
@@ -260,32 +266,11 @@
             //列表有变动则保存
             if (_orderChanged) {
                 [[BModelInterface shareInstance] updateCategoryList:_categoryArray];
+                _orderChanged = NO;
             }
             break;
         }
     }
-}
-
-#pragma mark - Helper methods
-
-/** @brief Returns a customized snapshot of a given view. */
-- (UIView *)customSnapshoFromView:(UIView *)inputView {
-    
-    // Make an image from the input view.
-    UIGraphicsBeginImageContextWithOptions(inputView.bounds.size, NO, 0);
-    [inputView.layer renderInContext:UIGraphicsGetCurrentContext()];
-    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    
-    // Create an image view.
-    UIView *snapshot = [[UIImageView alloc] initWithImage:image];
-    snapshot.layer.masksToBounds = NO;
-    snapshot.layer.cornerRadius = 0.0;
-    snapshot.layer.shadowOffset = CGSizeMake(-5.0, 0.0);
-    snapshot.layer.shadowRadius = 5.0;
-    snapshot.layer.shadowOpacity = 0.4;
-    
-    return snapshot;
 }
 
 #pragma mark - UITableViewDelegate

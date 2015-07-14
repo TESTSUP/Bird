@@ -28,6 +28,7 @@
 //分类操作
 - (void)insertCategory:(BCategoryContent *)aCategory;
 - (void)updateCategoryDesc:(BCategoryContent *)aCategory;
+- (BCategoryContent *)getCategoryWithId:(NSString *)aCategoryId;
 - (NSArray *)getAllCategory;
 - (void)updateCategoryListOrder:(NSArray *)aCategoryList;
 - (void)deleteCateGoryWithId:(NSString *)aCategoryId;

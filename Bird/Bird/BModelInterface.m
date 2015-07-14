@@ -121,6 +121,11 @@ static BModelInterface *modelInstance = nil;
     return [[BirdDB share] getAllCategory];
 }
 
+- (BCategoryContent *)getCategoryWithId:(NSString *)aCategoryId
+{
+    return [[BirdDB share] getCategoryWithId:aCategoryId];
+}
+
 - (void)updateCategoryList:(NSArray *)categoryList
 {
     [[BirdDB share] updateCategoryListOrder:categoryList];

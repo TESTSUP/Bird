@@ -60,6 +60,9 @@ BPageViewControllerDelegate>
     [self configNavigationBar];
     
     [self createSubViews];
+    
+    UIView *createView = [self.navigationController.view viewWithTag:TAG_CREATE_VC];
+    [createView removeFromSuperview];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -77,10 +80,8 @@ BPageViewControllerDelegate>
     backBtn.backgroundColor = [UIColor clearColor];
     backBtn.frame = CGRectMake(0, 0, 120, 40);
     [backBtn addTarget:self action:@selector(handleBackAction) forControlEvents:UIControlEventTouchUpInside];
-    NSString *title = self.itemContent.name;
-    if ([title length] == 0) {
-        title = self.categoryName;
-    }
+    BCategoryContent* content = [[BModelInterface shareInstance] getCategoryWithId:self.itemContent.categoryId];
+    NSString *title = [content.descr length]? content.descr:content.name;
     [backBtn setTitle:title forState:UIControlStateNormal];
     [backBtn setImage:[UIImage imageNamed:@"nav_back"] forState:UIControlStateNormal];
     [backBtn setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
@@ -233,7 +234,7 @@ BPageViewControllerDelegate>
     
     NSInteger count = [_imageViewArray count];
     NSInteger line = count/4+ ((count%4)? 1:0);
-    CGFloat thumbHeight = line*ThumbnailSide +(line-1)*ItemOffset10;
+    CGFloat thumbHeight = MAX(line*ThumbnailSide +(line-1)*ItemOffset10, 0);
     
     [_thumbnailView remakeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(_coverView.bottom).offset(ItemOffset10);

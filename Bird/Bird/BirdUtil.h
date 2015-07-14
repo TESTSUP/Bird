@@ -36,4 +36,6 @@
 
 + (void)showAlertViewWithMsg:(NSString *)aMsg;
 
++ (UIView *)customSnapshoFromView:(UIView *)inputView;
+
 @end

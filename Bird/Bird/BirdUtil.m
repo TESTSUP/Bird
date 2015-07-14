@@ -255,4 +255,26 @@
     [alert show];
 }
 
+#pragma mark - Helper methods
+
+/** @brief Returns a customized snapshot of a given view. */
++ (UIView *)customSnapshoFromView:(UIView *)inputView {
+    
+    // Make an image from the input view.
+    UIGraphicsBeginImageContextWithOptions(inputView.bounds.size, NO, 0);
+    [inputView.layer renderInContext:UIGraphicsGetCurrentContext()];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    // Create an image view.
+    UIView *snapshot = [[UIImageView alloc] initWithImage:image];
+    snapshot.layer.masksToBounds = NO;
+    snapshot.layer.cornerRadius = 0.0;
+    snapshot.layer.shadowOffset = CGSizeMake(-5.0, 0.0);
+    snapshot.layer.shadowRadius = 5.0;
+    snapshot.layer.shadowOpacity = 0.4;
+    
+    return snapshot;
+}
+
 @end

@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "BItemContent.h"
 
+#define TAG_CREATE_VC   9997
+
 /**
  *  物品详情页面
  */
