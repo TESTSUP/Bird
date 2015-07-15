@@ -65,8 +65,8 @@ typedef NS_ENUM(NSInteger, ModelAction) {
  *
  *  @return NSString的数组
  */
-- (NSArray *)getUsuallyPropertyWithLimit:(NSInteger )aLimit;
+- (NSArray *)getUsuallyPropertyWithLimit:(NSInteger )aLimit byCateGoryId:(NSString *)aCategoryId;
 
-- (void)statisticsProperties:(NSArray *)propertyList;
+- (void)statisticsProperties:(NSArray *)propertyList withCategoryId:(NSString *)aCategory;
 
 @end

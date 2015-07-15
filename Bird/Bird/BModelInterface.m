@@ -161,15 +161,15 @@ static BModelInterface *modelInstance = nil;
     return [[BirdDB share] getItemsWithKeyWord:aKey];
 }
 
-- (NSArray *)getUsuallyPropertyWithLimit:(NSInteger )aLimit
+- (NSArray *)getUsuallyPropertyWithLimit:(NSInteger )aLimit byCateGoryId:(NSString *)aCategoryId
 {
-    return [[BirdDB share] getUsuallyPropertyWithLimit:aLimit];
+    return [[BirdDB share] getUsuallyPropertyWithLimit:aLimit byCateGoryId:aCategoryId];
 }
 
-- (void)statisticsProperties:(NSArray *)propertyList
+- (void)statisticsProperties:(NSArray *)propertyList withCategoryId:(NSString *)aCategory
 {
-    if ([propertyList count]) {
-        [[BirdDB share] insertPropertyList:propertyList];
+    if ([propertyList count] && [aCategory length] > 0) {
+        [[BirdDB share] insertPropertyList:propertyList withCategoryId:aCategory];
     }
 }
 

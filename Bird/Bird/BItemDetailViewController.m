@@ -181,11 +181,15 @@ BPageViewControllerDelegate>
                                            alpha:1.0];
     
     _editeIcon = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"item_editeIcon"]];
+    _editeIcon.hidden = YES;
     
     _tagView = [[BTagLabelView alloc] initWithFrame:CGRectZero];
     _tagView.backgroundColor = [UIColor clearColor];
     _tagView.numberOfLines = 0;
     _tagView.font = [UIFont systemFontOfSize:14];
+    _tagView.canTap = NO;
+    _tagView.canShowMenu = NO;
+    _tagView.userInteractionEnabled = NO;
     _tagView.textColor = [UIColor colorWithRed:154.0/255.0
                                          green:154.0/255.0
                                           blue:154.0/255.0

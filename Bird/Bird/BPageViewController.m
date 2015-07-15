@@ -173,8 +173,6 @@
     } else {
         self.currentIndex = self.currentIndex+1;
     }
-    
-
 }
 
 #pragma mark - data
@@ -262,7 +260,7 @@
     if (completed) {
         _currentIndex = [self indexOfViewController:(BimageViewController *)[self.pageController.viewControllers objectAtIndex:0]];
         
-        _pageLabel.text = [NSString stringWithFormat:@"%ld/%ld", _currentIndex+1, [self.pageContent count]];
+        _pageLabel.text = [NSString stringWithFormat:@"%ld%ld", _currentIndex+1, [self.pageContent count]];
         
         if (_showToolbar) {
             if (_currentIndex == 0) {

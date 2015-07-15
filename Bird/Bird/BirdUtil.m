@@ -97,10 +97,11 @@
 {
     float orgi_width = aImage.size.width;
     float orgi_height = aImage.size.height;
+    CGFloat ratio = width*[UIScreen mainScreen].scale;
     
     //按照每列的宽度，以及图片的宽高来按比例压缩
-    float new_width = width;
-    float new_height = (width * orgi_height)/orgi_width;
+    float new_width = ratio;
+    float new_height = (ratio * orgi_height)/orgi_width;
 
     CGRect rect = CGRectMake(0.0, 0.0, new_width, new_height);
     

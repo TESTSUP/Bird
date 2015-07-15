@@ -49,6 +49,9 @@ static NSString *const defaultSepStr = @"|";
     self.userInteractionEnabled = YES;
     
     _separateStr = defaultSepStr;
+    
+    tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapAction:)];
+    [self addGestureRecognizer:tap];
 }
 
 - (CFIndex)characterIndexAtPoint:(CGPoint)point {
@@ -368,7 +371,6 @@ static NSString *const defaultSepStr = @"|";
     
     CGPoint point = [aTap locationInView:self];
     
-    
     CFIndex charIndex = [self characterIndexAtPoint:point];
     NSRange wordRange = [self getLongPressedRangeWithIndex:charIndex];
     
@@ -382,8 +384,23 @@ static NSString *const defaultSepStr = @"|";
     
     self.highlightedRange = wordRange;
     
-    if (self.delegate && [self.delegate respondsToSelector:@selector(BTagLabelView:didTapTagAtIndex:withString:)]) {
-        [self.delegate BTagLabelView:self didTapTagAtIndex:self.highlightedIndex withString:[self.tagArray objectAtIndex:self.highlightedIndex]];
+    if (self.canTap) {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(BTagLabelView:didTapTagAtIndex:withString:)]) {
+            [self.delegate BTagLabelView:self didTapTagAtIndex:self.highlightedIndex withString:[self.tagArray objectAtIndex:self.highlightedIndex]];
+        }
+    }
+
+    if (self.canShowMenu) {
+        CGPoint popPoint = [self menuItemPopPointAtPoint:point];
+        
+        UIMenuController *popMenu = [UIMenuController sharedMenuController];
+        UIMenuItem *deleteItem = [[UIMenuItem alloc] initWithTitle:@"删除" action:@selector(handleDeleteAction)];
+        UIMenuItem *setIitem = [[UIMenuItem alloc] initWithTitle:@"设置名字" action:@selector(handleSetAction)];
+        [popMenu setMenuItems:@[deleteItem, setIitem]];
+        [popMenu setArrowDirection:UIMenuControllerArrowDown];
+        [popMenu setTargetRect:CGRectMake(popPoint.x,popPoint.y,0,0) inView:self];
+        [self becomeFirstResponder];
+        [popMenu setMenuVisible:YES animated:YES];
     }
 }
 
@@ -472,21 +489,21 @@ static NSString *const defaultSepStr = @"|";
     _tagArray = aTagArray;
 }
 
-- (void)setCanTap:(BOOL)aCanTap
-{
-    if (aCanTap) {
-        tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapAction:)];
-        pan = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPressAction:)];
-        
-        [self addGestureRecognizer:tap];
-        [self addGestureRecognizer:pan];
-    } else {
-        [self removeGestureRecognizer:tap];
-        [self removeGestureRecognizer:pan];
-        
-        tap = nil;
-        pan = nil;
-    }
-}
+//- (void)setCanTap:(BOOL)aCanTap
+//{
+//    if (aCanTap) {
+//        tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapAction:)];
+//        pan = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPressAction:)];
+//        
+//        [self addGestureRecognizer:tap];
+//        [self addGestureRecognizer:pan];
+//    } else {
+//        [self removeGestureRecognizer:tap];
+//        [self removeGestureRecognizer:pan];
+//        
+//        tap = nil;
+//        pan = nil;
+//    }
+//}
 
 @end

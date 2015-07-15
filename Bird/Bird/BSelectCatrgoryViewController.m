@@ -91,7 +91,7 @@
 
 - (NSString *)title
 {
-    return self.isGuide? @"创建一个分类":@"选择";
+    return @"常用分类";
 }
 
 - (void)didReceiveMemoryWarning {
@@ -127,15 +127,22 @@
     NSString *name = [_categoryArray objectAtIndex:indexPath.row];
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    BCategoryContent *content = [[BCategoryContent alloc] init];
-    content.categoryId = [BirdUtil createCategoryID];
-    content.name = name;
     
-    BCreateCategoryViewController *createVC = [[BCreateCategoryViewController alloc] init];
-    createVC.isCreate = YES;
-    createVC.category = content;
-    createVC.item = self.item;
-    [self.navigationController pushViewController:createVC animated:YES];;
+    if (self.delegate && [self.delegate respondsToSelector:@selector(BSelectCatrgoryViewController:didSlectedCategoryName:)]) {
+        [self.delegate BSelectCatrgoryViewController:self didSlectedCategoryName:name];
+    }
+    
+    [self.navigationController popViewControllerAnimated:YES];
+    
+//    BCategoryContent *content = [[BCategoryContent alloc] init];
+//    content.categoryId = [BirdUtil createCategoryID];
+//    content.name = name;
+//    
+//    BCreateCategoryViewController *createVC = [[BCreateCategoryViewController alloc] init];
+//    createVC.isCreate = YES;
+//    createVC.category = content;
+//    createVC.item = self.item;
+//    [self.navigationController pushViewController:createVC animated:YES];;
 }
 
 #pragma mark - UITableViewDataSource

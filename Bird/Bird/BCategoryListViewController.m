@@ -9,7 +9,6 @@
 #import "BCategoryListViewController.h"
 #import "BSettingViewController.h"
 #import "BCreateCategoryViewController.h"
-#import "BSelectCatrgoryViewController.h"
 #import "BModelInterface.h"
 #import "BirdUtil.h"
 
@@ -167,9 +166,14 @@
 
 - (void)handleAddCategoryAction
 {
-    BSelectCatrgoryViewController *selectedVC = [[BSelectCatrgoryViewController alloc] init];
+    BCategoryContent *content = [[BCategoryContent alloc] init];
+    content.categoryId = [BirdUtil createCategoryID];
     
-    [self.navigationController pushViewController:selectedVC animated:YES];
+    BCreateCategoryViewController *createVC = [[BCreateCategoryViewController alloc] init];
+    createVC.isCreate = YES;
+    createVC.category = content;
+    createVC.item = nil;
+    [self.navigationController pushViewController:createVC animated:YES];
 }
 
 - (void)handleSettingButtonAction

@@ -10,7 +10,7 @@
 #import "BCategoryListViewController.h"
 #import "BHomeFloadView.h"
 #import "ZYQAssetPickerController.h"
-#import "BSelectCatrgoryViewController.h"
+#import "BCreateCategoryViewController.h"
 #import "BWaterfallView.h"
 #import "BModelInterface.h"
 #import "BCreateItemViewController.h"
@@ -79,9 +79,7 @@ BWaterfallViewDelagate>
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO];
     [self refreshCatagoryData];
-    
     [self refreshItemData];
-    
     [_createItemVC refreshData];
     [self setCreateItemViewAlpha:1.0];
 }
@@ -146,8 +144,6 @@ BWaterfallViewDelagate>
     negativeSpacer.width = -10;
     customView.titleEdgeInsets = UIEdgeInsetsMake(0, 5, 0, 0);
     [self.navigationItem setLeftBarButtonItems:@[negativeSpacer, leftBarItem] animated:YES];
-    
-    [self configLeftNavButtonTextColor];
 }
 
 - (void)configNavigationBar
@@ -399,22 +395,23 @@ BWaterfallViewDelagate>
     textLabel.textColor = [UIColor normalTextColor];
     textLabel.highlightedTextColor = [UIColor selectedTextColor];
     
-    UIImageView *addImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"home_add_category"]];
-    addImage.tag = TAG_ADD;
-    addImage.userInteractionEnabled = YES;
-    
     [cell.contentView addSubview:textLabel];
-    [cell.contentView addSubview:addImage];
     [textLabel makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(UIEdgeInsetsMake(0, 0, 0, 0));
     }];
-    [addImage makeConstraints:^(MASConstraintMaker *make) {
-        make.centerX.equalTo(cell.contentView);
-        make.centerY.equalTo(cell.contentView);
-        make.width.equalTo(22);
-        make.height.equalTo(22);
-    }];
     
+    //加号
+//    UIImageView *addImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"home_add_category"]];
+//    addImage.tag = TAG_ADD;
+//    addImage.userInteractionEnabled = YES;
+//    [cell.contentView addSubview:addImage];
+//    [addImage makeConstraints:^(MASConstraintMaker *make) {
+//        make.centerX.equalTo(cell.contentView);
+//        make.centerY.equalTo(cell.contentView);
+//        make.width.equalTo(22);
+//        make.height.equalTo(22);
+//    }];
+
     return cell;
 }
 
@@ -436,6 +433,18 @@ BWaterfallViewDelagate>
 
 - (void)refreshItemData
 {
+    BOOL hasSelected = NO;
+    for (BCategoryContent *category in _categoryData) {
+        if ([category.categoryId isEqualToString:_selectedCategoryId]) {
+            hasSelected = YES;
+            break;
+        }
+    }
+    if (!hasSelected) {
+        _selectedCategoryId = nil;
+    }
+    [self configLeftNavButtonTextColor];
+    
     _itemsData = [[BModelInterface shareInstance] getItemsWithCategoryId:_selectedCategoryId];
     _contentView.itemArray = _itemsData;
 }
@@ -600,7 +609,7 @@ BWaterfallViewDelagate>
     _itemsData = [[BModelInterface shareInstance] getItemsWithCategoryId:_selectedCategoryId];
     [self refreshItemData];
     
-    [self configLeftNavButtonTextColor];
+    
 }
 
 - (void)handleShowSideViewAction
@@ -695,11 +704,14 @@ BWaterfallViewDelagate>
 
 - (void)BCreateItemViewController:(BCreateItemViewController *)aVC didAddCategory:(BItemContent *)aItem
 {
-//    [self dismissCreateItemView:YES];
+    BCategoryContent *content = [[BCategoryContent alloc] init];
+    content.categoryId = [BirdUtil createCategoryID];
     
-    BSelectCatrgoryViewController *selectedVC = [[BSelectCatrgoryViewController alloc] init];
-    selectedVC.item = aItem;
-    [self.navigationController pushViewController:selectedVC animated:YES];
+    BCreateCategoryViewController *createVC = [[BCreateCategoryViewController alloc] init];
+    createVC.isCreate = YES;
+    createVC.category = content;
+    createVC.item = aItem;
+    [self.navigationController pushViewController:createVC animated:YES];
 }
 
 #pragma mark - UIImagePickerControllerDelegate
@@ -768,9 +780,11 @@ BWaterfallViewDelagate>
     self.showFloatView = NO;
     
     if (indexPath.row >= [_categoryData count]) {
-        //添加分类
-        BSelectCatrgoryViewController *selectedVC = [[BSelectCatrgoryViewController alloc] init];
-        [self.navigationController pushViewController:selectedVC animated:YES];
+//        //添加分类
+//        BSelectCatrgoryViewController *selectedVC = [[BSelectCatrgoryViewController alloc] init];
+//        [self.navigationController pushViewController:selectedVC animated:YES];
+        
+        [self showCategoryView];
         
         return [tableView indexPathForSelectedRow];
     } else {
@@ -782,11 +796,7 @@ BWaterfallViewDelagate>
 {
     if (indexPath.row >= [_categoryData count]) {
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
-        //添加分类
-//        BSelectCatrgoryViewController *selectedVC = [[BSelectCatrgoryViewController alloc] init];
-//        [self.navigationController pushViewController:selectedVC animated:YES];
     } else {
-        [self configLeftNavButtonTextColor];
         //选中分类
         BCategoryContent *content = [_categoryData objectAtIndex:indexPath.row];
         _selectedCategoryId = content.categoryId;
@@ -804,7 +814,6 @@ BWaterfallViewDelagate>
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static const NSInteger addBtnTag = 9999;
     static NSString *cellId = @"categoryCell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellId];
     if (!cell) {
@@ -812,10 +821,7 @@ BWaterfallViewDelagate>
     }
     
     UILabel *textLabel = (UILabel *)[cell.contentView viewWithTag:TAG_LABEL];
-    UIImageView *addBtn = (UIImageView *)[cell.contentView viewWithTag:addBtnTag];
     textLabel.hidden = NO;
-    addBtn.hidden = YES;
-    
     textLabel.text = nil;
     if (indexPath.row < [_categoryData count]) {
         BCategoryContent *category = [_categoryData objectAtIndex:indexPath.row];
@@ -827,8 +833,7 @@ BWaterfallViewDelagate>
         }
         
     } else if (indexPath.row == [_categoryData count]) {
-        textLabel.hidden = YES;
-        addBtn.hidden = NO;
+        textLabel.text = @"管理分类";
     }
     
     return cell;

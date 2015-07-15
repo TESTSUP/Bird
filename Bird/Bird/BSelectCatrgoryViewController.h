@@ -9,13 +9,20 @@
 #import <UIKit/UIKit.h>
 #import "BItemContent.h"
 
+@class BSelectCatrgoryViewController;
+
+@protocol BSelectCatrgoryViewControllerDelegate <NSObject>
+
+- (void)BSelectCatrgoryViewController:(BSelectCatrgoryViewController*)vc didSlectedCategoryName:(NSString *)aName;
+
+@end
+
 /**
  *  创建新分类时选择默认的分类页面
  */
 @interface BSelectCatrgoryViewController : UIViewController
 
-@property (nonatomic, assign) BOOL isGuide;     //是否是引导页
-
+@property (nonatomic, weak) id<BSelectCatrgoryViewControllerDelegate> delegate;
 @property (nonatomic, strong) BItemContent *item;
 
 @end

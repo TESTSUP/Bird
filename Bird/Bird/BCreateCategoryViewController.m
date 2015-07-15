@@ -12,18 +12,21 @@
 #import "BirdUtil.h"
 #import "BItemDetailViewController.h"
 #import "BModelInterface.h"
+#import "BSelectCatrgoryViewController.h"
 
 static const CGFloat left_offset = 20;
 static const CGFloat top_offset = 20;
 static const CGFloat itemSpace15 = 10;
 
-@interface BCreateCategoryViewController () <UITextViewDelegate, UITextFieldDelegate>
+@interface BCreateCategoryViewController () <UITextViewDelegate, UITextFieldDelegate, BSelectCatrgoryViewControllerDelegate>
 {
     UIView *_contentView;
-    UILabel *_catigoryName;
+    UILabel *_catigoryLabel;
+    UITextField *_catigoryName;
     UILabel *_infoLabel;
     UITextView *_categoryDescription;
     
+    UIButton *_showListButton;
     UIButton *_deleteButton;
 }
 @end
@@ -45,6 +48,14 @@ static const CGFloat itemSpace15 = 10;
     [self createSuViews];
     
     [self layoutSubviews];
+    
+    if (self.isCreate) {
+        _catigoryName.enabled = YES;
+        [_catigoryName becomeFirstResponder];
+    } else {
+        _catigoryName.enabled = NO;
+        [_categoryDescription becomeFirstResponder];
+    }
 }
 
 - (void)configNavigationBar
@@ -74,14 +85,18 @@ static const CGFloat itemSpace15 = 10;
 
 - (void)configContentView
 {
-    _catigoryName = [[UILabel alloc] initWithFrame:CGRectZero];
+    _catigoryLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+    _catigoryLabel.backgroundColor = [UIColor clearColor];
+    _catigoryLabel.text = @"分类名称：";
+    _catigoryLabel.textColor = [UIColor colorWithHexString:@"#9a9a9a"];
+    _catigoryLabel.font = [UIFont systemFontOfSize:14];
+    
+    _catigoryName = [[UITextField alloc] initWithFrame:CGRectZero];
     _catigoryName.textColor = [UIColor normalTextColor];
     _catigoryName.font = [UIFont systemFontOfSize:16];
-    _catigoryName.backgroundColor = [UIColor clearColor];
     _catigoryName.text = self.category.name;
     
     _infoLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-    _infoLabel.backgroundColor = [UIColor clearColor];
     _infoLabel.text = @"备注名：";
     _infoLabel.textColor = [UIColor colorWithHexString:@"#9a9a9a"];
     _infoLabel.font = [UIFont systemFontOfSize:14];
@@ -94,7 +109,6 @@ static const CGFloat itemSpace15 = 10;
     _categoryDescription.text =  self.category.descr;
     _categoryDescription.textColor = [UIColor normalTextColor];
     _categoryDescription.font = [UIFont systemFontOfSize:16];
-    _categoryDescription.backgroundColor = [UIColor clearColor];
     _categoryDescription.textAlignment = NSTextAlignmentLeft;
     _categoryDescription.returnKeyType = UIReturnKeyDone;
     self.automaticallyAdjustsScrollViewInsets = NO;
@@ -104,6 +118,12 @@ static const CGFloat itemSpace15 = 10;
     UIView *bottomLine = [[UIView alloc] initWithFrame:CGRectZero];
     bottomLine.backgroundColor = [UIColor separatorColor];
     
+    _catigoryLabel.backgroundColor = [UIColor clearColor];
+    _catigoryName.backgroundColor = [UIColor clearColor];
+    _infoLabel.backgroundColor = [UIColor clearColor];
+    _categoryDescription.backgroundColor = [UIColor clearColor];
+    
+    [_contentView addSubview:_catigoryLabel];
     [_contentView addSubview:_catigoryName];
     [_contentView addSubview:_infoLabel];
     [_contentView addSubview:_categoryDescription];
@@ -143,32 +163,60 @@ static const CGFloat itemSpace15 = 10;
                                                   blue:167.0/255.0
                                                  alpha:1.0]
                         forState:UIControlStateNormal];
+    
+    _showListButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_showListButton setTitle:@"从常用中选择" forState:UIControlStateNormal];
+    [_showListButton addTarget:self action:@selector(handleShowListAction) forControlEvents:UIControlEventTouchUpInside];
+    [_showListButton setTitleColor:[UIColor colorWithRed:167.0/255.0
+                                                 green:167.0/255.0
+                                                  blue:167.0/255.0
+                                                 alpha:1.0]
+                        forState:UIControlStateNormal];
+    
+    
     _deleteButton.backgroundColor = [UIColor whiteColor];
+    _showListButton.backgroundColor = self.view.backgroundColor;
     [self.view addSubview:_deleteButton];
+    [self.view addSubview:_showListButton];
     
     if ([self.category.categoryId isEqual:[BGlobalConfig shareInstance].defaultCategoryId] || _isCreate) {
         _deleteButton.hidden = YES;
+    }
+    
+    if (_isCreate) {
+        _showListButton.hidden = NO;
+    } else {
+        _showListButton.hidden = YES;
     }
 }
 
 - (void)layoutSubviews
 {
-    CGSize constraintSize = CGSizeMake(self.view.frame.size.width-2*left_offset-60, MAXFLOAT);
+    CGFloat width1 = 70;
+    CGFloat width2 = 60;
+    CGSize constraintSize = CGSizeMake(self.view.frame.size.width-2*left_offset-width2, MAXFLOAT);
     CGSize size = [_categoryDescription sizeThatFits:constraintSize];
     CGFloat descriptionH = MAX(33, size.height);
     CGFloat titleHeight = 20;
     
-    [_catigoryName remakeConstraints:^(MASConstraintMaker *make) {
+    [_catigoryLabel makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.equalTo(_catigoryName);
         make.left.equalTo(left_offset);
-        make.right.equalTo(-left_offset);
+        make.width.equalTo(width1);
+        make.height.equalTo(titleHeight);
+    }];
+    
+    [_catigoryName remakeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(_catigoryLabel.right);
+        make.right.equalTo(_contentView.right).offset(-left_offset);
         make.top.equalTo(top_offset);
         make.height.equalTo(titleHeight);
     }];
     
     [_infoLabel makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(_catigoryName.bottom).offset(0);
+        make.top.equalTo(_catigoryName.bottom).offset(itemSpace15);
         make.left.equalTo(left_offset);
-        make.width.equalTo(60);
+        make.width.equalTo(width2);
         make.height.equalTo(33);
     }];
     
@@ -183,13 +231,20 @@ static const CGFloat itemSpace15 = 10;
         make.top.equalTo(22);
         make.left.equalTo(self.view).offset(0);
         make.right.equalTo(self.view.right).offset(0);
-        make.height.equalTo(top_offset +titleHeight + itemSpace15 + descriptionH);
+        make.height.equalTo(itemSpace15*2 +titleHeight + top_offset + descriptionH);
     }];
     
     [_deleteButton remakeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(left_offset);
         make.right.equalTo(-left_offset);
         make.top.equalTo(_contentView.bottom).offset(33);
+        make.height.equalTo(44);
+    }];
+    
+    [_showListButton makeConstraints:^(MASConstraintMaker *make) {
+        make.right.equalTo(-left_offset);
+        make.top.equalTo(_contentView.bottom).offset(33);
+        make.width.equalTo(110);
         make.height.equalTo(44);
     }];
 }
@@ -222,6 +277,15 @@ static const CGFloat itemSpace15 = 10;
     self.category.updateTime = self.category.createTime;
     
     if (_isCreate) {
+        //去除空格和换行
+        NSString* s1=[_catigoryName.text stringByReplacingOccurrencesOfString:@" " withString:@""];
+        NSString* s2=[s1 stringByReplacingOccurrencesOfString:@"\n" withString:@""];
+        
+        if (![s2 length]) {
+            [BirdUtil showAlertViewWithMsg:@"分类名称不能为空"];
+            return;
+        }
+        self.category.name = s2;
         [[BModelInterface shareInstance] handleCategoryWithAction:ModelAction_create andData:self.category];
     } else {
         [[BModelInterface shareInstance] handleCategoryWithAction:ModelAction_update andData:self.category];
@@ -262,9 +326,23 @@ static const CGFloat itemSpace15 = 10;
 
 }
 
+- (void)handleShowListAction
+{
+    BSelectCatrgoryViewController *selectedVC = [[BSelectCatrgoryViewController alloc] init];
+    selectedVC.delegate = self;
+    [self.navigationController pushViewController:selectedVC animated:YES];
+}
+
 - (void)handleDisappearKeybord
 {
     [_categoryDescription resignFirstResponder];
+}
+
+#pragma mark - BSelectCatrgoryViewControllerDelegate
+
+- (void)BSelectCatrgoryViewController:(BSelectCatrgoryViewController*)vc didSlectedCategoryName:(NSString *)aName
+{
+    _catigoryName.text = aName;
 }
 
 #pragma mark - UITextViewDelegate

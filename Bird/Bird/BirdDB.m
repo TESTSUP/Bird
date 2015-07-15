@@ -165,7 +165,7 @@ static BirdDB *DBInstance = nil;
 - (void)createPropertyTable
 {
     [self.dbQueue inDatabase:^(FMDatabase *db) {
-        [db executeUpdate:@"CREATE TABLE IF NOT EXISTS bird_db_property (name varchar(64), used_count int, PRIMARY KEY (name) ON CONFLICT REPLACE)"];
+        [db executeUpdate:@"CREATE TABLE IF NOT EXISTS bird_db_property (name varchar(64), used_count int, categoryid char(32),PRIMARY KEY (name) ON CONFLICT REPLACE)"];
         [self checkError:db];
     }];
 }
@@ -196,7 +196,9 @@ static BirdDB *DBInstance = nil;
     NSString *imageStr = [rs stringForColumnIndex:3];
     item.imageIDs = [imageStr componentsSeparatedByString:@","];
     NSString *proStr = [rs stringForColumnIndex:4];
-    item.property = [proStr componentsSeparatedByString:@","];
+    if ([proStr length]) {
+        item.property = [proStr componentsSeparatedByString:@","];
+    }
     item.createTime = [rs intForColumnIndex:5];
     item.updateTime = [rs intForColumnIndex:6];
     item.coverImage = [BirdUtil getImageWithID:[item.imageIDs firstObject]];
@@ -399,19 +401,19 @@ static BirdDB *DBInstance = nil;
 
 #pragma mark - property
 
-- (void)insertPropertyList:(NSArray *)aProperty
+- (void)insertPropertyList:(NSArray *)aProperty withCategoryId:(NSString *)aCategoryId
 {
     [self.dbQueue inTransaction:^(FMDatabase *db, BOOL *rollback) {
         for (NSString *name in aProperty) {
             //查询次数
-            FMResultSet *rs = [db executeQuery:@"SELECT used_count FROM bird_db_property WHERE name = ?", name];
+            FMResultSet *rs = [db executeQuery:@"SELECT used_count FROM bird_db_property WHERE name = ? AND categoryid = ?", name, aCategoryId];
             [self checkError:db];
             NSInteger count = 0;
             if ([rs next]) {
                 count = [rs intForColumnIndex:0];
             }
             //插入
-            [db executeUpdate:@"INSERT OR REPLACE INTO bird_db_property (name, used_count) VALUES (?,?)", name, @(++count)];
+            [db executeUpdate:@"INSERT OR REPLACE INTO bird_db_property (name, used_count, categoryid) VALUES (?,?,?)", name, @(++count), aCategoryId];
             [self checkError:db];
         }
     }];
@@ -421,7 +423,22 @@ static BirdDB *DBInstance = nil;
 {
      NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:0];
     [self.dbQueue inDatabase:^(FMDatabase *db) {
-        FMResultSet *rs = [db executeQuery:@"SELECT * FROM bird_db_property ORDER BY used_count DESC LIMIT 10"];
+        FMResultSet *rs = [db executeQuery:@"SELECT * FROM bird_db_property ORDER BY used_count DESC LIMIT ?", @(aLimit)];
+        [self checkError:db];
+        while ([rs next]) {
+            NSString *property = [rs stringForColumnIndex:0];
+            [array addObject:property];
+        }
+    }];
+    
+    return array;
+}
+
+- (NSArray *)getUsuallyPropertyWithLimit:(NSInteger)aLimit byCateGoryId:(NSString *)aCategoryId
+{
+    NSMutableArray *array = [[NSMutableArray alloc] initWithCapacity:0];
+    [self.dbQueue inDatabase:^(FMDatabase *db) {
+        FMResultSet *rs = [db executeQuery:@"SELECT * FROM bird_db_property WHERE categoryid = ? ORDER BY used_count DESC LIMIT ?", aCategoryId, @(aLimit)];
         [self checkError:db];
         while ([rs next]) {
             NSString *property = [rs stringForColumnIndex:0];

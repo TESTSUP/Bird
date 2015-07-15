@@ -124,7 +124,7 @@ static const CGFloat LineSpace = 15;
     _itemTagLabel.font = [UIFont systemFontOfSize:15];
     _itemTagLabel.text = self.itemContent.name;
     _itemTagLabel.numberOfLines = 0;
-    _itemTagLabel.canTap = YES;
+    _itemTagLabel.canTap = NO;
     _itemTagLabel.canShowMenu = YES;
     
     _lineView = [[UIView alloc] initWithFrame:CGRectZero];
@@ -219,7 +219,8 @@ static const CGFloat LineSpace = 15;
         _defaultProperty = [[NSMutableArray alloc] initWithCapacity:0];
     }
     //常用标签
-    NSArray *usualArray = [[BModelInterface shareInstance] getUsuallyPropertyWithLimit:10];
+    NSArray *usualArray = [[BModelInterface shareInstance] getUsuallyPropertyWithLimit:10
+                                                                          byCateGoryId:self.itemContent.categoryId];
     if ([usualArray count]) {
         [_defaultProperty addObject:usualArray];
     }
@@ -268,7 +269,7 @@ static const CGFloat LineSpace = 15;
             if (lastView) {
                 make.top.equalTo(lastView.bottom);
             } else {
-                make.top.equalTo(titleLabel.bottom).offset(itemSpace15);
+                make.top.equalTo(titleLabel.bottom).offset(0);
             }
             make.left.equalTo(0);
             make.right.equalTo(0);
@@ -434,7 +435,7 @@ static const CGFloat LineSpace = 15;
             _itemName = aTapString;
         } else {
             [_propertyArray addObject:aTapString];
-            [[BModelInterface shareInstance] statisticsProperties:@[aTapString]];
+            [[BModelInterface shareInstance] statisticsProperties:@[aTapString] withCategoryId:self.itemContent.categoryId];
         }
 
         [self refreshData];
@@ -528,7 +529,7 @@ static const CGFloat LineSpace = 15;
         } else {
             [_propertyArray addObject:s2];
         }
-        [[BModelInterface shareInstance] statisticsProperties:@[s2]];
+        [[BModelInterface shareInstance] statisticsProperties:@[s2] withCategoryId:self.itemContent.categoryId];
         
         textView.text = nil;
         
