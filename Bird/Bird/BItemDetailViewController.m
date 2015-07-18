@@ -15,13 +15,13 @@
 #import "ZYQAssetPickerController.h"
 #import "BPageViewController.h"
 
-static const CGFloat CoverSide = 230;
+static const CGFloat DefaultCoverSide = 230;
 static const CGFloat AddBtnSide = 65;
 static const CGFloat DefaultDescViewHeight = 50;
-static const CGFloat ThumbnailSide = 70;
 static const CGFloat ItemOffset5 = 5;
 static const CGFloat ItemOffset10 = 10;
 static const CGFloat LineSpace = 15;
+static const NSInteger ColumnCount = 4;
 
 @interface BItemDetailViewController ()
 <UIActionSheetDelegate,
@@ -32,6 +32,8 @@ BPageViewControllerDelegate>
 {
     UIScrollView *_scrollView;
     UIView *_contentView;
+    
+    CGFloat _thumbnailSide;
     
     //封面和添加照片按钮
     UIImageView *_coverView;
@@ -110,6 +112,8 @@ BPageViewControllerDelegate>
 
 - (void)createSubViews
 {
+    _thumbnailSide = (self.view.frame.size.width-ItemOffset5*2-ItemOffset10*(ColumnCount-1))/ColumnCount;
+    
     _scrollView = [[UIScrollView alloc] initWithFrame:CGRectZero];
     _contentView = [[UIView alloc] initWithFrame:CGRectZero];
     _contentView.backgroundColor = [UIColor clearColor];
@@ -211,7 +215,8 @@ BPageViewControllerDelegate>
 - (void)layoutThumbnailView
 {
     UIImageView *lastView = nil;
-    CGSize imageSize = CGSizeMake(ThumbnailSide, ThumbnailSide);
+    CGSize imageSize = CGSizeMake(_thumbnailSide, _thumbnailSide);
+    
     for (UIImageView *imageView in _imageViewArray) {
         if (lastView == nil) {
             [imageView makeConstraints:^(MASConstraintMaker *make) {
@@ -219,7 +224,7 @@ BPageViewControllerDelegate>
                 make.top.equalTo(0);
                 make.size.equalTo(imageSize);
             }];
-        } else if([_imageViewArray indexOfObject:imageView]%4 == 0) {
+        } else if([_imageViewArray indexOfObject:imageView]%ColumnCount == 0) {
             [imageView makeConstraints:^(MASConstraintMaker *make) {
                 make.top.equalTo(lastView.bottom).offset(ItemOffset10);
                 make.left.equalTo(0);
@@ -237,8 +242,8 @@ BPageViewControllerDelegate>
     }
     
     NSInteger count = [_imageViewArray count];
-    NSInteger line = count/4+ ((count%4)? 1:0);
-    CGFloat thumbHeight = MAX(line*ThumbnailSide +(line-1)*ItemOffset10, 0);
+    NSInteger line = count/ColumnCount+ ((count%ColumnCount)? 1:0);
+    CGFloat thumbHeight = MAX(line*_thumbnailSide +(line-1)*ItemOffset10, 0);
     
     [_thumbnailView remakeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(_coverView.bottom).offset(ItemOffset10);
@@ -262,14 +267,15 @@ BPageViewControllerDelegate>
     [_titleView makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.equalTo(_editeIcon.centerY);
         make.left.equalTo(ItemOffset10);
-        make.width.equalTo(CoverSide+10);
+        //        make.width.equalTo(CoverSide+10);
+        make.top.equalTo(_coverView.bottom).offset(ItemOffset10);
     }];
     
-     [_editeIcon makeConstraints:^(MASConstraintMaker *make) {
-         make.top.equalTo(14);
-         make.size.equalTo(CGSizeMake(22, 22));
-         make.right.equalTo(-(ItemOffset10+5));
-     }];
+    [_editeIcon makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(14);
+        make.size.equalTo(CGSizeMake(22, 22));
+        make.right.equalTo(-(ItemOffset10+5));
+    }];
     
     CGFloat tagHeight = 0;
     if ([_tagView.text length]) {
@@ -294,30 +300,35 @@ BPageViewControllerDelegate>
     }];
     
     [_bottomDescLine makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(_tagView.bottom).offset([_tagView.text length]? ItemOffset10:0);
+        make.bottom.equalTo(_itemDescView.bottom);
         make.left.equalTo(0);
         make.right.equalTo(0);
         make.height.equalTo(0.5);
     }];
     
     UIView *lastView = _thumbnailView;
-     if ([_imageViewArray count] == 0) {
-         lastView = _coverView;
-     }
+    if ([_imageViewArray count] == 0) {
+        lastView = _coverView;
+    }
+    CGFloat offset = [_tagView.text length]? ItemOffset10:0;
     [_itemDescView remakeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(lastView.bottom).offset(ItemOffset5);
         make.left.equalTo(0);
         make.right.equalTo(0);
-        make.height.equalTo(DefaultDescViewHeight+tagHeight+ItemOffset10);
+        make.height.equalTo(DefaultDescViewHeight+tagHeight+offset);
     }];
 }
 
 - (void)layoutsubViews
 {
+
+    
     [_coverView makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(ItemOffset5);
         make.left.equalTo(ItemOffset10);
-        make.size.equalTo(CGSizeMake(CoverSide, CoverSide));
+//        make.size.equalTo(CGSizeMake(CoverSide, CoverSide));
+        make.right.equalTo(_addImageBtn.left).offset(-ItemOffset5);
+        make.height.equalTo(_coverView.width);
     }];
     
     [_addImageBtn makeConstraints:^(MASConstraintMaker *make) {
@@ -360,8 +371,8 @@ BPageViewControllerDelegate>
             continue;
         }
         [imageDataArray addObject:image];
-        UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, ThumbnailSide, ThumbnailSide)];
-        imageView.image = [BirdUtil squareThumbnailWithOrgImage:image andSideLength:ThumbnailSide];
+        UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, _thumbnailSide, _thumbnailSide)];
+        imageView.image = [BirdUtil squareThumbnailWithOrgImage:image andSideLength:_thumbnailSide];
         [_thumbnailView addSubview:imageView];
         imageView.tag = [self.itemContent.imageIDs indexOfObject:imageId];
         [_imageViewArray addObject:imageView];
@@ -377,7 +388,7 @@ BPageViewControllerDelegate>
 - (void)loadData
 {
     UIImage *cover = [self.itemContent imageWithId:[self.itemContent.imageIDs firstObject]];
-    _coverView.image = [BirdUtil squareThumbnailWithOrgImage:cover andSideLength:CoverSide];
+    _coverView.image = [BirdUtil squareThumbnailWithOrgImage:cover andSideLength:DefaultCoverSide];
     _titleView.text = self.itemContent.name;
     _tagView.tagArray = self.itemContent.property;
     

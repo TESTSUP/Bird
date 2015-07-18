@@ -324,7 +324,8 @@ static BirdDB *DBInstance = nil;
         [db executeUpdate:@"DELETE FROM bird_db_category"];
         [self checkError:db];
         
-        for (BCategoryContent *aCategory in aCategoryList) {
+        for (NSInteger index = [aCategoryList count]-1; index>=0; index--) {
+            BCategoryContent *aCategory  = [aCategoryList objectAtIndex:index];
             [db executeUpdate:@"INSERT OR REPLACE INTO bird_db_category (name, categoryid, description, createtime, updatetime) VALUES (?,?,?,?,?)",
              aCategory.name,
              aCategory.categoryId,
@@ -332,6 +333,15 @@ static BirdDB *DBInstance = nil;
              @(aCategory.createTime),
              @(aCategory.updateTime)];
         }
+        
+//        for (BCategoryContent *aCategory in aCategoryList) {
+//            [db executeUpdate:@"INSERT OR REPLACE INTO bird_db_category (name, categoryid, description, createtime, updatetime) VALUES (?,?,?,?,?)",
+//             aCategory.name,
+//             aCategory.categoryId,
+//             [self checkEmpty:aCategory.descr],
+//             @(aCategory.createTime),
+//             @(aCategory.updateTime)];
+//        }
     }];
 }
 
@@ -340,7 +350,7 @@ static BirdDB *DBInstance = nil;
      NSMutableArray *rt = [[NSMutableArray alloc] initWithCapacity:0];
     
     [self.dbQueue inDatabase:^(FMDatabase *db) {
-        FMResultSet *rs = [db executeQuery:@"SELECT * FROM bird_db_category ORDER BY orderid"];
+        FMResultSet *rs = [db executeQuery:@"SELECT * FROM bird_db_category ORDER BY orderid DESC"];
         [self checkError:db];
         while ([rs next]) {
             BCategoryContent *category = [[BCategoryContent alloc] init];

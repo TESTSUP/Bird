@@ -144,6 +144,8 @@ BWaterfallViewDelagate>
     negativeSpacer.width = -10;
     customView.titleEdgeInsets = UIEdgeInsetsMake(0, 5, 0, 0);
     [self.navigationItem setLeftBarButtonItems:@[negativeSpacer, leftBarItem] animated:YES];
+    
+    [self configLeftNavButtonTextColor];
 }
 
 - (void)configNavigationBar
@@ -323,6 +325,57 @@ BWaterfallViewDelagate>
     }];
 }
 
+- (UIView *)createTableFooterView
+{
+    UIView *footer = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SideWidth, SideCellHeight)];
+    footer.backgroundColor = [UIColor clearColor];
+    
+    UIView *topLine = [[UIView alloc] initWithFrame:CGRectZero];
+    UIView *bottomLine = [[UIView alloc] initWithFrame:CGRectZero];
+    UIButton *button = [[UIButton alloc] initWithFrame:CGRectZero];
+    button.titleLabel.font = [UIFont systemFontOfSize: 14.0];
+    [button setTitle:@"管理分类" forState:UIControlStateNormal];
+    [button addTarget:self action:@selector(showCategoryView)
+     forControlEvents:UIControlEventTouchUpInside];
+    [button setTitleColor:[UIColor normalTextColor]
+                 forState:UIControlStateNormal];
+    [button setTitleColor:[UIColor selectedTextColor]
+                 forState:UIControlStateHighlighted];
+    [button setBackgroundImage:[BirdUtil imageWithColor:[UIColor viewBgColor]]
+                      forState:UIControlStateHighlighted];
+
+    topLine.backgroundColor = [UIColor separatorColor];
+    bottomLine.backgroundColor = [UIColor separatorColor];
+    button.backgroundColor = [UIColor whiteColor];
+    
+    [footer addSubview:topLine];
+    [footer addSubview:bottomLine];
+    [footer addSubview:button];
+    
+    [topLine makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(0);
+        make.left.equalTo(0);
+        make.right.equalTo(0);
+        make.height.equalTo(0.5);
+    }];
+    [bottomLine makeConstraints:^(MASConstraintMaker *make) {
+        make.bottom.equalTo(0);
+        make.left.equalTo(0);
+        make.right.equalTo(0);
+        make.height.equalTo(0.5);
+    }];
+    
+    [button makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(topLine.bottom);
+        make.bottom.equalTo(bottomLine.top);
+        make.left.equalTo(0);
+        make.right.equalTo(0);
+    }];
+    
+    return footer;
+    
+}
+
 - (void)createSideTableView
 {
     _categoryTableView = [[UITableView alloc] initWithFrame:CGRectZero
@@ -344,6 +397,8 @@ BWaterfallViewDelagate>
     
     UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressGestureRecognized:)];
     [_categoryTableView addGestureRecognizer:longPress];
+    
+    _categoryTableView.tableFooterView = [self createTableFooterView];
     
     [self.view addSubview:_categoryTableView];
     [self createSideFooterView];
@@ -499,7 +554,6 @@ BWaterfallViewDelagate>
         case UIGestureRecognizerStateBegan: {
             if (indexPath) {
                 sourceIndexPath = indexPath;
-
                 UITableViewCell *cell = [_categoryTableView cellForRowAtIndexPath:indexPath];
                 
                 // Take a snapshot of the selected row using helper method.
@@ -534,7 +588,10 @@ BWaterfallViewDelagate>
             snapshot.center = center;
             
             // Is destination valid and is it different from source?
-            if (indexPath && ![indexPath isEqual:sourceIndexPath] && indexPath.row < [_categoryData count]) {
+            if (indexPath &&
+                ![indexPath isEqual:sourceIndexPath] &&
+                indexPath.row < [_categoryData count]-1 &&
+                sourceIndexPath.row != [_categoryData count]-1) {
                 
                 // ... update data source.
                 [_categoryData exchangeObjectAtIndex:indexPath.row withObjectAtIndex:sourceIndexPath.row];
@@ -809,7 +866,7 @@ BWaterfallViewDelagate>
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [_categoryData count] + 1;
+    return [_categoryData count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath

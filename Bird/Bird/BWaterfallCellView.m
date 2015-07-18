@@ -62,8 +62,8 @@ static const CGFloat labelHeight = 27;
     [_imageView remakeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(0);
         make.left.equalTo(0);
-        make.width.equalTo(self.contentView.width);
-        make.height.equalTo(self.contentView.width).multipliedBy(_ratioHW);
+        make.width.equalTo(self);
+        make.height.equalTo(_imageView.width).multipliedBy(_ratioHW);
     }];
     
     [_titleLabel remakeConstraints:^(MASConstraintMaker *make) {

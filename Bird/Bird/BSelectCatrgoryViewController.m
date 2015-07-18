@@ -54,7 +54,7 @@
 
 - (void)createSubView
 {
-    _categoryTable = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStyleGrouped];
+    _categoryTable = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
     _categoryTable.delegate = self;
     _categoryTable.dataSource = self;
     _categoryTable.showsVerticalScrollIndicator = NO;

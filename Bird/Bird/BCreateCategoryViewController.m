@@ -150,8 +150,6 @@ static const CGFloat itemSpace15 = 10;
     _contentView.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:_contentView];
     [self configContentView];
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapAction)];
-    [_contentView addGestureRecognizer:tap];
     
     _deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
     _deleteButton.layer.borderWidth = 0.5;
@@ -227,11 +225,18 @@ static const CGFloat itemSpace15 = 10;
         make.height.equalTo(descriptionH);
     }];
     
+    CGFloat height = (itemSpace15*2 +titleHeight + top_offset + descriptionH);
+    if (self.isCreate) {
+        height = top_offset*2+titleHeight;
+        _infoLabel.hidden = YES;
+        _categoryDescription.hidden = YES;
+    }
+    
     [_contentView remakeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(22);
         make.left.equalTo(self.view).offset(0);
         make.right.equalTo(self.view.right).offset(0);
-        make.height.equalTo(itemSpace15*2 +titleHeight + top_offset + descriptionH);
+        make.height.equalTo(height);
     }];
     
     [_deleteButton remakeConstraints:^(MASConstraintMaker *make) {
@@ -251,7 +256,7 @@ static const CGFloat itemSpace15 = 10;
 
 - (NSString *)title
 {
-    return _isCreate? @"创建":@"修改备注名";
+    return _isCreate? @"创建分类":@"修改备注名";
 }
 
 - (void)didReceiveMemoryWarning {
@@ -260,11 +265,6 @@ static const CGFloat itemSpace15 = 10;
 }
 
 #pragma mark - action
-
-- (void)handleTapAction
-{
-    [_categoryDescription becomeFirstResponder];
-}
 
 - (void)handleBackbuttonAction
 {
@@ -343,6 +343,9 @@ static const CGFloat itemSpace15 = 10;
 - (void)BSelectCatrgoryViewController:(BSelectCatrgoryViewController*)vc didSlectedCategoryName:(NSString *)aName
 {
     _catigoryName.text = aName;
+    if (!self.isCreate) {
+        [_categoryDescription becomeFirstResponder];
+    }
 }
 
 #pragma mark - UITextViewDelegate
