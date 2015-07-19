@@ -237,7 +237,7 @@ BWaterfallViewDelagate>
     _createItemVC.view.tag = TAG_CREATE_VC;
     [self.navigationController.view addSubview:_createItemVC.view];
 //    [self.navigationController addChildViewController:_createItemVC];
-    _createItemVC.view.alpha = 0.0;
+    _createItemVC.view.alpha = 0.5;
     [UIView animateWithDuration:0.3
                           delay:0
                         options:UIViewAnimationOptionTransitionCrossDissolve
@@ -754,6 +754,7 @@ BWaterfallViewDelagate>
     
     [[BModelInterface shareInstance] handleItemWithAction:ModelAction_create
                                                   andData:aItem];
+    _selectedCategoryId = aItem.categoryId;
     BItemDetailViewController *detailVC = [[BItemDetailViewController alloc] init];
     detailVC.itemContent = aItem;
     [self.navigationController pushViewController:detailVC animated:YES];
@@ -763,6 +764,7 @@ BWaterfallViewDelagate>
 {
     BCategoryContent *content = [[BCategoryContent alloc] init];
     content.categoryId = [BirdUtil createCategoryID];
+    _selectedCategoryId = content.categoryId;
     
     BCreateCategoryViewController *createVC = [[BCreateCategoryViewController alloc] init];
     createVC.isCreate = YES;
@@ -785,12 +787,13 @@ BWaterfallViewDelagate>
 //    NSString *const  UIImagePickerControllerMediaMetadata;当来数据来源是照相机的时候这个值才有效
 
     UIImage *pickImage = [info objectForKey:UIImagePickerControllerOriginalImage];
-    pickImage = [BirdUtil fixOrientation:pickImage];
+    pickImage = [BirdUtil fixOrientation:pickImage needCompress:YES];
+//    pickImage = [BirdUtil compressImageByMainScreen:pickImage];
     NSLog(@"%@", pickImage);
     
-    [self dismissViewControllerAnimated:YES completion:^{
-        [self presentCreateItemViewWithImages:@[pickImage]];
-    }];
+    [self dismissViewControllerAnimated:YES completion:nil];
+    
+    [self presentCreateItemViewWithImages:@[pickImage]];
 }
 
 #pragma mark - ZYQAssetPickerController Delegate

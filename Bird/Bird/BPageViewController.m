@@ -37,6 +37,11 @@
     [super viewWillAppear:animated];
 }
 
+- (BOOL)prefersStatusBarHidden
+{
+    return YES;
+}
+
 - (void)createButtons
 {
     UIButton * backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -73,7 +78,7 @@
     [self.view addSubview:_pageLabel];
     
     [backBtn makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(20);
+        make.top.equalTo(0);
         make.left.equalTo(0);
         make.size.equalTo(CGSizeMake(44, 44));
     }];

@@ -157,7 +157,7 @@ static BirdDB *DBInstance = nil;
 - (void)createCategoryTable
 {
     [self.dbQueue inDatabase:^(FMDatabase *db) {
-        [db executeUpdate:@"CREATE TABLE IF NOT EXISTS bird_db_category (name char(32), categoryid char(32), description var(64), createtime int, updatetime int, orderid INTEGER PRIMARY KEY  AUTOINCREMENT)"];
+        [db executeUpdate:@"CREATE TABLE IF NOT EXISTS bird_db_category (name char(32), categoryid char(32), description var(64), fromdefault int,createtime int, updatetime int, orderid INTEGER PRIMARY KEY  AUTOINCREMENT)"];
         [self checkError:db];
     }];
 }
@@ -202,6 +202,7 @@ static BirdDB *DBInstance = nil;
     item.createTime = [rs intForColumnIndex:5];
     item.updateTime = [rs intForColumnIndex:6];
     item.coverImage = [BirdUtil getImageWithID:[item.imageIDs firstObject]];
+    item.coverImage = [BirdUtil compressImageByMainScreen:item.coverImage];
     
     return item;
 }
@@ -272,17 +273,11 @@ static BirdDB *DBInstance = nil;
 - (void)insertCategory:(BCategoryContent *)aCategory
 {
     [self.dbQueue inDatabase:^(FMDatabase *db) {
-//        [db executeUpdate:@"INSERT OR REPLACE INTO bird_db_category VALUES (?,?,?,?)",
-//         aCategory.name,
-//         [self checkEmpty:aCategory.descr],
-//         @(aCategory.createTime),
-//         @(aCategory.updateTime)];
-        
-
-        [db executeUpdate:@"INSERT OR REPLACE INTO bird_db_category (name, categoryid, description, createtime, updatetime) VALUES (?,?,?,?,?)",
+        [db executeUpdate:@"INSERT OR REPLACE INTO bird_db_category (name, categoryid, description, fromdefault, createtime, updatetime) VALUES (?,?,?,?,?,?)",
          aCategory.name,
          aCategory.categoryId,
          [self checkEmpty:aCategory.descr],
+         @(aCategory.fromDefault),
          @(aCategory.createTime),
          @(aCategory.updateTime)];
         
@@ -293,7 +288,10 @@ static BirdDB *DBInstance = nil;
 - (void)updateCategoryDesc:(BCategoryContent *)aCategory
 {
     [self.dbQueue inDatabase:^(FMDatabase *db) {
-        [db executeUpdate:@"UPDATE bird_db_category SET description = ? WHERE categoryid = ?", aCategory.descr, aCategory.categoryId];
+        [db executeUpdate:@"UPDATE bird_db_category SET description = ? , name = ? WHERE categoryid = ?",
+         [self checkEmpty:aCategory.descr],
+         [self checkEmpty:aCategory.name],
+         aCategory.categoryId];
         [self checkError:db];
     }];
 }
@@ -309,8 +307,9 @@ static BirdDB *DBInstance = nil;
             category.name = [rs stringForColumnIndex:0];
             category.categoryId = [rs stringForColumnIndex:1];
             category.descr = [rs stringForColumnIndex:2];
-            category.createTime = [rs intForColumnIndex:3];
-            category.updateTime = [rs intForColumnIndex:4];
+            category.fromDefault = [rs boolForColumnIndex:3];
+            category.createTime = [rs intForColumnIndex:4];
+            category.updateTime = [rs intForColumnIndex:5];
         }
         [rs close];
     }];
@@ -326,22 +325,14 @@ static BirdDB *DBInstance = nil;
         
         for (NSInteger index = [aCategoryList count]-1; index>=0; index--) {
             BCategoryContent *aCategory  = [aCategoryList objectAtIndex:index];
-            [db executeUpdate:@"INSERT OR REPLACE INTO bird_db_category (name, categoryid, description, createtime, updatetime) VALUES (?,?,?,?,?)",
+            [db executeUpdate:@"INSERT OR REPLACE INTO bird_db_category (name, categoryid, description, fromdefault, createtime, updatetime) VALUES (?,?,?,?,?,?)",
              aCategory.name,
              aCategory.categoryId,
              [self checkEmpty:aCategory.descr],
+             @(aCategory.fromDefault),
              @(aCategory.createTime),
              @(aCategory.updateTime)];
         }
-        
-//        for (BCategoryContent *aCategory in aCategoryList) {
-//            [db executeUpdate:@"INSERT OR REPLACE INTO bird_db_category (name, categoryid, description, createtime, updatetime) VALUES (?,?,?,?,?)",
-//             aCategory.name,
-//             aCategory.categoryId,
-//             [self checkEmpty:aCategory.descr],
-//             @(aCategory.createTime),
-//             @(aCategory.updateTime)];
-//        }
     }];
 }
 
@@ -357,8 +348,9 @@ static BirdDB *DBInstance = nil;
             category.name = [rs stringForColumnIndex:0];
             category.categoryId = [rs stringForColumnIndex:1];
             category.descr = [rs stringForColumnIndex:2];
-            category.createTime = [rs intForColumnIndex:3];
-            category.updateTime = [rs intForColumnIndex:4];
+            category.fromDefault = [rs boolForColumnIndex:3];
+            category.createTime = [rs intForColumnIndex:4];
+            category.updateTime = [rs intForColumnIndex:5];
             [rt addObject:category];
         }
         [rs close];
@@ -369,6 +361,7 @@ static BirdDB *DBInstance = nil;
         category.name = @"默认";
         category.categoryId = [BGlobalConfig shareInstance].defaultCategoryId;
         category.descr = nil;
+        category.fromDefault = YES;
         category.createTime = [[NSDate date] timeIntervalSince1970];
         category.updateTime = category.createTime;
         

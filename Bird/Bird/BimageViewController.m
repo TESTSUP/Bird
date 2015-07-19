@@ -35,6 +35,12 @@
     
     [self loadImage];
 }
+
+- (BOOL)prefersStatusBarHidden
+{
+    return YES;
+}
+
 // 加载图片
 - (void)loadImage
 {

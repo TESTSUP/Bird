@@ -28,6 +28,8 @@ static const CGFloat itemSpace15 = 10;
     
     UIButton *_showListButton;
     UIButton *_deleteButton;
+    
+    BOOL _fromDefault;
 }
 @end
 
@@ -47,15 +49,23 @@ static const CGFloat itemSpace15 = 10;
     
     [self createSuViews];
     
-    [self layoutSubviews];
-    
+    _fromDefault = self.category.fromDefault;
+    if (_fromDefault) {
+         _catigoryName.enabled = NO;
+    } else {
+         _catigoryName.enabled = YES;
+    }
     if (self.isCreate) {
-        _catigoryName.enabled = YES;
         [_catigoryName becomeFirstResponder];
     } else {
-        _catigoryName.enabled = NO;
-        [_categoryDescription becomeFirstResponder];
+        if (_catigoryName.enabled) {
+            [_catigoryName becomeFirstResponder];
+        } else {
+            [_categoryDescription becomeFirstResponder];
+        }
     }
+    
+    [self layoutSubviews];
 }
 
 - (void)configNavigationBar
@@ -176,7 +186,10 @@ static const CGFloat itemSpace15 = 10;
     _showListButton.backgroundColor = self.view.backgroundColor;
     [self.view addSubview:_deleteButton];
     [self.view addSubview:_showListButton];
-    
+}
+
+- (void)layoutSubviews
+{
     if ([self.category.categoryId isEqual:[BGlobalConfig shareInstance].defaultCategoryId] || _isCreate) {
         _deleteButton.hidden = YES;
     }
@@ -186,10 +199,7 @@ static const CGFloat itemSpace15 = 10;
     } else {
         _showListButton.hidden = YES;
     }
-}
-
-- (void)layoutSubviews
-{
+    
     CGFloat width1 = 70;
     CGFloat width2 = 60;
     CGSize constraintSize = CGSizeMake(self.view.frame.size.width-2*left_offset-width2, MAXFLOAT);
@@ -226,10 +236,13 @@ static const CGFloat itemSpace15 = 10;
     }];
     
     CGFloat height = (itemSpace15*2 +titleHeight + top_offset + descriptionH);
-    if (self.isCreate) {
+    if (!_fromDefault) {
         height = top_offset*2+titleHeight;
         _infoLabel.hidden = YES;
         _categoryDescription.hidden = YES;
+    } else {
+        _infoLabel.hidden = NO;
+        _categoryDescription.hidden = NO;
     }
     
     [_contentView remakeConstraints:^(MASConstraintMaker *make) {
@@ -256,7 +269,16 @@ static const CGFloat itemSpace15 = 10;
 
 - (NSString *)title
 {
-    return _isCreate? @"创建分类":@"修改备注名";
+    if (_isCreate) {
+        return @"创建分类";
+    }
+    
+    _fromDefault = self.category.fromDefault;
+    if (_fromDefault) {
+        return @"修改备注名";
+    } else {
+        return @"修改分类名";
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -273,19 +295,20 @@ static const CGFloat itemSpace15 = 10;
 
 - (void)handleConfirmButtonAction
 {
-    self.category.descr = _categoryDescription.text;
+    self.category.descr = [_categoryDescription.text length]? _categoryDescription.text:nil;
     self.category.updateTime = self.category.createTime;
+    self.category.fromDefault = _fromDefault;
+    //去除空格和换行
+    NSString* s1=[_catigoryName.text stringByReplacingOccurrencesOfString:@" " withString:@""];
+    NSString* s2=[s1 stringByReplacingOccurrencesOfString:@"\n" withString:@""];
     
+    if (![s2 length]) {
+        [BirdUtil showAlertViewWithMsg:@"分类名称不能为空"];
+        return;
+    }
+    self.category.name = s2;
+
     if (_isCreate) {
-        //去除空格和换行
-        NSString* s1=[_catigoryName.text stringByReplacingOccurrencesOfString:@" " withString:@""];
-        NSString* s2=[s1 stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-        
-        if (![s2 length]) {
-            [BirdUtil showAlertViewWithMsg:@"分类名称不能为空"];
-            return;
-        }
-        self.category.name = s2;
         [[BModelInterface shareInstance] handleCategoryWithAction:ModelAction_create andData:self.category];
     } else {
         [[BModelInterface shareInstance] handleCategoryWithAction:ModelAction_update andData:self.category];
@@ -343,9 +366,11 @@ static const CGFloat itemSpace15 = 10;
 - (void)BSelectCatrgoryViewController:(BSelectCatrgoryViewController*)vc didSlectedCategoryName:(NSString *)aName
 {
     _catigoryName.text = aName;
-    if (!self.isCreate) {
-        [_categoryDescription becomeFirstResponder];
-    }
+    _fromDefault = YES;
+    _catigoryName.enabled = NO;
+  
+    [_categoryDescription becomeFirstResponder];
+    [self layoutSubviews];
 }
 
 #pragma mark - UITextViewDelegate

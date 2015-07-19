@@ -124,6 +124,13 @@
     return thumbnail;
 }
 
++ (UIImage *)compressImageByMainScreen:(UIImage*)aImage
+{
+    CGFloat width = [UIScreen mainScreen].bounds.size.width;
+    
+    return [BirdUtil compressImage:aImage withWidth:width];
+}
+
 + (UIImage *)squareThumbnailWithOrgImage:(UIImage *)image
                            andSideLength:(CGFloat)aLength
 {
@@ -180,12 +187,24 @@
     return image;
 }
 
-+ (UIImage *)fixOrientation:(UIImage *)aImage {
++ (UIImage *)fixOrientation:(UIImage *)aImage needCompress:(BOOL)aNeed; {
     
     // No-op if the orientation is already correct
     if (aImage.imageOrientation == UIImageOrientationUp)
-        return aImage;
+        return aNeed? [BirdUtil compressImageByMainScreen:aImage]:aImage;
     
+    //resize
+    CGFloat imageWidth = aImage.size.width;
+    CGFloat imageHeight = aImage.size.height;
+    if (aNeed) {
+        float orgi_width = aImage.size.width;
+        float orgi_height = aImage.size.height;
+        CGFloat ratio = [UIScreen mainScreen].bounds.size.width*[UIScreen mainScreen].scale;
+        //按照每列的宽度，以及图片的宽高来按比例压缩
+        imageWidth = ratio;
+        imageHeight = (ratio * orgi_height)/orgi_width;
+    }
+
     // We need to calculate the proper transformation to make the image upright.
     // We do it in 2 steps: Rotate if Left/Right/Down, and then flip if Mirrored.
     CGAffineTransform transform = CGAffineTransformIdentity;
@@ -193,19 +212,19 @@
     switch (aImage.imageOrientation) {
         case UIImageOrientationDown:
         case UIImageOrientationDownMirrored:
-            transform = CGAffineTransformTranslate(transform, aImage.size.width, aImage.size.height);
+            transform = CGAffineTransformTranslate(transform, imageWidth, imageHeight);
             transform = CGAffineTransformRotate(transform, M_PI);
             break;
             
         case UIImageOrientationLeft:
         case UIImageOrientationLeftMirrored:
-            transform = CGAffineTransformTranslate(transform, aImage.size.width, 0);
+            transform = CGAffineTransformTranslate(transform, imageWidth, 0);
             transform = CGAffineTransformRotate(transform, M_PI_2);
             break;
             
         case UIImageOrientationRight:
         case UIImageOrientationRightMirrored:
-            transform = CGAffineTransformTranslate(transform, 0, aImage.size.height);
+            transform = CGAffineTransformTranslate(transform, 0, imageHeight);
             transform = CGAffineTransformRotate(transform, -M_PI_2);
             break;
         default:
@@ -215,13 +234,13 @@
     switch (aImage.imageOrientation) {
         case UIImageOrientationUpMirrored:
         case UIImageOrientationDownMirrored:
-            transform = CGAffineTransformTranslate(transform, aImage.size.width, 0);
+            transform = CGAffineTransformTranslate(transform, imageWidth, 0);
             transform = CGAffineTransformScale(transform, -1, 1);
             break;
             
         case UIImageOrientationLeftMirrored:
         case UIImageOrientationRightMirrored:
-            transform = CGAffineTransformTranslate(transform, aImage.size.height, 0);
+            transform = CGAffineTransformTranslate(transform, imageHeight, 0);
             transform = CGAffineTransformScale(transform, -1, 1);
             break;
         default:
@@ -230,7 +249,7 @@
     
     // Now we draw the underlying CGImage into a new context, applying the transform
     // calculated above.
-    CGContextRef ctx = CGBitmapContextCreate(NULL, aImage.size.width, aImage.size.height,
+    CGContextRef ctx = CGBitmapContextCreate(NULL, imageWidth, imageHeight,
                                              CGImageGetBitsPerComponent(aImage.CGImage), 0,
                                              CGImageGetColorSpace(aImage.CGImage),
                                              CGImageGetBitmapInfo(aImage.CGImage));
@@ -241,11 +260,11 @@
         case UIImageOrientationRight:
         case UIImageOrientationRightMirrored:
             // Grr...
-            CGContextDrawImage(ctx, CGRectMake(0,0,aImage.size.height,aImage.size.width), aImage.CGImage);
+            CGContextDrawImage(ctx, CGRectMake(0,0,imageHeight,imageWidth), aImage.CGImage);
             break;
             
         default:
-            CGContextDrawImage(ctx, CGRectMake(0,0,aImage.size.width,aImage.size.height), aImage.CGImage);
+            CGContextDrawImage(ctx, CGRectMake(0,0,imageWidth,imageHeight), aImage.CGImage);
             break;
     }
     

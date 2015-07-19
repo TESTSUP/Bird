@@ -13,6 +13,7 @@
 @property (nonatomic, strong) NSString *name;               //分类名
 @property (nonatomic, strong) NSString *categoryId;         //分类id
 @property (nonatomic, strong) NSString *descr;              //备注
+@property (nonatomic, assign) BOOL fromDefault;             //是否是从常用分类中创建的
 @property (nonatomic, assign) NSTimeInterval createTime;    //创建时间
 @property (nonatomic, assign) NSTimeInterval updateTime;    //更新时间
 

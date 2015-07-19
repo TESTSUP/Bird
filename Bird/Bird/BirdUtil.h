@@ -23,11 +23,12 @@
 
 + (void)saveImage:(UIImage *)aImgae withId:(NSString *)aImageId;
 
-+ (UIImage *)fixOrientation:(UIImage *)aImage;
++ (UIImage *)fixOrientation:(UIImage *)aImage needCompress:(BOOL)aNeed;
 
 + (void)deleteImageWithId:(NSString *)aImageId;
 
 + (UIImage *)compressImage:(UIImage*)aImage withWidth:(CGFloat)width;
++ (UIImage *)compressImageByMainScreen:(UIImage*)aImage;
 
 + (UIImage *)squareThumbnailWithOrgImage:(UIImage *)image
                            andSideLength:(CGFloat)aLength;

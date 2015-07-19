@@ -185,9 +185,8 @@ static const CGFloat itemSpace = 10.0;
     
     for (BItemContent *content in aItemArray) {
         BWaterfallCellView *cell = [[BWaterfallCellView alloc] initWithFrame:CGRectZero];
-        UIImage *image = [content imageWithId:[content.imageIDs firstObject]];
         cell.itemTitle = content.name;
-        cell.itemImage = [BirdUtil compressImage:image withWidth:160];
+        cell.itemImage = content.coverImage;
         cell.tag = [aItemArray indexOfObject:content];
         //图片添加事件响应
         UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(imageClickWithTag:)];
@@ -195,7 +194,7 @@ static const CGFloat itemSpace = 10.0;
         [cell addGestureRecognizer:tapRecognizer];
         
         CGFloat width = 123;//(320-edgeOffset*2-itemSpace)/2;
-        CGSize size = [BWaterfallCellView cellSizeWithImage:image
+        CGSize size = [BWaterfallCellView cellSizeWithImage:content.coverImage
                                                    titile:content.name
                                                    andWidth:width];
         float height = size.height;

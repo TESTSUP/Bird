@@ -387,8 +387,9 @@ BPageViewControllerDelegate>
 
 - (void)loadData
 {
-    UIImage *cover = [self.itemContent imageWithId:[self.itemContent.imageIDs firstObject]];
-    _coverView.image = [BirdUtil squareThumbnailWithOrgImage:cover andSideLength:DefaultCoverSide];
+//    UIImage *cover = [self.itemContent imageWithId:[self.itemContent.imageIDs firstObject]];
+    _coverView.image = [BirdUtil squareThumbnailWithOrgImage:self.itemContent.coverImage
+                                               andSideLength:DefaultCoverSide];
     _titleView.text = self.itemContent.name;
     _tagView.tagArray = self.itemContent.property;
     
@@ -435,24 +436,29 @@ BPageViewControllerDelegate>
     switch (buttonIndex) {
         case 0:
         {
-            if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
-                UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
-                imagePickerController.delegate = self;
-                imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
-                imagePickerController.showsCameraControls = YES;
-                imagePickerController.cameraFlashMode = UIImagePickerControllerCameraFlashModeAuto;
-                //取景框全屏
-                CGSize screenBounds = [UIScreen mainScreen].bounds.size;
-                CGFloat cameraAspectRatio = 4.0f/3.0f;
-                CGFloat camViewHeight = screenBounds.width * cameraAspectRatio;
-                CGFloat scale = screenBounds.height / camViewHeight;
-                imagePickerController.cameraViewTransform = CGAffineTransformMakeTranslation(0, (screenBounds.height - camViewHeight) / 2.0);
-                imagePickerController.cameraViewTransform = CGAffineTransformScale(imagePickerController.cameraViewTransform, scale, scale);
-                
-                [self presentViewController:imagePickerController animated:YES completion:nil];
-            } else {
-                NSLog(@"设备不支持拍照");
-            }
+             [self performSelector:@selector(showCamera) withObject:nil afterDelay:0.3];
+            
+//            if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+//                UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
+//                imagePickerController.delegate = self;
+//                imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
+//                imagePickerController.showsCameraControls = YES;
+//                imagePickerController.cameraFlashMode = UIImagePickerControllerCameraFlashModeAuto;
+//                //取景框全屏
+//                CGSize screenBounds = [UIScreen mainScreen].bounds.size;
+//                CGFloat cameraAspectRatio = 4.0f/3.0f;
+//                CGFloat camViewHeight = screenBounds.width * cameraAspectRatio;
+//                CGFloat scale = screenBounds.height / camViewHeight;
+//                imagePickerController.cameraViewTransform = CGAffineTransformMakeTranslation(0, (screenBounds.height - camViewHeight) / 2.0);
+//                imagePickerController.cameraViewTransform = CGAffineTransformScale(imagePickerController.cameraViewTransform, scale, scale);
+//                
+//                if([[[UIDevice currentDevice] systemVersion] floatValue]>=8.0) {
+//                    self.modalPresentationStyle=UIModalPresentationOverCurrentContext;
+//                }
+//                [self.navigationController presentViewController:imagePickerController animated:YES completion:nil];
+//            } else {
+//                NSLog(@"设备不支持拍照");
+//            }
         }
             break;
         case 1:
@@ -486,7 +492,8 @@ BPageViewControllerDelegate>
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
     UIImage *pickImage = [info objectForKey:UIImagePickerControllerOriginalImage];
-    pickImage = [BirdUtil fixOrientation:pickImage];
+    pickImage = [BirdUtil fixOrientation:pickImage needCompress:YES];
+//    pickImage = [BirdUtil compressImageByMainScreen:pickImage];
     NSLog(@"%@", pickImage);
     
     self.itemContent.addImageData = @[pickImage];
@@ -516,6 +523,36 @@ BPageViewControllerDelegate>
 }
 
 #pragma mark - action 
+
+- (void)showCamera
+{
+    if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
+        UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
+        imagePickerController.delegate = self;
+        imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
+        imagePickerController.showsCameraControls = YES;
+        imagePickerController.cameraFlashMode = UIImagePickerControllerCameraFlashModeAuto;
+        //取景框全屏
+        CGSize screenBounds = [UIScreen mainScreen].bounds.size;
+        CGFloat cameraAspectRatio = 4.0f/3.0f;
+        CGFloat camViewHeight = screenBounds.width * cameraAspectRatio;
+        CGFloat scale = screenBounds.height / camViewHeight;
+        imagePickerController.cameraViewTransform = CGAffineTransformMakeTranslation(0, (screenBounds.height - camViewHeight) / 2.0);
+        imagePickerController.cameraViewTransform = CGAffineTransformScale(imagePickerController.cameraViewTransform, scale, scale);
+        
+        if([[[UIDevice currentDevice] systemVersion] floatValue]>=8.0) {
+            self.modalPresentationStyle=UIModalPresentationOverCurrentContext;
+        }
+        [self presentViewController:imagePickerController animated:YES completion:nil];
+    } else {
+        NSLog(@"设备不支持拍照");
+    }
+}
+
+- (void)showAlbum
+{
+    
+}
 
 - (void)handleBackAction
 {

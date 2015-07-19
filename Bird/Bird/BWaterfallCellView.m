@@ -96,7 +96,7 @@ static const CGFloat labelHeight = 27;
     CGFloat orgi_width = itemImage.size.width;
     CGFloat orgi_height = itemImage.size.height;
     _ratioHW = orgi_height/orgi_width;
-    _imageView.image = [BirdUtil compressImage:itemImage withWidth:160];
+    _imageView.image = itemImage;
     [self layoutCell];
 }
 

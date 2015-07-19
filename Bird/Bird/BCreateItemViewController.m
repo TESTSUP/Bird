@@ -237,7 +237,7 @@ static const CGFloat CoverSide = 40;
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     BItemContent *content = [[BItemContent alloc] init];
     content.itemID = [BirdUtil createItemID];
-    content.coverImage = [self.imageArray firstObject];
+    content.coverImage = [BirdUtil compressImageByMainScreen:[self.imageArray firstObject]];
     content.imageDatas = self.imageArray;
     if (indexPath.row >= [_categoryArray count]) {
         //添加分类
