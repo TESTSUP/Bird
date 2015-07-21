@@ -71,9 +71,9 @@ static NSString *identifier = @"collectionView";
     _searchBar = [[UISearchBar alloc] initWithFrame:CGRectZero];
     _searchBar.backgroundImage = [BirdUtil imageWithColor:self.view.backgroundColor];
     _searchBar.delegate = self;
-    _searchBar.placeholder = @"名字/描述/标签";
+//    _searchBar.placeholder = @"名字/描述/标签";
     _searchBar.showsCancelButton = YES;
-    
+    [_searchBar becomeFirstResponder];
     [self.view addSubview:_searchBar];
     
 //    UIView *topView = _searchBar.subviews[0];

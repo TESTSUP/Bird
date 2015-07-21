@@ -13,7 +13,6 @@
 #import "BirdUtil.h"
 
 static const CGFloat Cell_Height = 50;
-static const CGFloat Table_Width = 300;
 static const CGFloat Table_Height = 405;
 static const CGFloat CornerRadius = 5;
 static const CGFloat CoverSide = 40;
@@ -26,6 +25,7 @@ static const CGFloat CoverSide = 40;
     UIView *_headerView;
     UIView *_lineView;
     UITableView *_categoryTable;
+    UIView *_footerView;
     
     NSArray *_categoryArray;
 }
@@ -60,17 +60,14 @@ static const CGFloat CoverSide = 40;
     [self.view addSubview:_contentView];
     
     [self createHeaderView];
-    
+    [self createFooterView];
     [self createTableView];
 }
 
 - (void)createHeaderView
 {
-    _headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, Table_Width, Cell_Height)];
-    _headerView.backgroundColor = [UIColor colorWithRed:247.0/255.0
-                                                  green:247.0/255.0
-                                                   blue:247.0/255.0
-                                                  alpha:1.0];
+    _headerView = [[UIView alloc] initWithFrame:CGRectZero];
+    _headerView.backgroundColor = [UIColor navBgColor];
     
     _iTemCover = [[UIImageView alloc] initWithFrame:CGRectZero];
     _iTemCover.image = [_imageArray count]? [_imageArray firstObject]:nil;
@@ -83,10 +80,7 @@ static const CGFloat CoverSide = 40;
     titleView.backgroundColor = [UIColor clearColor];
     titleView.textAlignment = NSTextAlignmentCenter;
     titleView.text = @"选择一个分类";
-    titleView.textColor = [UIColor colorWithRed:68.0/255.0
-                                          green:68.0/255.0
-                                           blue:68.0/255.0
-                                          alpha:1.0];
+    titleView.textColor = [UIColor normalTextColor];
     titleView.font = [UIFont systemFontOfSize:16];
     
     [_headerView addSubview:titleView];
@@ -94,10 +88,7 @@ static const CGFloat CoverSide = 40;
     [_headerView addSubview:_closeBtn];
     
     _lineView = [[UIView alloc] initWithFrame:CGRectZero];
-    _lineView.backgroundColor = [UIColor colorWithRed:204.0/255.0
-                                                green:204.0/255.0
-                                                 blue:204.0/255.0
-                                                alpha:1.0];
+    _lineView.backgroundColor = [UIColor separatorColor];
     [_contentView addSubview:_lineView];
     [_contentView addSubview:_headerView];
     
@@ -120,6 +111,49 @@ static const CGFloat CoverSide = 40;
         make.width.equalTo(100);
     }];
 }
+
+- (void)createFooterView
+{
+    _footerView = [[UIView alloc] initWithFrame:CGRectZero];
+    _footerView.backgroundColor = [UIColor navBgColor];
+    
+    UIView *HLineView = [[UIView alloc] initWithFrame:CGRectZero];
+    HLineView.backgroundColor = [UIColor separatorColor];
+    
+    UIButton *footerButton = [[UIButton alloc] initWithFrame:CGRectZero];
+    footerButton.backgroundColor = [UIColor clearColor];
+    footerButton.titleLabel.font = [UIFont systemFontOfSize: 12.0];
+    [footerButton setTitle:@"新建分类" forState:UIControlStateNormal];
+    footerButton.contentHorizontalAlignment = UIControlContentHorizontalAlignmentRight;
+    footerButton.contentEdgeInsets = UIEdgeInsetsMake(0,0, 0, 20);
+    [footerButton addTarget:self action:@selector(handleAddCategory)
+           forControlEvents:UIControlEventTouchUpInside];
+    [footerButton setTitleColor:[UIColor colorWithHexString:@"#9a9a9a"]
+                       forState:UIControlStateNormal];
+    [footerButton setTitleColor:[UIColor selectedTextColor]
+                       forState:UIControlStateHighlighted];
+    [footerButton setBackgroundImage:[BirdUtil imageWithColor:[UIColor viewBgColor]]
+                            forState:UIControlStateHighlighted];
+
+    [_contentView addSubview:_footerView];
+    [_footerView addSubview:footerButton];
+    [_footerView addSubview:HLineView];
+
+    [HLineView makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(0);
+        make.left.equalTo(0);
+        make.right.equalTo(0);
+        make.height.equalTo(0.5);
+    }];
+    
+    [footerButton makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(HLineView.bottom);
+        make.bottom.equalTo(0);
+        make.left.equalTo(0);
+        make.right.equalTo(0);
+    }];
+}
+
 
 - (void)createTableView
 {
@@ -162,15 +196,23 @@ static const CGFloat CoverSide = 40;
         make.height.equalTo(0.5);
     }];
     
+    [_footerView makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(0);
+        make.right.equalTo(0);
+        make.bottom.equalTo(0);
+        make.height.equalTo(27.5);
+    }];
+    
     [_categoryTable makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(_lineView.bottom);
         make.left.equalTo(0);
         make.right.equalTo(0);
-        make.bottom.equalTo(0);
+        make.bottom.equalTo(_footerView.top);
     }];
     
     [_contentView makeConstraints:^(MASConstraintMaker *make) {
-        make.width.equalTo(Table_Width);
+        make.left.equalTo(10);
+        make.right.equalTo(-10);
         make.height.equalTo(Table_Height);
         make.centerX.equalTo(self.view);
         make.bottom.equalTo(self.view).offset(-30);
@@ -203,6 +245,18 @@ static const CGFloat CoverSide = 40;
                      }];
 }
 
+- (void)handleAddCategory
+{
+    BItemContent *content = [[BItemContent alloc] init];
+    content.itemID = [BirdUtil createItemID];
+    content.coverImage = [BirdUtil compressImageByMainScreen:[self.imageArray firstObject]];
+    content.imageDatas = self.imageArray;
+    
+    //添加分类
+    if (self.delegate && [self.delegate respondsToSelector:@selector(BCreateItemViewController:didAddCategory:)]) {
+        [self.delegate BCreateItemViewController:self didAddCategory:content];
+    }
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -239,18 +293,12 @@ static const CGFloat CoverSide = 40;
     content.itemID = [BirdUtil createItemID];
     content.coverImage = [BirdUtil compressImageByMainScreen:[self.imageArray firstObject]];
     content.imageDatas = self.imageArray;
-    if (indexPath.row >= [_categoryArray count]) {
-        //添加分类
-        if (self.delegate && [self.delegate respondsToSelector:@selector(BCreateItemViewController:didAddCategory:)]) {
-            [self.delegate BCreateItemViewController:self didAddCategory:content];
-        }
-    } else {
-        //选中分类
-        if (self.delegate && [self.delegate respondsToSelector:@selector(BCreateItemViewController:didCreateItem:)]) {
-            BCategoryContent *category = [_categoryArray objectAtIndex:indexPath.row];
-            content.categoryId = category.categoryId;
-            [self.delegate BCreateItemViewController:self didCreateItem:content];
-        }
+    
+    //选中分类
+    if (self.delegate && [self.delegate respondsToSelector:@selector(BCreateItemViewController:didCreateItem:)]) {
+        BCategoryContent *category = [_categoryArray objectAtIndex:indexPath.row];
+        content.categoryId = category.categoryId;
+        [self.delegate BCreateItemViewController:self didCreateItem:content];
     }
 }
 
@@ -258,43 +306,24 @@ static const CGFloat CoverSide = 40;
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [_categoryArray count] + 1;
+    return [_categoryArray count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static const NSInteger addBtnTag = 9999;
     static NSString *cellId = @"categoryCell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellId];
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
                                       reuseIdentifier:cellId];
         cell.textLabel.font = [UIFont systemFontOfSize:16];
-//        cell.textLabel.textAlignment = NSTextAlignmentCenter;
-        cell.textLabel.textColor = [UIColor colorWithRed:68.0/255.0
-                                                   green:68.0/255.0
-                                                    blue:68.0/255.0
-                                                   alpha:1.0];
-        
-        UIImageView *addImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"home_add_category"]];
-        addImage.tag = addBtnTag;
-        [cell.contentView addSubview:addImage];
-        [addImage makeConstraints:^(MASConstraintMaker *make) {
-            make.centerX.equalTo(cell.contentView);
-            make.centerY.equalTo(cell.contentView);
-            make.width.equalTo(22);
-            make.height.equalTo(22);
-        }];
+        cell.textLabel.textColor = [UIColor normalTextColor];
     }
-    
-    UIImageView *addBtn = (UIImageView *)[cell.contentView viewWithTag:addBtnTag];
-    addBtn.hidden = YES;
+
     cell.textLabel.text = nil;
     if (indexPath.row < [_categoryArray count]) {
         BCategoryContent *category = [_categoryArray objectAtIndex:indexPath.row];
         cell.textLabel.text = [category.descr length]? category.descr:category.name;
-    } else if (indexPath.row == [_categoryArray count]) {
-        addBtn.hidden = NO;
     }
     
     return cell;

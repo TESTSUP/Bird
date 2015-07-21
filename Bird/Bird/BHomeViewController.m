@@ -23,6 +23,7 @@
 
 static const CGFloat SideWidth = 75;
 static const CGFloat SideCellHeight = 50;
+static const CGFloat SideFooterHeight = 27.5;
 static const NSTimeInterval animationDur3 = 0.3;
 
 @interface BHomeViewController ()
@@ -36,6 +37,7 @@ BWaterfallViewDelagate>
 {
     BCreateItemViewController *_createItemVC;
     
+    UIButton *_headerButton;
     UITableView *_categoryTableView;
     UIView *_tableFooter;
     BWaterfallView *_contentView;
@@ -50,6 +52,7 @@ BWaterfallViewDelagate>
 
 @property (nonatomic, assign) BOOL showSideView;
 @property (nonatomic, assign) BOOL showFloatView;
+@property (nonatomic, strong) NSString *selectedCategoryId;
 
 @end
 
@@ -79,7 +82,7 @@ BWaterfallViewDelagate>
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO];
     [self refreshCatagoryData];
-    [self refreshItemData];
+    self.selectedCategoryId = _selectedCategoryId;
     [_createItemVC refreshData];
     [self setCreateItemViewAlpha:1.0];
 }
@@ -101,21 +104,21 @@ BWaterfallViewDelagate>
 
 - (void)configLeftNavButtonTextColor
 {
-    NSArray *items = self.navigationItem.leftBarButtonItems;
-    UIBarButtonItem *leftItem = [items lastObject];
-    UIButton *leftBtn = (UIButton *)leftItem.customView;
-    
-    if ([leftBtn isKindOfClass:[UIButton class]]) {
-        NSIndexPath *selected = [_categoryTableView indexPathForSelectedRow];
-        if(selected) {
-            [leftBtn setTitleColor:[UIColor normalTextColor]
-                          forState:UIControlStateNormal];
-            
-        } else {
-            [leftBtn setTitleColor:[UIColor selectedTextColor]
-                          forState:UIControlStateNormal];
-        }
-    }
+//    NSArray *items = self.navigationItem.leftBarButtonItems;
+//    UIBarButtonItem *leftItem = [items lastObject];
+//    UIButton *leftBtn = (UIButton *)leftItem.customView;
+//    
+//    if ([leftBtn isKindOfClass:[UIButton class]]) {
+//        NSIndexPath *selected = [_categoryTableView indexPathForSelectedRow];
+//        if(selected) {
+//            [leftBtn setTitleColor:[UIColor normalTextColor]
+//                          forState:UIControlStateNormal];
+//            
+//        } else {
+//            [leftBtn setTitleColor:[UIColor selectedTextColor]
+//                          forState:UIControlStateNormal];
+//        }
+//    }
 }
 
 - (void)createLeftNavigationBarItem
@@ -124,8 +127,8 @@ BWaterfallViewDelagate>
     if (self.showSideView) {
         UIButton *homeBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         homeBtn.frame = CGRectMake(0, 0, 65, 40);
-        [homeBtn addTarget:self action:@selector(handleHomeButtonAction) forControlEvents:UIControlEventTouchUpInside];
         [homeBtn setTitle:@"星鸟" forState:UIControlStateNormal];
+        [homeBtn setTitleColor:[UIColor normalTextColor] forState:UIControlStateNormal];
         [homeBtn setImage:[UIImage imageNamed:@"NavigationBar_home"] forState:UIControlStateNormal];
         customView = homeBtn;
     } else {
@@ -183,7 +186,7 @@ BWaterfallViewDelagate>
         make.right.equalTo(_categoryTableView.right);
         make.bottom.equalTo(self.view.bottom);
         make.top.equalTo(_categoryTableView.bottom);
-        make.height.equalTo(20);
+        make.height.equalTo(SideFooterHeight);
     }];
     
     [_contentView remakeConstraints:^(MASConstraintMaker *make) {
@@ -283,32 +286,26 @@ BWaterfallViewDelagate>
 {
     _tableFooter = [[UIView alloc] initWithFrame:CGRectZero];
     _tableFooter.backgroundColor = [UIColor navBgColor];
-    UIImageView *left = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"home_sideFooter_left"]];
-    UIImageView *right = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"home_sideFooter_right"]];
-    UIView *VLineView = [[UIView alloc] initWithFrame:CGRectZero];
-    VLineView.backgroundColor = [UIColor viewBgColor];
+
     UIView *HLineView = [[UIView alloc] initWithFrame:CGRectZero];
-    HLineView.backgroundColor = VLineView.backgroundColor;
+    HLineView.backgroundColor = [UIColor separatorColor];
+    
+    UIButton *footerButton = [[UIButton alloc] initWithFrame:CGRectZero];
+    footerButton.backgroundColor = [UIColor clearColor];
+    footerButton.titleLabel.font = [UIFont systemFontOfSize: 12.0];
+    [footerButton setTitle:@"新建分类" forState:UIControlStateNormal];
+    [footerButton addTarget:self action:@selector(showCategoryView)
+            forControlEvents:UIControlEventTouchUpInside];
+    [footerButton setTitleColor:[UIColor colorWithHexString:@"#9a9a9a"]
+                        forState:UIControlStateNormal];
+    [footerButton setTitleColor:[UIColor selectedTextColor]
+                        forState:UIControlStateHighlighted];
+    [footerButton setBackgroundImage:[BirdUtil imageWithColor:[UIColor viewBgColor]]
+                             forState:UIControlStateHighlighted];
     
     [self.view addSubview:_tableFooter];
-    [_tableFooter addSubview:left];
-    [_tableFooter addSubview:right];
-    [_tableFooter addSubview:VLineView];
+    [_tableFooter addSubview:footerButton];
     [_tableFooter addSubview:HLineView];
-    
-    [left makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(0);
-        make.left.equalTo(0);
-        make.bottom.equalTo(0);
-        make.width.equalTo(34);
-    }];
-    
-    [right makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(0);
-        make.right.equalTo(0);
-        make.bottom.equalTo(0);
-        make.width.equalTo(34);
-    }];
     
     [HLineView makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(0);
@@ -317,40 +314,42 @@ BWaterfallViewDelagate>
         make.height.equalTo(0.5);
     }];
     
-    [VLineView makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(0);
+    [footerButton makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(HLineView.bottom);
         make.bottom.equalTo(0);
-        make.centerX.equalTo(_tableFooter);
-        make.width.equalTo(0.5);
+        make.left.equalTo(0);
+        make.right.equalTo(0);
     }];
 }
 
-- (UIView *)createTableFooterView
+- (UIView *)createTableHeaderView
 {
     UIView *footer = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SideWidth, SideCellHeight)];
     footer.backgroundColor = [UIColor clearColor];
     
     UIView *topLine = [[UIView alloc] initWithFrame:CGRectZero];
     UIView *bottomLine = [[UIView alloc] initWithFrame:CGRectZero];
-    UIButton *button = [[UIButton alloc] initWithFrame:CGRectZero];
-    button.titleLabel.font = [UIFont systemFontOfSize: 14.0];
-    [button setTitle:@"管理分类" forState:UIControlStateNormal];
-    [button addTarget:self action:@selector(showCategoryView)
-     forControlEvents:UIControlEventTouchUpInside];
-    [button setTitleColor:[UIColor normalTextColor]
-                 forState:UIControlStateNormal];
-    [button setTitleColor:[UIColor selectedTextColor]
-                 forState:UIControlStateHighlighted];
-    [button setBackgroundImage:[BirdUtil imageWithColor:[UIColor viewBgColor]]
-                      forState:UIControlStateHighlighted];
-
+    _headerButton = [[UIButton alloc] initWithFrame:CGRectZero];
+    _headerButton.titleLabel.font = [UIFont systemFontOfSize: 14.0];
+    [_headerButton setTitle:@"全部分类" forState:UIControlStateNormal];
+    [_headerButton addTarget:self action:@selector(handleShowAllButtonAction)
+            forControlEvents:UIControlEventTouchUpInside];
+    [_headerButton setTitleColor:[UIColor normalTextColor]
+                        forState:UIControlStateNormal];
+    [_headerButton setTitleColor:[UIColor selectedTextColor]
+                        forState:UIControlStateHighlighted];
+    [_headerButton setBackgroundImage:[BirdUtil imageWithColor:[UIColor viewBgColor]]
+                             forState:UIControlStateHighlighted];
+    [_headerButton setBackgroundImage:[BirdUtil imageWithColor:[UIColor viewBgColor]]
+                             forState:UIControlStateSelected];
+    
     topLine.backgroundColor = [UIColor separatorColor];
     bottomLine.backgroundColor = [UIColor separatorColor];
-    button.backgroundColor = [UIColor whiteColor];
+    _headerButton.backgroundColor = [UIColor whiteColor];
     
     [footer addSubview:topLine];
     [footer addSubview:bottomLine];
-    [footer addSubview:button];
+    [footer addSubview:_headerButton];
     
     [topLine makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(0);
@@ -365,7 +364,7 @@ BWaterfallViewDelagate>
         make.height.equalTo(0.5);
     }];
     
-    [button makeConstraints:^(MASConstraintMaker *make) {
+    [_headerButton makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(topLine.bottom);
         make.bottom.equalTo(bottomLine.top);
         make.left.equalTo(0);
@@ -387,6 +386,8 @@ BWaterfallViewDelagate>
     footView.backgroundColor = [UIColor clearColor];
     _categoryTableView.tableFooterView = footView;
     _categoryTableView.separatorColor = [UIColor separatorColor];
+    _categoryTableView.showsHorizontalScrollIndicator = NO;
+    _categoryTableView.showsVerticalScrollIndicator = NO;
     
     if ([_categoryTableView respondsToSelector:@selector(setSeparatorInset:)]) {
         [_categoryTableView setSeparatorInset:UIEdgeInsetsZero];
@@ -398,7 +399,7 @@ BWaterfallViewDelagate>
     UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressGestureRecognized:)];
     [_categoryTableView addGestureRecognizer:longPress];
     
-    _categoryTableView.tableFooterView = [self createTableFooterView];
+    _categoryTableView.tableHeaderView = [self createTableHeaderView];
     
     [self.view addSubview:_categoryTableView];
     [self createSideFooterView];
@@ -486,24 +487,6 @@ BWaterfallViewDelagate>
     [_categoryTableView reloadData];
 }
 
-- (void)refreshItemData
-{
-    BOOL hasSelected = NO;
-    for (BCategoryContent *category in _categoryData) {
-        if ([category.categoryId isEqualToString:_selectedCategoryId]) {
-            hasSelected = YES;
-            break;
-        }
-    }
-    if (!hasSelected) {
-        _selectedCategoryId = nil;
-    }
-    [self configLeftNavButtonTextColor];
-    
-    _itemsData = [[BModelInterface shareInstance] getItemsWithCategoryId:_selectedCategoryId];
-    _contentView.itemArray = _itemsData;
-}
-
 #pragma mark - set
 
 - (void)setShowSideView:(BOOL)asShowSideView
@@ -535,6 +518,35 @@ BWaterfallViewDelagate>
                      completion:^(BOOL finished) {
                          
                      }];
+}
+
+- (void)setSelectedCategoryId:(NSString *)aSelectedCategoryId
+{
+    BOOL hasSelected = NO;
+    _selectedCategoryId= aSelectedCategoryId;
+    
+    for (BCategoryContent *category in _categoryData) {
+        if ([category.categoryId isEqualToString:_selectedCategoryId]) {
+            hasSelected = YES;
+            break;
+        }
+    }
+    if (!hasSelected) {
+        _selectedCategoryId = nil;
+        _headerButton.selected = YES;
+        
+        NSIndexPath *selected = [_categoryTableView indexPathForSelectedRow];
+        if(selected) {
+            [_categoryTableView deselectRowAtIndexPath:selected animated:NO];
+        }
+    } else {
+        _headerButton.selected = NO;
+    }
+    
+    [self configLeftNavButtonTextColor];
+    
+    _itemsData = [[BModelInterface shareInstance] getItemsWithCategoryId:_selectedCategoryId];
+    _contentView.itemArray = _itemsData;
 }
 
 #pragma mark - sort action
@@ -653,20 +665,11 @@ BWaterfallViewDelagate>
     }
 }
 
-
-- (void)handleHomeButtonAction
+- (void)handleShowAllButtonAction
 {
     self.showFloatView = NO;
     
-    NSIndexPath *selected = [_categoryTableView indexPathForSelectedRow];
-    if(selected)
-        [_categoryTableView deselectRowAtIndexPath:selected animated:YES];
-    
-    _selectedCategoryId = nil;
-    _itemsData = [[BModelInterface shareInstance] getItemsWithCategoryId:_selectedCategoryId];
-    [self refreshItemData];
-    
-    
+    self.selectedCategoryId = nil;
 }
 
 - (void)handleShowSideViewAction
@@ -835,34 +838,12 @@ BWaterfallViewDelagate>
     return SideCellHeight;
 }
 
-- (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    self.showFloatView = NO;
-    
-    if (indexPath.row >= [_categoryData count]) {
-//        //添加分类
-//        BSelectCatrgoryViewController *selectedVC = [[BSelectCatrgoryViewController alloc] init];
-//        [self.navigationController pushViewController:selectedVC animated:YES];
-        
-        [self showCategoryView];
-        
-        return [tableView indexPathForSelectedRow];
-    } else {
-        return indexPath;
-    }
-}
-
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.row >= [_categoryData count]) {
-        [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    } else {
-        //选中分类
-        BCategoryContent *content = [_categoryData objectAtIndex:indexPath.row];
-        _selectedCategoryId = content.categoryId;
-        _itemsData = [[BModelInterface shareInstance] getItemsWithCategoryId:_selectedCategoryId];
-        [self refreshItemData];
-    }
+    //选中分类
+    BCategoryContent *content = [_categoryData objectAtIndex:indexPath.row];
+    
+    self.selectedCategoryId = content.categoryId;
 }
 
 #pragma mark - UITableViewDataSource
@@ -889,11 +870,8 @@ BWaterfallViewDelagate>
         
         //选中刷新
         if ([category.categoryId isEqualToString:_selectedCategoryId]) {
-            [tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionMiddle];
+            [tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
         }
-        
-    } else if (indexPath.row == [_categoryData count]) {
-        textLabel.text = @"管理分类";
     }
     
     return cell;

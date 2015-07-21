@@ -97,7 +97,7 @@ static const CGFloat itemSpace15 = 10;
 {
     _catigoryLabel = [[UILabel alloc] initWithFrame:CGRectZero];
     _catigoryLabel.backgroundColor = [UIColor clearColor];
-    _catigoryLabel.text = @"分类名称：";
+    _catigoryLabel.text = @"名称：";
     _catigoryLabel.textColor = [UIColor colorWithHexString:@"#9a9a9a"];
     _catigoryLabel.font = [UIFont systemFontOfSize:14];
     
@@ -107,7 +107,7 @@ static const CGFloat itemSpace15 = 10;
     _catigoryName.text = self.category.name;
     
     _infoLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-    _infoLabel.text = @"备注名：";
+    _infoLabel.text = @"重命名：";
     _infoLabel.textColor = [UIColor colorWithHexString:@"#9a9a9a"];
     _infoLabel.font = [UIFont systemFontOfSize:14];
     
@@ -200,7 +200,7 @@ static const CGFloat itemSpace15 = 10;
         _showListButton.hidden = YES;
     }
     
-    CGFloat width1 = 70;
+    CGFloat width1 = 60;
     CGFloat width2 = 60;
     CGSize constraintSize = CGSizeMake(self.view.frame.size.width-2*left_offset-width2, MAXFLOAT);
     CGSize size = [_categoryDescription sizeThatFits:constraintSize];
@@ -215,7 +215,11 @@ static const CGFloat itemSpace15 = 10;
     }];
     
     [_catigoryName remakeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(_catigoryLabel.right);
+        if (_fromDefault) {
+            make.left.equalTo(_catigoryLabel.right);
+        } else {
+            make.left.equalTo(left_offset);
+        }
         make.right.equalTo(_contentView.right).offset(-left_offset);
         make.top.equalTo(top_offset);
         make.height.equalTo(titleHeight);
@@ -238,9 +242,11 @@ static const CGFloat itemSpace15 = 10;
     CGFloat height = (itemSpace15*2 +titleHeight + top_offset + descriptionH);
     if (!_fromDefault) {
         height = top_offset*2+titleHeight;
+        _catigoryLabel.hidden = YES;
         _infoLabel.hidden = YES;
         _categoryDescription.hidden = YES;
     } else {
+        _catigoryLabel.hidden = NO;
         _infoLabel.hidden = NO;
         _categoryDescription.hidden = NO;
     }
@@ -270,14 +276,9 @@ static const CGFloat itemSpace15 = 10;
 - (NSString *)title
 {
     if (_isCreate) {
-        return @"创建分类";
-    }
-    
-    _fromDefault = self.category.fromDefault;
-    if (_fromDefault) {
-        return @"修改备注名";
+        return @"新建分类";
     } else {
-        return @"修改分类名";
+        return @"修改名称";
     }
 }
 
@@ -371,6 +372,8 @@ static const CGFloat itemSpace15 = 10;
   
     [_categoryDescription becomeFirstResponder];
     [self layoutSubviews];
+    
+    [self handleConfirmButtonAction];
 }
 
 #pragma mark - UITextViewDelegate

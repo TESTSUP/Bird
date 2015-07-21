@@ -35,7 +35,7 @@
     CGFloat sideLength = self.frame.size.width < self.frame.size.height ? self.frame.size.width:self.frame.size.height;
     
     float ratio = aImage.size.width /aImage.size.height;
-    CGSize newSize = CGSizeMake(sideLength, sideLength);
+    CGSize newSize = CGSizeZero;
     if (aImage.size.width < aImage.size.height ) {
         
         CGFloat newHeight = sideLength/ratio;

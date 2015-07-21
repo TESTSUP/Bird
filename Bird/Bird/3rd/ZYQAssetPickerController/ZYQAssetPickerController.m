@@ -116,6 +116,8 @@
     
     [videoIcon drawAtPoint:CGPointMake(2, (height - videoIcon.size.height) / 2)];
     
+    CGColorSpaceRelease(baseSpace);
+    CGGradientRelease(gradient);
 }
 
 @end
@@ -308,7 +310,8 @@ static UIColor *titleColor;
 @implementation ZYQAssetViewCell
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier{
-    if ([super initWithStyle:style reuseIdentifier:reuseIdentifier]) {
+    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+    if (self) {
         [self setSelectionStyle:UITableViewCellSelectionStyleNone];
     }
     return self;
@@ -392,24 +395,6 @@ static UIColor *titleColor;
 
 - (id)init
 {
-    _indexPathsForSelectedItems=[[NSMutableArray alloc] init];
-    
-    if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation))
-    {
-        self.tableView.contentInset=UIEdgeInsetsMake(9.0, 2.0, 0, 2.0);
-        
-        minimumInteritemSpacing=3;
-        minimumLineSpacing=3;
-        
-    }
-    else
-    {
-        self.tableView.contentInset=UIEdgeInsetsMake(9.0, 0, 0, 0);
-        
-        minimumInteritemSpacing=2;
-        minimumLineSpacing=2;
-    }
-    
     if (self = [super init])
     {
         if ([self respondsToSelector:@selector(setEdgesForExtendedLayout:)])
@@ -423,7 +408,24 @@ static UIColor *titleColor;
             self.preferredContentSize = kPopoverContentSize;
         }
         
+        _indexPathsForSelectedItems=[[NSMutableArray alloc] init];
+        if (UIInterfaceOrientationIsLandscape(self.interfaceOrientation))
+        {
+            self.tableView.contentInset=UIEdgeInsetsMake(9.0, 2.0, 0, 2.0);
+            
+            minimumInteritemSpacing=3;
+            minimumLineSpacing=3;
+            
+        }
+        else
+        {
+            self.tableView.contentInset=UIEdgeInsetsMake(9.0, 0, 0, 0);
+            
+            minimumInteritemSpacing=2;
+            minimumLineSpacing=2;
+        }
     }
+    
     
     [self.tableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     return self;

@@ -246,8 +246,9 @@ SKStoreProductViewControllerDelegate>
     NSArray *toRecipients = @[Mail_Receiver];
     [mailPicker setToRecipients: toRecipients];
 
-    NSString *emailBody = @"星鸟，是一款物品管理和共享的APP。大家可以用它来管理自己的个人物品，还可以用它与朋友们相互分享有趣的物品或借出、赠送闲置物品（开发中）。\n\n\n\n\n联系微信：chenke2080\nEmail： 37105787@qq.com";
-    [mailPicker setMessageBody:emailBody isHTML:NO];
+//    NSString *emailBody = @"星鸟，是一款物品管理和共享的APP。大家可以用它来管理自己的个人物品，还可以用它与朋友们相互分享有趣的物品或借出、赠送闲置物品（开发中）。\n\n\n\n\n联系微信：chenke2080\nEmail： 37105787@qq.com";
+//    [mailPicker setMessageBody:emailBody isHTML:NO];
+    
     [self presentViewController:mailPicker animated:YES completion:nil];
 }
 
@@ -275,20 +276,18 @@ SKStoreProductViewControllerDelegate>
             break;
         case MFMailComposeResultSaved:
             msg = @"邮件保存成功";
-            [self alertWithTitle:nil msg:msg];
             break;
         case MFMailComposeResultSent:
             msg = @"邮件发送成功";
-            [self alertWithTitle:nil msg:msg];
             break;
         case MFMailComposeResultFailed:
             msg = @"邮件发送失败";
-            [self alertWithTitle:nil msg:msg];
             break;
         default:
             break;
     }
     
+    [self alertWithTitle:nil msg:msg];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 

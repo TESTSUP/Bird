@@ -157,7 +157,9 @@
     // Done cropping
     
     if (ratio >= clippedRect.size.width) {
-        return [UIImage imageWithCGImage:imageRef];
+        UIImage *thumbnail = [UIImage imageWithCGImage:imageRef];
+        CGImageRelease(imageRef);
+        return thumbnail;
     }
     
     // Resize the image
@@ -169,6 +171,7 @@
     UIGraphicsEndImageContext();
     // Done Resizing
     
+    CGImageRelease(imageRef);
     return thumbnail;
 }
 

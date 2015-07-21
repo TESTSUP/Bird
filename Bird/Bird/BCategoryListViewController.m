@@ -94,9 +94,9 @@
     self.navigationItem.hidesBackButton = YES;
     
     UIButton *categoryBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    categoryBtn.frame = CGRectMake(0, 0, 40, 40);
+    categoryBtn.frame = CGRectMake(0, 0, 44, 44);
     [categoryBtn addTarget:self action:@selector(handleBackAction) forControlEvents:UIControlEventTouchUpInside];
-    [categoryBtn setImage:[UIImage imageNamed:@"NavigationBar_category"] forState:UIControlStateNormal];
+    [categoryBtn setImage:[UIImage imageNamed:@"nav_back"] forState:UIControlStateNormal];
     UIBarButtonItem *leftBarItem = [[UIBarButtonItem alloc] initWithCustomView:categoryBtn];
     // 调整 leftBarButtonItem 在 iOS7 下面的位置
     UIBarButtonItem *negativeSpacer = [[UIBarButtonItem alloc]
@@ -107,9 +107,11 @@
     [self.navigationItem setLeftBarButtonItems:@[negativeSpacer, leftBarItem] animated:YES];
     
     UIButton *addBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    addBtn.frame = CGRectMake(0, 0, 40, 40);
+    addBtn.frame = CGRectMake(0, 0, 75, 44);
     [addBtn addTarget:self action:@selector(handleAddCategoryAction) forControlEvents:UIControlEventTouchUpInside];
-    [addBtn setImage:[UIImage imageNamed:@"nav_add_category"] forState:UIControlStateNormal];
+    [addBtn setTitle:@"新建分类" forState:UIControlStateNormal];
+    [addBtn setTitleColor:[UIColor normalTextColor] forState:UIControlStateNormal];
+//    [addBtn setImage:[UIImage imageNamed:@"nav_add_category"] forState:UIControlStateNormal];
     UIBarButtonItem *rightBarItem = [[UIBarButtonItem alloc] initWithCustomView:addBtn];
     self.navigationItem.rightBarButtonItem = rightBarItem;
 }
@@ -302,6 +304,10 @@
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
+    if (indexPath.row == [_categoryArray count]-1) {
+        return;
+    }
+    
     BCategoryContent *content = [_categoryArray objectAtIndex:indexPath.row];
     BCreateCategoryViewController *createVC = [[BCreateCategoryViewController alloc] init];
     createVC.isCreate = NO;
@@ -330,6 +336,11 @@
     
     BCategoryContent *content = [_categoryArray objectAtIndex:indexPath.row];
     cell.textLabel.text = [content.descr length]? content.descr:content.name;
+    if (indexPath.row == [_categoryArray count]-1) {
+        cell.accessoryView.hidden = YES;
+    } else {
+        cell.accessoryView.hidden = NO;
+    }
     
     return cell;
 }

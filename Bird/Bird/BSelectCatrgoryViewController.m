@@ -128,11 +128,13 @@
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
+    //创建分类或物品
+    
     if (self.delegate && [self.delegate respondsToSelector:@selector(BSelectCatrgoryViewController:didSlectedCategoryName:)]) {
         [self.delegate BSelectCatrgoryViewController:self didSlectedCategoryName:name];
     }
     
-    [self.navigationController popViewControllerAnimated:YES];
+//    [self.navigationController popViewControllerAnimated:YES];
     
 //    BCategoryContent *content = [[BCategoryContent alloc] init];
 //    content.categoryId = [BirdUtil createCategoryID];
