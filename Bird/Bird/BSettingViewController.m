@@ -11,7 +11,7 @@
 #import <StoreKit/StoreKit.h>
 
 static NSString *const Mail_Receiver = @"37105787@qq.com";
-static NSString *const App_ID = @"594467299";
+static NSString *const App_ID = @"1021170657";
 
 @interface BSettingViewController () <UITableViewDataSource,
 UITableViewDelegate,

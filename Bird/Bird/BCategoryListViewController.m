@@ -51,6 +51,38 @@
     }
 }
 
+- (void)createFooterView
+{
+    UIView *footView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 40)];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
+    label.backgroundColor = [UIColor clearColor];
+    label.text = @"长按可排序";
+    label.font = [UIFont systemFontOfSize:12];
+    label.textColor = [UIColor colorWithHexString:@"#9a9a9a"];
+    label.textAlignment = NSTextAlignmentRight;
+    
+    UIView *HLineView = [[UIView alloc] initWithFrame:CGRectZero];
+    HLineView.backgroundColor = [UIColor separatorColor];
+    [footView addSubview:HLineView];
+    [footView addSubview:label];
+    
+    [HLineView makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(0);
+        make.left.equalTo(0);
+        make.right.equalTo(0);
+        make.height.equalTo(0.5);
+    }];
+    
+    [label makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(HLineView.bottom);
+        make.left.equalTo(0);
+        make.right.equalTo(0).offset(-20);
+        make.bottom.equalTo(footView.bottom);
+    }];
+    
+    _categoryTable.tableFooterView = footView;
+}
+
 - (void)createSubView
 {
     _settingBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -67,9 +99,8 @@
                                                      blue:204.0/255.0
                                                     alpha:1.0];
     
-    UIView *footView = [[UIView alloc] init];
-    footView.backgroundColor = [UIColor clearColor];
-    _categoryTable.tableFooterView = footView;
+    [self createFooterView];
+    
     if ([_categoryTable respondsToSelector:@selector(setSeparatorInset:)]) {
         [_categoryTable setSeparatorInset:UIEdgeInsetsZero];
     }
@@ -148,7 +179,7 @@
 
 - (NSString *)title
 {
-    return @"长按可排序";
+    return nil;
 }
 
 #pragma mark - action
@@ -258,6 +289,7 @@
             UITableViewCell *cell = [_categoryTable cellForRowAtIndexPath:sourceIndexPath];
             cell.hidden = NO;
             cell.alpha = 0.0;
+            [_categoryTable reloadData];
             
             [UIView animateWithDuration:0.25 animations:^{
                 

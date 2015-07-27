@@ -176,7 +176,7 @@ BPageViewControllerDelegate>
     
     
     _titleView = [[UITextField alloc] initWithFrame:CGRectZero];
-    _titleView.placeholder = @"记录";
+    _titleView.placeholder = @"描述";
     _titleView.enabled = NO;
     _titleView.font = [UIFont systemFontOfSize:16];
     _titleView.textColor = [UIColor colorWithRed:68.0/255.0

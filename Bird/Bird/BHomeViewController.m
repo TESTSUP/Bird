@@ -23,7 +23,7 @@
 
 static const CGFloat SideWidth = 75;
 static const CGFloat SideCellHeight = 50;
-static const CGFloat SideFooterHeight = 27.5;
+static const CGFloat SideFooterHeight = 40;
 static const NSTimeInterval animationDur3 = 0.3;
 
 @interface BHomeViewController ()
@@ -331,13 +331,15 @@ BWaterfallViewDelagate>
     UIView *bottomLine = [[UIView alloc] initWithFrame:CGRectZero];
     _headerButton = [[UIButton alloc] initWithFrame:CGRectZero];
     _headerButton.titleLabel.font = [UIFont systemFontOfSize: 14.0];
-    [_headerButton setTitle:@"全部分类" forState:UIControlStateNormal];
+    [_headerButton setTitle:@"全部" forState:UIControlStateNormal];
     [_headerButton addTarget:self action:@selector(handleShowAllButtonAction)
             forControlEvents:UIControlEventTouchUpInside];
     [_headerButton setTitleColor:[UIColor normalTextColor]
                         forState:UIControlStateNormal];
     [_headerButton setTitleColor:[UIColor selectedTextColor]
                         forState:UIControlStateHighlighted];
+    [_headerButton setTitleColor:[UIColor selectedTextColor]
+                        forState:UIControlStateSelected];
     [_headerButton setBackgroundImage:[BirdUtil imageWithColor:[UIColor viewBgColor]]
                              forState:UIControlStateHighlighted];
     [_headerButton setBackgroundImage:[BirdUtil imageWithColor:[UIColor viewBgColor]]
@@ -668,7 +670,7 @@ BWaterfallViewDelagate>
 - (void)handleShowAllButtonAction
 {
     self.showFloatView = NO;
-    
+    _headerButton.selected = YES;
     self.selectedCategoryId = nil;
 }
 

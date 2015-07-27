@@ -200,7 +200,7 @@ static const CGFloat CoverSide = 40;
         make.left.equalTo(0);
         make.right.equalTo(0);
         make.bottom.equalTo(0);
-        make.height.equalTo(27.5);
+        make.height.equalTo(40);
     }];
     
     [_categoryTable makeConstraints:^(MASConstraintMaker *make) {
@@ -213,7 +213,8 @@ static const CGFloat CoverSide = 40;
     [_contentView makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(10);
         make.right.equalTo(-10);
-        make.height.equalTo(Table_Height);
+//        make.height.equalTo(Table_Height);
+        make.height.equalTo(_contentView.width).multipliedBy(1.35);
         make.centerX.equalTo(self.view);
         make.bottom.equalTo(self.view).offset(-30);
     }];

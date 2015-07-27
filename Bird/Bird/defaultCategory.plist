@@ -3,13 +3,26 @@
 <plist version="1.0">
 <array>
 	<string>衣服</string>
-	<string>玩乐</string>
-	<string>用品</string>
-	<string>票券</string>
-	<string>衣服</string>
+	<string>裤子</string>
+	<string>鞋袜</string>
+	<string>裙子</string>
+	<string>包包</string>
+	<string>配饰</string>
 	<string>食品</string>
-	<string>电器</string>
-	<string>家具</string>
-	<string>其它</string>
+	<string>药品</string>
+	<string>书籍</string>
+	<string>化妆品</string>
+	<string>宝宝衣服</string>
+	<string>宝宝用品</string>
+	<string>宝宝食品</string>
+	<string>玩具</string>
+	<string>童书</string>
+	<string>收藏</string>
+	<string>兴趣爱好</string>
+	<string>车</string>
+	<string>电器数码</string>
+	<string>家居家装</string>
+	<string>家居用品</string>
+	<string>票券</string>
 </array>
 </plist>
